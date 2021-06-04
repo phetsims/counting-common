@@ -1,7 +1,7 @@
-// Copyright 2015-2020, University of Colorado Boulder
+// Copyright 2015-2021, University of Colorado Boulder
 
 /**
- * Constants that are shared between the various portions of the Making Tens Simulation
+ * Constants that are shared between the various portions of Counting Common code
  *
  * @author Sharfudeen Ashraf
  */
@@ -9,13 +9,9 @@
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import makeATen from '../../makeATen.js';
 
-const MakeATenConstants = {
-  // Initial layout bounds
-  LAYOUT_BOUNDS: new Bounds2( 0, 0, 1024, 618 ),
+const CountingCommonConstants = {
 
   // Common colors
-  SCREEN_BACKGROUND_COLOR: '#E8FFB0',
-  EQUATION_FILL: 'rgb(0,0,0)',
   CUE_FILL: 'rgb(63,63,183)',
 
   /**
@@ -35,6 +31,6 @@ const MakeATenConstants = {
   MOVE_AWAY_DISTANCE: { 1: 50, 2: 100, 3: 150, 4: 160 }
 };
 
-makeATen.register( 'MakeATenConstants', MakeATenConstants );
+makeATen.register( 'CountingCommonConstants', CountingCommonConstants );
 
-export default MakeATenConstants;
+export default CountingCommonConstants;

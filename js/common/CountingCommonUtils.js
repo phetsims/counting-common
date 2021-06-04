@@ -1,7 +1,7 @@
 // Copyright 2015-2021, University of Colorado Boulder
 
 /**
- * Utility methods for Make a Ten
+ * Utility methods for Counting Common code
  *
  * @author Sharfudeen Ashraf
  */
@@ -12,7 +12,7 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import makeATen from '../../makeATen.js';
 
-const MakeATenUtils = {
+const CountingCommonUtils = {
   /**
    * Common way of determining number of digits in a number.
    * @public
@@ -51,6 +51,6 @@ const MakeATenUtils = {
   }
 };
 
-makeATen.register( 'MakeATenUtils', MakeATenUtils );
+makeATen.register( 'CountingCommonUtils', CountingCommonUtils );
 
-export default MakeATenUtils;
+export default CountingCommonUtils;

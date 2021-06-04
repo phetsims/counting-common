@@ -1,7 +1,7 @@
 // Copyright 2015-2021, University of Colorado Boulder
 
 /**
- * Common ScreenView for Make a Ten screens.
+ * Common ScreenView for CommonModel.
  *
  * @author Sharfudeen Ashraf
  */
@@ -17,7 +17,7 @@ import MakeATenConstants from '../MakeATenConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
 
-class MakeATenCommonView extends ScreenView {
+class CountingCommonView extends ScreenView {
   /**
    * @param {MakeATenModel} model
    */
@@ -238,6 +238,6 @@ class MakeATenCommonView extends ScreenView {
   }
 }
 
-makeATen.register( 'MakeATenCommonView', MakeATenCommonView );
+makeATen.register( 'CountingCommonView', CountingCommonView );
 
-export default MakeATenCommonView;
+export default CountingCommonView;

@@ -1,7 +1,7 @@
-// Copyright 2015-2020, University of Colorado Boulder
+// Copyright 2015-2021, University of Colorado Boulder
 
 /**
- * Base model for Make a Ten screens.
+ * Base model for counting screens.
  *
  * @author Sharfudeen Ashraf
  */
@@ -12,7 +12,7 @@ import makeATen from '../../../makeATen.js';
 import MakeATenConstants from '../MakeATenConstants.js';
 import PaperNumber from './PaperNumber.js';
 
-class MakeATenCommonModel {
+class CountingCommonModel {
   constructor() {
     // @public {ObservableArrayDef.<PaperNumber>} - Numbers in play that can be interacted with.
     this.paperNumbers = createObservableArray();
@@ -154,6 +154,6 @@ class MakeATenCommonModel {
   }
 }
 
-makeATen.register( 'MakeATenCommonModel', MakeATenCommonModel );
+makeATen.register( 'CountingCommonModel', CountingCommonModel );
 
-export default MakeATenCommonModel;
+export default CountingCommonModel;
