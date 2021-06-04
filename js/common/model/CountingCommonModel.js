@@ -9,7 +9,7 @@
 import createObservableArray from '../../../../../axon/js/createObservableArray.js';
 import Vector2 from '../../../../../dot/js/Vector2.js';
 import countingCommon from '../../countingCommon.js';
-import MakeATenConstants from '../MakeATenConstants.js';
+import CountingCommonConstants from '../CountingCommonConstants.js';
 import PaperNumber from './PaperNumber.js';
 
 class CountingCommonModel {
@@ -113,8 +113,8 @@ class CountingCommonModel {
       if ( !number ) { continue; }
 
       // evenly distribute across the screen
-      const x = MakeATenConstants.LAYOUT_BOUNDS.width * ( 1 + i ) / ( numbers.length + 1 );
-      const initialNumberPosition = new Vector2( x, MakeATenConstants.LAYOUT_BOUNDS.height / 2.5 );
+      const x = CountingCommonConstants.LAYOUT_BOUNDS.width * ( 1 + i ) / ( numbers.length + 1 );
+      const initialNumberPosition = new Vector2( x, CountingCommonConstants.LAYOUT_BOUNDS.height / 2.5 );
       const paperNumber = new PaperNumber( number, initialNumberPosition );
       this.addPaperNumber( paperNumber );
     }
@@ -134,8 +134,8 @@ class CountingCommonModel {
     const rightPaperNumber = isPaper1Left ? paperNumber2 : paperNumber1;
 
     // Determine offsets
-    const repelLeftOffset = -MakeATenConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ];
-    const repelRightOffset = MakeATenConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ];
+    const repelLeftOffset = -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ];
+    const repelRightOffset = CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ];
     const leftPosition = leftPaperNumber.positionProperty.value.plusXY( repelLeftOffset, 0 );
     const rightPosition = rightPaperNumber.positionProperty.value.plusXY( repelRightOffset, 0 );
 

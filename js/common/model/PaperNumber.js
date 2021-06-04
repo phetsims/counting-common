@@ -14,8 +14,8 @@ import Bounds2 from '../../../../../dot/js/Bounds2.js';
 import Vector2 from '../../../../../dot/js/Vector2.js';
 import Vector2Property from '../../../../../dot/js/Vector2Property.js';
 import countingCommon from '../../countingCommon.js';
-import MakeATenConstants from '../MakeATenConstants.js';
-import MakeATenUtils from '../MakeATenUtils.js';
+import CountingCommonConstants from '../CountingCommonConstants.js';
+import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumber from './BaseNumber.js';
 
 // Incremented for PaperNumber IDs
@@ -72,9 +72,9 @@ class PaperNumber {
 
       // perform any animation
       const distanceToDestination = currentPosition.distance( this.destination );
-      if ( distanceToDestination > dt * MakeATenConstants.ANIMATION_VELOCITY ) {
+      if ( distanceToDestination > dt * CountingCommonConstants.ANIMATION_VELOCITY ) {
         // Move a step toward the destination.
-        const stepVector = this.destination.minus( currentPosition ).setMagnitude( MakeATenConstants.ANIMATION_VELOCITY * dt );
+        const stepVector = this.destination.minus( currentPosition ).setMagnitude( CountingCommonConstants.ANIMATION_VELOCITY * dt );
         assert && assert( stepVector.isFinite() );
         this.positionProperty.value = currentPosition.plus( stepVector );
 
@@ -97,7 +97,7 @@ class PaperNumber {
   get digitLength() {
     assert && assert( this.numberValueProperty.value > 0 );
 
-    return MakeATenUtils.digitsInNumber( this.numberValueProperty.value );
+    return CountingCommonUtils.digitsInNumber( this.numberValueProperty.value );
   }
 
   /**
@@ -119,7 +119,7 @@ class PaperNumber {
    */
   getBoundaryY() {
     const bounds = this.getLocalBounds();
-    const moveToSplitRatio = MakeATenConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
+    const moveToSplitRatio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
     return bounds.maxY * ( 1 - moveToSplitRatio ) + bounds.minY * moveToSplitRatio;
   }
 
@@ -132,7 +132,7 @@ class PaperNumber {
   getDragTargetOffset() {
     const bounds = this.getLocalBounds();
 
-    const ratio = MakeATenConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION / 2;
+    const ratio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION / 2;
     return new Vector2( bounds.centerX, bounds.minY * ratio + bounds.maxY * ( 1 - ratio ) );
   }
 

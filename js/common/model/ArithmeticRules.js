@@ -8,7 +8,7 @@
  */
 
 import countingCommon from '../../countingCommon.js';
-import MakeATenUtils from '../MakeATenUtils.js';
+import CountingCommonUtils from '../CountingCommonUtils.js';
 
 class ArithmeticRules {
   /**
@@ -58,7 +58,7 @@ class ArithmeticRules {
     }
 
     // How many places are on the number?
-    const maximumPlace = MakeATenUtils.digitsInNumber( numberValue ) - 1;
+    const maximumPlace = CountingCommonUtils.digitsInNumber( numberValue ) - 1;
 
     // Grab the place we'll try to remove from.
     const place = Math.max( minimumPlace, pulledPlace );

@@ -9,7 +9,7 @@
  */
 
 import countingCommon from '../../countingCommon.js';
-import MakeATenUtils from '../MakeATenUtils.js';
+import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumberNode from '../view/BaseNumberNode.js';
 
 // Precompute bounds for each digit
@@ -29,7 +29,7 @@ class BaseNumber {
     this.numberValue = digit * Math.pow( 10, place );
 
     // @public {number} - Number of digits in our numeric value
-    this.digitLength = MakeATenUtils.digitsInNumber( this.numberValue );
+    this.digitLength = CountingCommonUtils.digitsInNumber( this.numberValue );
 
     // @public {number} - The place in the number (power of 10) that our digit would be multiplied by to sum, e.g.
     //                    place 2 with a digit 3 has a numberValue = 300, i.e. 3 * 10^2.
