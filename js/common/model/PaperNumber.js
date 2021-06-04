@@ -13,7 +13,7 @@ import NumberProperty from '../../../../../axon/js/NumberProperty.js';
 import Bounds2 from '../../../../../dot/js/Bounds2.js';
 import Vector2 from '../../../../../dot/js/Vector2.js';
 import Vector2Property from '../../../../../dot/js/Vector2Property.js';
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import MakeATenConstants from '../MakeATenConstants.js';
 import MakeATenUtils from '../MakeATenUtils.js';
 import BaseNumber from './BaseNumber.js';
@@ -272,6 +272,6 @@ class PaperNumber {
   }
 }
 
-makeATen.register( 'PaperNumber', PaperNumber );
+countingCommon.register( 'PaperNumber', PaperNumber );
 
 export default PaperNumber;

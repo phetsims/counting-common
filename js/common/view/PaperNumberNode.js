@@ -12,7 +12,7 @@ import arrayRemove from '../../../../../phet-core/js/arrayRemove.js';
 import DragListener from '../../../../../scenery/js/listeners/DragListener.js';
 import Node from '../../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../../scenery/js/nodes/Rectangle.js';
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import BaseNumber from '../model/BaseNumber.js';
 import PaperNumber from '../model/PaperNumber.js';
@@ -263,6 +263,6 @@ class PaperNumberNode extends Node {
   }
 }
 
-makeATen.register( 'PaperNumberNode', PaperNumberNode );
+countingCommon.register( 'PaperNumberNode', PaperNumberNode );
 
 export default PaperNumberNode;

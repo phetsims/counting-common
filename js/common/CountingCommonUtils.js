@@ -10,7 +10,7 @@ import ScreenIcon from '../../../../joist/js/ScreenIcon.js';
 import Image from '../../../../scenery/js/nodes/Image.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
-import makeATen from '../../makeATen.js';
+import countingCommon from '../countingCommon.js';
 
 const CountingCommonUtils = {
   /**
@@ -51,6 +51,6 @@ const CountingCommonUtils = {
   }
 };
 
-makeATen.register( 'CountingCommonUtils', CountingCommonUtils );
+countingCommon.register( 'CountingCommonUtils', CountingCommonUtils );
 
 export default CountingCommonUtils;

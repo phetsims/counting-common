@@ -8,7 +8,7 @@
 
 import createObservableArray from '../../../../../axon/js/createObservableArray.js';
 import Vector2 from '../../../../../dot/js/Vector2.js';
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import MakeATenConstants from '../MakeATenConstants.js';
 import PaperNumber from './PaperNumber.js';
 
@@ -154,6 +154,6 @@ class CountingCommonModel {
   }
 }
 
-makeATen.register( 'CountingCommonModel', CountingCommonModel );
+countingCommon.register( 'CountingCommonModel', CountingCommonModel );
 
 export default CountingCommonModel;

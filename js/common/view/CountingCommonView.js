@@ -12,7 +12,7 @@ import ResetAllButton from '../../../../../scenery-phet/js/buttons/ResetAllButto
 import Node from '../../../../../scenery/js/nodes/Node.js';
 import Plane from '../../../../../scenery/js/nodes/Plane.js';
 import ClosestDragListener from '../../../../../sun/js/ClosestDragListener.js';
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import MakeATenConstants from '../MakeATenConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
@@ -238,6 +238,6 @@ class CountingCommonView extends ScreenView {
   }
 }
 
-makeATen.register( 'CountingCommonView', CountingCommonView );
+countingCommon.register( 'CountingCommonView', CountingCommonView );
 
 export default CountingCommonView;

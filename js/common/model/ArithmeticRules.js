@@ -7,7 +7,7 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import MakeATenUtils from '../MakeATenUtils.js';
 
 class ArithmeticRules {
@@ -81,6 +81,6 @@ class ArithmeticRules {
   }
 }
 
-makeATen.register( 'ArithmeticRules', ArithmeticRules );
+countingCommon.register( 'ArithmeticRules', ArithmeticRules );
 
 export default ArithmeticRules;

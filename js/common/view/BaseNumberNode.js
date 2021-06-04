@@ -24,7 +24,7 @@ import imagePaperBackground1000 from '../../../../mipmaps/paper-background-1000_
 import imagePaperBackground100 from '../../../../mipmaps/paper-background-100_png.js';
 import imagePaperBackground10 from '../../../../mipmaps/paper-background-10_png.js';
 import imagePaperBackground1 from '../../../../mipmaps/paper-background-1_png.js';
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP = {
@@ -126,6 +126,6 @@ BaseNumberNode.IMAGE_OFFSETS = [
   new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_Y_OFFSET[ 3 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE )
 ];
 
-makeATen.register( 'BaseNumberNode', BaseNumberNode );
+countingCommon.register( 'BaseNumberNode', BaseNumberNode );
 
 export default BaseNumberNode;

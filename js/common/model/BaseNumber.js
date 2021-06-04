@@ -8,7 +8,7 @@
  * @author Sharfudeen Ashraf
  */
 
-import makeATen from '../../../makeATen.js';
+import countingCommon from '../../countingCommon.js';
 import MakeATenUtils from '../MakeATenUtils.js';
 import BaseNumberNode from '../view/BaseNumberNode.js';
 
@@ -47,6 +47,6 @@ class BaseNumber {
   }
 }
 
-makeATen.register( 'BaseNumber', BaseNumber );
+countingCommon.register( 'BaseNumber', BaseNumber );
 
 export default BaseNumber;

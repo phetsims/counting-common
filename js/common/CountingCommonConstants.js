@@ -6,8 +6,7 @@
  * @author Sharfudeen Ashraf
  */
 
-import Bounds2 from '../../../../dot/js/Bounds2.js';
-import makeATen from '../../makeATen.js';
+import countingCommon from '../countingCommon.js';
 
 const CountingCommonConstants = {
 
@@ -31,6 +30,6 @@ const CountingCommonConstants = {
   MOVE_AWAY_DISTANCE: { 1: 50, 2: 100, 3: 150, 4: 160 }
 };
 
-makeATen.register( 'CountingCommonConstants', CountingCommonConstants );
+countingCommon.register( 'CountingCommonConstants', CountingCommonConstants );
 
 export default CountingCommonConstants;
