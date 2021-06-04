@@ -19,13 +19,13 @@ import PaperNumberNode from './PaperNumberNode.js';
 
 class CountingCommonView extends ScreenView {
   /**
-   * @param {MakeATenModel} model
+   * @param {CountingCommonModel} model
    */
   constructor( model ) {
 
     super( { layoutBounds: CountingCommonConstants.LAYOUT_BOUNDS } );
 
-    // @public {MakeATenModel}
+    // @public {CountingCommonModel}
     this.model = model;
 
     // @protected {Node} - Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the
