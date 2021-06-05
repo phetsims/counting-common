@@ -8,6 +8,7 @@
 
 import createObservableArray from '../../../../../axon/js/createObservableArray.js';
 import Vector2 from '../../../../../dot/js/Vector2.js';
+import ScreenView from '../../../../joist/js/ScreenView.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import PaperNumber from './PaperNumber.js';
@@ -113,8 +114,8 @@ class CountingCommonModel {
       if ( !number ) { continue; }
 
       // evenly distribute across the screen
-      const x = CountingCommonConstants.LAYOUT_BOUNDS.width * ( 1 + i ) / ( numbers.length + 1 );
-      const initialNumberPosition = new Vector2( x, CountingCommonConstants.LAYOUT_BOUNDS.height / 2.5 );
+      const x = ScreenView.DEFAULT_LAYOUT_BOUNDS.width * ( 1 + i ) / ( numbers.length + 1 );
+      const initialNumberPosition = new Vector2( x, ScreenView.DEFAULT_LAYOUT_BOUNDS.height / 2.5 );
       const paperNumber = new PaperNumber( number, initialNumberPosition );
       this.addPaperNumber( paperNumber );
     }

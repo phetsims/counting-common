@@ -6,16 +6,10 @@
  * @author Sharfudeen Ashraf
  */
 
-import Bounds2 from '../../../../dot/js/Bounds2.js';
 import countingCommon from '../countingCommon.js';
 
 const CountingCommonConstants = {
-  // Initial layout bounds
-  LAYOUT_BOUNDS: new Bounds2( 0, 0, 1024, 618 ),
-
   // Common colors
-  SCREEN_BACKGROUND_COLOR: '#E8FFB0',
-  EQUATION_FILL: 'rgb(0,0,0)',
   CUE_FILL: 'rgb(63,63,183)',
 
   /**

@@ -13,7 +13,6 @@ import Node from '../../../../../scenery/js/nodes/Node.js';
 import Plane from '../../../../../scenery/js/nodes/Plane.js';
 import ClosestDragListener from '../../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
-import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
 
@@ -22,8 +21,7 @@ class CountingCommonView extends ScreenView {
    * @param {CountingCommonModel} model
    */
   constructor( model ) {
-
-    super( { layoutBounds: CountingCommonConstants.LAYOUT_BOUNDS } );
+    super();
 
     // @public {CountingCommonModel}
     this.model = model;
@@ -43,7 +41,7 @@ class CountingCommonView extends ScreenView {
 
     // @public {Property.<Bounds2>} - The view coordinates where numbers can be dragged. Can update when the sim
     //                                is resized.
-    this.availableViewBoundsProperty = new Property( CountingCommonConstants.LAYOUT_BOUNDS );
+    this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
     // @private {ClosestDragListener} - Handle touches nearby to the numbers, and interpret those as the proper drag.
     this.closestDragListener = new ClosestDragListener( 30, 0 );
