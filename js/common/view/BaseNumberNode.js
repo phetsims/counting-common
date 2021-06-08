@@ -6,10 +6,10 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import Dimension2 from '../../../../../dot/js/Dimension2.js';
-import Vector2 from '../../../../../dot/js/Vector2.js';
-import Image from '../../../../../scenery/js/nodes/Image.js';
-import Node from '../../../../../scenery/js/nodes/Node.js';
+import Dimension2 from '../../../../dot/js/Dimension2.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import Image from '../../../../scenery/js/nodes/Image.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import imageDigit0 from '../../../mipmaps/digit-0_png.js';
 import imageDigit1 from '../../../mipmaps/digit-1_png.js';
 import imageDigit2 from '../../../mipmaps/digit-2_png.js';

@@ -7,12 +7,12 @@
  * @author Sharfudeen Ashraf
  */
 
-import BooleanProperty from '../../../../../axon/js/BooleanProperty.js';
-import Emitter from '../../../../../axon/js/Emitter.js';
-import NumberProperty from '../../../../../axon/js/NumberProperty.js';
-import Bounds2 from '../../../../../dot/js/Bounds2.js';
-import Vector2 from '../../../../../dot/js/Vector2.js';
-import Vector2Property from '../../../../../dot/js/Vector2Property.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import Emitter from '../../../../axon/js/Emitter.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import Vector2Property from '../../../../dot/js/Vector2Property.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';

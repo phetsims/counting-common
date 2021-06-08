@@ -6,8 +6,8 @@
  * @author Sharfudeen Ashraf
  */
 
-import createObservableArray from '../../../../../axon/js/createObservableArray.js';
-import Vector2 from '../../../../../dot/js/Vector2.js';
+import createObservableArray from '../../../../axon/js/createObservableArray.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';

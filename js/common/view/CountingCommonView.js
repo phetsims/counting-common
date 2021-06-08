@@ -6,12 +6,12 @@
  * @author Sharfudeen Ashraf
  */
 
-import Property from '../../../../../axon/js/Property.js';
-import ScreenView from '../../../../../joist/js/ScreenView.js';
-import ResetAllButton from '../../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import Node from '../../../../../scenery/js/nodes/Node.js';
-import Plane from '../../../../../scenery/js/nodes/Plane.js';
-import ClosestDragListener from '../../../../../sun/js/ClosestDragListener.js';
+import Property from '../../../../axon/js/Property.js';
+import ScreenView from '../../../../joist/js/ScreenView.js';
+import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Plane from '../../../../scenery/js/nodes/Plane.js';
+import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
