@@ -19,16 +19,18 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 class BasePictorialNode extends Node {
   /**
    * @param {BaseNumber} baseNumber
-   * @param {number} numberValue
    * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
    * @param {EnumerationProperty.<PlayObjectType>} playObjectTypeProperty
    * @param {boolean} separateNumber - whether the objects should be show separated or grouped
    */
-  constructor( baseNumber, numberValue, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
+  constructor( baseNumber, value, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
     super();
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
+
+    // saves the case from when value is 0
+    value = Math.max( baseNumber.numberValue, value );
 
     let backgroundNode;
 
@@ -37,10 +39,10 @@ class BasePictorialNode extends Node {
     const stackOffset = 10;
     const sideMargin = 10;
 
-    // add a background if there's a least 2 object together
-    if ( numberValue > 1 && !separateNumbers ) {
-      const backgroundWidth = objectWidth + 2 * sideMargin + ( numberValue - 1 ) * stackOffset;
-      const backgroundHeight = objectHeight + 3 * sideMargin + numberValue * stackOffset;
+    // add a background if there's a least 2 objects together
+    if ( value > 1 && !separateNumbers ) {
+      const backgroundWidth = objectWidth + 2 * sideMargin + ( value - 1 ) * stackOffset;
+      const backgroundHeight = objectHeight + 3 * sideMargin + value * stackOffset;
 
       backgroundNode = new Rectangle( 0, 0, backgroundWidth, backgroundHeight, {
         fill: '#e8f6ff',
@@ -58,7 +60,7 @@ class BasePictorialNode extends Node {
     }
 
     // add and position the object images
-    for ( let i = 0; i < numberValue; i++ ) {
+    for ( let i = 0; i < value; i++ ) {
       const offset = ( sideMargin + i * stackOffset );
       const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
         maxWidth: objectWidth,
@@ -74,7 +76,7 @@ class BasePictorialNode extends Node {
 
     // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
-    if ( numberValue > 1 && !separateNumbers ) {
+    if ( value > 1 && !separateNumbers ) {
 
       // empirically determined to put the grippy in the same place in relation to the paper number's digit
       const yMargin = baseNumber.place >= 1 ? 22 : 13;
