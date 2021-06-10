@@ -85,7 +85,8 @@ class PaperNumberNode extends Node {
       },
 
       drag: ( event, listener ) => {
-        paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint );
+        paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false,
+          !!this.playObjectTypeProperty );
       },
 
       end: ( event, listener ) => {
@@ -151,12 +152,25 @@ class PaperNumberNode extends Node {
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
 
-    this.numberImageContainer.children = this.playObjectTypeProperty ?
-      _.map( reversedBaseNumbers, ( baseNumber, index ) => new BasePictorialNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1, this.playObjectTypeProperty ) ) :
-      _.map( reversedBaseNumbers, ( baseNumber, index ) => new BaseNumberNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1 ) );
+    let fullBounds;
 
-    // Grab the bounds of the biggest base number for the full bounds
-    const fullBounds = this.paperNumber.baseNumbers[ this.paperNumber.baseNumbers.length - 1 ].bounds;
+    // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
+    if ( this.playObjectTypeProperty ) {
+      this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
+        return new BasePictorialNode( baseNumber, 0.95 * Math.pow( 0.97, index ),
+          reversedBaseNumbers.length > 1, this.playObjectTypeProperty );
+      } );
+      fullBounds = this.numberImageContainer.bounds;
+      this.paperNumber.alternateBounds = fullBounds.copy();
+    }
+    else {
+      this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
+        return new BaseNumberNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1 );
+      } );
+
+      // Grab the bounds of the biggest base number for the full bounds
+      fullBounds = this.paperNumber.baseNumbers[ this.paperNumber.baseNumbers.length - 1 ].bounds;
+    }
 
     // Split target only visible if our number is > 1. Move target can resize as needed.
     if ( this.paperNumber.numberValueProperty.value === 1 ) {
@@ -167,8 +181,10 @@ class PaperNumberNode extends Node {
     else {
       this.splitTarget.visible = true;
 
+      // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
       // Locate the boundary between the "move" input area and "split" input area.
-      const boundaryY = this.paperNumber.getBoundaryY();
+      const boundaryY = this.playObjectTypeProperty ? this.paperNumber.getBoundaryY( fullBounds ) :
+                        this.paperNumber.getBoundaryY();
 
       // Modify our move/split targets
       this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds.withMinY( boundaryY );

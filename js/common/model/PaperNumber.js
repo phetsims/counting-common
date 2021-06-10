@@ -56,6 +56,13 @@ class PaperNumber {
 
     // @public {Emitter} - Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
+
+    // TODO: these should probably be refactored, see https://github.com/phetsims/number-play/issues/19
+    // @public {Bounds2|null} - alternate Bounds set by the view if needed for dragging
+    this.alternateBounds = null;
+
+    // @public {boolean} - set later by the view
+    this.viewHasIndependentModel = null;
   }
 
   /**
@@ -107,18 +114,22 @@ class PaperNumber {
    * @returns {Bounds2}
    */
   getLocalBounds() {
-    // Use the largest base number
-    return this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
+    // TODO: this is a temporary band-aid for https://github.com/phetsims/number-play/issues/19
+    // Use the largest base number unless this model is independent and uses objects in the view
+    return this.viewHasIndependentModel && this.alternateBounds ? this.alternateBounds :
+           this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
   }
 
   /**
-   * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds.
+   * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds or provided
+   * bounds. // TODO: this is a temporary band-aid for https://github.com/phetsims/number-play/issues/19
    * @public
    *
+   * @param {Bounds2} [bounds]
    * @returns {Bounds2}
    */
-  getBoundaryY() {
-    const bounds = this.getLocalBounds();
+  getBoundaryY( bounds = null ) {
+    bounds = bounds || this.getLocalBounds();
     const moveToSplitRatio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
     return bounds.maxY * ( 1 - moveToSplitRatio ) + bounds.minY * moveToSplitRatio;
   }
@@ -177,10 +188,11 @@ class PaperNumber {
    * @param {Bounds2} viewBounds
    * @param {Vector2} position
    * @param {boolean} [animate] - Indicates if the new constrained position should be directly set or animated
+   * @param {boolean} [useAlternateBounds] - Indicates if the alternate bounds should
    */
-  setConstrainedDestination( viewBounds, newDestination, animate ) {
+  setConstrainedDestination( viewBounds, newDestination, animate, useAlternateBounds ) {
     // Determine how our number's origin can be placed in the bounds
-    const localBounds = this.getLocalBounds();
+    const localBounds = useAlternateBounds ? this.alternateBounds : this.getLocalBounds();
     const padding = 10;
     const originBounds = new Bounds2( viewBounds.left - localBounds.left,
       viewBounds.top - localBounds.top,
