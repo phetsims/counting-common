@@ -163,10 +163,9 @@ class PaperNumberNode extends Node {
 
     // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
     if ( this.playObjectTypeProperty ) {
-      this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
-        return new BasePictorialNode( baseNumber, 0.95 * Math.pow( 0.97, index ),
-          reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers );
-      } );
+      this.numberImageContainer.children = [ new BasePictorialNode( reversedBaseNumbers[ reversedBaseNumbers.length - 1 ],
+        this.paperNumber.numberValueProperty.value, reversedBaseNumbers.length > 1,
+        this.playObjectTypeProperty, breakApartNumbers ) ];
       fullBounds = this.numberImageContainer.bounds;
       this.paperNumber.alternateBounds = fullBounds.copy();
     }

@@ -19,21 +19,18 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 class BasePictorialNode extends Node {
   /**
    * @param {BaseNumber} baseNumber
-   * @param {number} opacity
+   * @param {number} numberValue
    * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
    * @param {EnumerationProperty.<PlayObjectType>} playObjectTypeProperty
    * @param {boolean} separateNumber - whether the objects should be show separated or grouped
    */
-  constructor( baseNumber, opacity, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
+  constructor( baseNumber, numberValue, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
     super();
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
     let backgroundNode;
-
-    // the view should be objects and a custom background
-    const numberValue = baseNumber.numberValue;
 
     const objectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const objectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
@@ -77,7 +74,7 @@ class BasePictorialNode extends Node {
 
     // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
-    if ( baseNumber.numberValue > 1 && !separateNumbers ) {
+    if ( numberValue > 1 && !separateNumbers ) {
 
       // empirically determined to put the grippy in the same place in relation to the paper number's digit
       const yMargin = baseNumber.place >= 1 ? 22 : 13;
