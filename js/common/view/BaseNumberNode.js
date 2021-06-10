@@ -8,8 +8,10 @@
 
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
+import Shape from '../../../../kite/js/Shape.js';
 import Image from '../../../../scenery/js/nodes/Image.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
 import imageDigit0 from '../../../mipmaps/digit-0_png.js';
 import imageDigit1 from '../../../mipmaps/digit-1_png.js';
 import imageDigit2 from '../../../mipmaps/digit-2_png.js';
@@ -24,7 +26,15 @@ import imagePaperBackground1000 from '../../../mipmaps/paper-background-1000_png
 import imagePaperBackground100 from '../../../mipmaps/paper-background-100_png.js';
 import imagePaperBackground10 from '../../../mipmaps/paper-background-10_png.js';
 import imagePaperBackground1 from '../../../mipmaps/paper-background-1_png.js';
+import peeledImagePaperBackground1 from '../../../mipmaps/peeled_paper_background_1_png.js';
+import peeledImagePaperBackground10 from '../../../mipmaps/peeled_paper_background_10_png.js';
 import countingCommon from '../../countingCommon.js';
+
+// place => mipmap info
+const PEELED_BACKGROUND_IMAGE_MAP = {
+  0: peeledImagePaperBackground1,
+  1: peeledImagePaperBackground10
+};
 
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP = {
@@ -72,8 +82,9 @@ class BaseNumberNode extends Node {
   /**
    * @param {BaseNumber} baseNumber
    * @param {number} opacity
+   * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
    */
-  constructor( baseNumber, opacity ) {
+  constructor( baseNumber, opacity, isPartOfStack ) {
     super( { scale: SCALE } );
 
     // Position of the initial digit
@@ -88,10 +99,24 @@ class BaseNumberNode extends Node {
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
-    // The paper behind the numbers
-    this.addChild( new Image( BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
-      imageOpacity: opacity
-    } ) );
+    let paperBackgroundImage;
+
+    // if the base number is a 1 that's not on top of a bigger base number, or if the base number is underneath smaller
+    // base numbers, then use a flat background instead of a peeled one.
+    if ( baseNumber.digit === 1 &&
+         ( ( baseNumber.place === 0 && !isPartOfStack ) || ( baseNumber.place >= 1 && isPartOfStack ) ) ) {
+
+      // The paper behind the numbers
+      paperBackgroundImage = new Image( BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
+        imageOpacity: opacity
+      } );
+    }
+    else {
+      paperBackgroundImage = new Image( PEELED_BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
+        imageOpacity: opacity
+      } );
+    }
+    this.addChild( paperBackgroundImage );
 
     // The initial (non-zero) digit
     this.addChild( new Image( DIGIT_IMAGE_MAP[ baseNumber.digit ], {
@@ -106,6 +131,23 @@ class BaseNumberNode extends Node {
         x: digitZeroOffsets[ i ],
         y: y
       } ) );
+    }
+
+    // add the grippy lines if this number is on the top layer
+    if ( !( baseNumber.place >= 1 && isPartOfStack ) ) {
+
+      // empirically determined to put the grippy in the same place in relation to the paper number's digit
+      const yMargin = baseNumber.place >= 1 ? 90 : 56;
+      const lineLength = 100;    // empirically determined
+      const lineSeparation = 15; // empirically determined
+      const grippyLines = new Path( new Shape()
+        .moveTo( 0, 0 ).lineTo( lineLength, 0 ).moveTo( 0, lineSeparation ).lineTo( lineLength, lineSeparation ).close(), {
+        stroke: 'rgb( 204, 204, 204 )',
+        lineWidth: 3,
+        centerX: paperBackgroundImage.centerX,
+        bottom: paperBackgroundImage.bottom - yMargin
+      } );
+      this.addChild( grippyLines );
     }
   }
 }

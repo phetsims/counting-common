@@ -17,6 +17,7 @@ import ArithmeticRules from '../model/ArithmeticRules.js';
 import BaseNumber from '../model/BaseNumber.js';
 import PaperNumber from '../model/PaperNumber.js';
 import BaseNumberNode from './BaseNumberNode.js';
+import BasePictorialNode from './BasePictorialNode.js';
 
 class PaperNumberNode extends Node {
   /**
@@ -24,8 +25,10 @@ class PaperNumberNode extends Node {
    * @param {Property.<Bounds2>} availableViewBoundsProperty
    * @param {Function} addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
    * @param {Function} tryToCombineNumbers - function( paperNumber ), called to combine our paper number
+   * @param {EnumerationProperty.<PlayObjectType>|null} playObjectTypeProperty
    */
-  constructor( paperNumber, availableViewBoundsProperty, addAndDragNumber, tryToCombineNumbers ) {
+  constructor( paperNumber, availableViewBoundsProperty, addAndDragNumber, tryToCombineNumbers,
+               playObjectTypeProperty = null ) {
 
     super();
 
@@ -46,6 +49,9 @@ class PaperNumberNode extends Node {
 
     // @private {Bounds2}
     this.availableViewBoundsProperty = availableViewBoundsProperty;
+
+    // @private {EnumerationProperty.<PlayObjectType>|null}
+    this.playObjectTypeProperty = playObjectTypeProperty;
 
     // @private {Node} - Container for the digit image nodes
     this.numberImageContainer = new Node( {
@@ -142,9 +148,12 @@ class PaperNumberNode extends Node {
    * @private
    */
   updateNumber() {
-    const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
-    this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => new BaseNumberNode( baseNumber, 0.95 * Math.pow( 0.97, index ) ) );
+    const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
+
+    this.numberImageContainer.children = this.playObjectTypeProperty ?
+      _.map( reversedBaseNumbers, ( baseNumber, index ) => new BasePictorialNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1, this.playObjectTypeProperty ) ) :
+      _.map( reversedBaseNumbers, ( baseNumber, index ) => new BaseNumberNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1 ) );
 
     // Grab the bounds of the biggest base number for the full bounds
     const fullBounds = this.paperNumber.baseNumbers[ this.paperNumber.baseNumbers.length - 1 ].bounds;
