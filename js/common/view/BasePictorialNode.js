@@ -22,8 +22,9 @@ class BasePictorialNode extends Node {
    * @param {number} opacity
    * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
    * @param {EnumerationProperty.<PlayObjectType>} playObjectTypeProperty
+   * @param {boolean} separateNumber - whether the objects should be show separated or grouped
    */
-  constructor( baseNumber, opacity, isPartOfStack, playObjectTypeProperty ) {
+  constructor( baseNumber, opacity, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
     super();
 
     // Translate everything by our offset
@@ -40,7 +41,7 @@ class BasePictorialNode extends Node {
     const sideMargin = 10;
 
     // add a background if there's a least 2 object together
-    if ( numberValue > 1 ) {
+    if ( numberValue > 1 && !separateNumbers ) {
       const backgroundWidth = objectWidth + 2 * sideMargin + ( numberValue - 1 ) * stackOffset;
       const backgroundHeight = objectHeight + 3 * sideMargin + numberValue * stackOffset;
 
@@ -76,7 +77,7 @@ class BasePictorialNode extends Node {
 
     // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
-    if ( baseNumber.numberValue > 1 ) {
+    if ( baseNumber.numberValue > 1 && !separateNumbers ) {
 
       // empirically determined to put the grippy in the same place in relation to the paper number's digit
       const yMargin = baseNumber.place >= 1 ? 22 : 13;

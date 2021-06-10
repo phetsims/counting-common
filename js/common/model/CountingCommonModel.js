@@ -127,16 +127,17 @@ class CountingCommonModel {
    * @param {Bounds2} availableModelBounds - Constrain the position to be inside these bounds
    * @param {PaperNumber} paperNumber1
    * @param {PaperNumber} paperNumber2
+   * @param {number} [repelDistance] // TODO: this should be generalized better, see https://github.com/phetsims/number-play/issues/19
    */
-  repelAway( availableModelBounds, paperNumber1, paperNumber2 ) {
+  repelAway( availableModelBounds, paperNumber1, paperNumber2, repelDistance ) {
     // Determine which are 'left' and 'right'
     const isPaper1Left = paperNumber1.positionProperty.value.x < paperNumber2.positionProperty.value.x;
     const leftPaperNumber = isPaper1Left ? paperNumber1 : paperNumber2;
     const rightPaperNumber = isPaper1Left ? paperNumber2 : paperNumber1;
 
     // Determine offsets
-    const repelLeftOffset = -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ];
-    const repelRightOffset = CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ];
+    const repelLeftOffset = -repelDistance || -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ];
+    const repelRightOffset = repelDistance || CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ];
     const leftPosition = leftPaperNumber.positionProperty.value.plusXY( repelLeftOffset, 0 );
     const rightPosition = rightPaperNumber.positionProperty.value.plusXY( repelRightOffset, 0 );
 

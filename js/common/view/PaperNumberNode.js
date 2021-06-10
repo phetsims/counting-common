@@ -8,6 +8,7 @@
 
 import Emitter from '../../../../axon/js/Emitter.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
@@ -28,7 +29,7 @@ class PaperNumberNode extends Node {
    * @param {EnumerationProperty.<PlayObjectType>|null} playObjectTypeProperty
    */
   constructor( paperNumber, availableViewBoundsProperty, addAndDragNumber, tryToCombineNumbers,
-               playObjectTypeProperty = null ) {
+               playObjectTypeProperty = null, groupingLinkingTypeProperty = null ) {
 
     super();
 
@@ -52,6 +53,9 @@ class PaperNumberNode extends Node {
 
     // @private {EnumerationProperty.<PlayObjectType>|null}
     this.playObjectTypeProperty = playObjectTypeProperty;
+
+    // @private {EnumerationProperty.<GroupingLinkingType>|null}
+    this.groupingLinkingTypeProperty = groupingLinkingTypeProperty;
 
     // @private {Node} - Container for the digit image nodes
     this.numberImageContainer = new Node( {
@@ -149,6 +153,9 @@ class PaperNumberNode extends Node {
    * @private
    */
   updateNumber() {
+    const breakApartNumbers = this.groupingLinkingTypeProperty &&
+                        this.groupingLinkingTypeProperty.value === GroupingLinkingType.NO_GROUPING;
+
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
 
@@ -158,7 +165,7 @@ class PaperNumberNode extends Node {
     if ( this.playObjectTypeProperty ) {
       this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
         return new BasePictorialNode( baseNumber, 0.95 * Math.pow( 0.97, index ),
-          reversedBaseNumbers.length > 1, this.playObjectTypeProperty );
+          reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers );
       } );
       fullBounds = this.numberImageContainer.bounds;
       this.paperNumber.alternateBounds = fullBounds.copy();
@@ -178,7 +185,7 @@ class PaperNumberNode extends Node {
       this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds;
       this.splitTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = new Bounds2( 0, 0, 0, 0 );
     }
-    else {
+    else if ( !breakApartNumbers ) {
       this.splitTarget.visible = true;
 
       // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
@@ -189,6 +196,11 @@ class PaperNumberNode extends Node {
       // Modify our move/split targets
       this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds.withMinY( boundaryY );
       this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = fullBounds.withMaxY( boundaryY );
+    }
+    else {
+      this.splitTarget.visible = true;
+      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = new Bounds2( 0, 0, 0, 0 );
+      this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = fullBounds;
     }
 
     // Changing the number must have happened from an interaction. If combined, we want to put cues on this.
