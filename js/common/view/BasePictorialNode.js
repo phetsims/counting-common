@@ -74,17 +74,18 @@ class BasePictorialNode extends Node {
       } );
     }
 
+    // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
     if ( baseNumber.numberValue > 1 ) {
 
       // empirically determined to put the grippy in the same place in relation to the paper number's digit
-      const yMargin = baseNumber.place >= 1 ? 90 : 56;
-      const lineLength = 100;    // empirically determined
-      const lineSeparation = 15; // empirically determined
+      const yMargin = baseNumber.place >= 1 ? 22 : 13;
+      const lineLength = 40;    // empirically determined
+      const lineSeparation = 4; // empirically determined
       const grippyLines = new Path( new Shape()
         .moveTo( 0, 0 ).lineTo( lineLength, 0 ).moveTo( 0, lineSeparation ).lineTo( lineLength, lineSeparation ).close(), {
         stroke: 'rgb( 204, 204, 204 )',
-        lineWidth: 3,
+        lineWidth: 1,
         centerX: backgroundNode.centerX,
         bottom: backgroundNode.bottom - yMargin
       } );

@@ -133,6 +133,7 @@ class BaseNumberNode extends Node {
       } ) );
     }
 
+    // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
     if ( !( baseNumber.place >= 1 && isPartOfStack ) ) {
 
