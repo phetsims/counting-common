@@ -13,6 +13,7 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import Plane from '../../../../scenery/js/nodes/Plane.js';
 import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
+import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
 
@@ -172,7 +173,13 @@ class CountingCommonView extends ScreenView {
       }
       else {
         // repel numbers - show rejection
-        this.model.repelAway( this.availableViewBoundsProperty.value, draggedPaperNumber, droppedPaperNumber );
+        this.model.repelAway( this.availableViewBoundsProperty.value, draggedPaperNumber, droppedPaperNumber,
+          ( leftPaperNumber, rightPaperNumber ) => {
+            return {
+              left: -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ],
+              right: CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ]
+            };
+          } );
         return; // A bit weird, but if repelled, no need to check for overlapping bits?
       }
     }

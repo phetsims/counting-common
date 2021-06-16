@@ -10,7 +10,6 @@ import createObservableArray from '../../../../axon/js/createObservableArray.js'
 import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import countingCommon from '../../countingCommon.js';
-import CountingCommonConstants from '../CountingCommonConstants.js';
 import PaperNumber from './PaperNumber.js';
 
 class CountingCommonModel {
@@ -127,17 +126,18 @@ class CountingCommonModel {
    * @param {Bounds2} availableModelBounds - Constrain the position to be inside these bounds
    * @param {PaperNumber} paperNumber1
    * @param {PaperNumber} paperNumber2
-   * @param {number} [repelDistance] // TODO: this should be generalized better, see https://github.com/phetsims/number-play/issues/19
+   * @param {function(leftPaperNumber:PaperNumber,rightPaperNumber:PaperNumber):{left:number,right:number}} getRepelOffsets
    */
-  repelAway( availableModelBounds, paperNumber1, paperNumber2, repelDistance ) {
+  repelAway( availableModelBounds, paperNumber1, paperNumber2, getRepelOffsets ) {
     // Determine which are 'left' and 'right'
     const isPaper1Left = paperNumber1.positionProperty.value.x < paperNumber2.positionProperty.value.x;
     const leftPaperNumber = isPaper1Left ? paperNumber1 : paperNumber2;
     const rightPaperNumber = isPaper1Left ? paperNumber2 : paperNumber1;
 
     // Determine offsets
-    const repelLeftOffset = -repelDistance || -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ];
-    const repelRightOffset = repelDistance || CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ];
+    const repelOffsets = getRepelOffsets( leftPaperNumber, rightPaperNumber );
+    const repelLeftOffset = repelOffsets.left;
+    const repelRightOffset = repelOffsets.right;
     const leftPosition = leftPaperNumber.positionProperty.value.plusXY( repelLeftOffset, 0 );
     const rightPosition = rightPaperNumber.positionProperty.value.plusXY( repelRightOffset, 0 );
 
