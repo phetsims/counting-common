@@ -265,10 +265,14 @@ class PaperNumberNode extends Node {
    * Removes listeners from the model. Should be called when removed from the scene graph.
    * @public
    */
-  detachListeners() {
+  dispose() {
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
     this.paperNumber.userControlledProperty.unlink( this.userControlledListener );
+
+    // remove any listeners on the children before detaching them
+    this.numberImageContainer.children.forEach( child => child.dispose() );
+    super.dispose();
   }
 
   /**

@@ -29,11 +29,13 @@ class BasePictorialNode extends Node {
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
+    // @private {EnumerationProperty.<PlayObjectType>}
+    this.playObjectTypeProperty = playObjectTypeProperty;
+
     // saves the case from when value is 0
     value = Math.max( baseNumber.numberValue, value );
 
     let backgroundNode;
-
     const objectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const objectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const stackOffset = 10;
@@ -60,6 +62,7 @@ class BasePictorialNode extends Node {
     }
 
     // add and position the object images
+    const objectImages = [];
     for ( let i = 0; i < value; i++ ) {
       const offset = ( sideMargin + i * stackOffset );
       const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
@@ -69,10 +72,16 @@ class BasePictorialNode extends Node {
         y: offset
       } );
       this.addChild( objectImage );
-      playObjectTypeProperty.link( playObjectType => {
+      objectImages.push( objectImage );
+    }
+
+    // @private
+    this.playObjectTypeListener = playObjectType => {
+      objectImages.forEach( objectImage => {
         objectImage.image = CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectType ];
       } );
-    }
+    };
+    this.playObjectTypeProperty.link( this.playObjectTypeListener );
 
     // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
     // add the grippy lines if this number is on the top layer
@@ -91,6 +100,14 @@ class BasePictorialNode extends Node {
       } );
       this.addChild( grippyLines );
     }
+  }
+
+  /**
+   * @public
+   */
+  dispose() {
+    this.playObjectTypeProperty.unlink( this.playObjectTypeListener );
+    super.dispose();
   }
 }
 

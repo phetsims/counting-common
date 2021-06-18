@@ -127,10 +127,8 @@ class CountingCommonView extends ScreenView {
     const paperNumberNode = this.findPaperNumberNode( paperNumber );
 
     delete this.paperNumberNodeMap[ paperNumberNode.paperNumber.id ];
-    this.paperNumberLayerNode.removeChild( paperNumberNode );
-    paperNumberNode.detachListeners();
-
     this.closestDragListener.removeDraggableItem( paperNumberNode );
+    paperNumberNode.dispose();
   }
 
   /**
