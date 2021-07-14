@@ -94,8 +94,10 @@ class PaperNumberNode extends Node {
       },
 
       end: ( event, listener ) => {
-        tryToCombineNumbers( this.paperNumber );
-        paperNumber.endDragEmitter.emit( paperNumber );
+        if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
+          tryToCombineNumbers( this.paperNumber );
+          paperNumber.endDragEmitter.emit( paperNumber );
+        }
       }
     } );
     this.moveDragHandler.isUserControlledProperty.link( controlled => {
