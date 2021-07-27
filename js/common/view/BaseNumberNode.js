@@ -48,8 +48,8 @@ const DIGIT_IMAGE_MAP = {
 };
 
 // place => x/y offsets for the first digit in each place
-const PLACE_X_OFFSET = { 0: 48, 1: 108, 2: 70, 3: 94 };
-const PLACE_Y_OFFSET = { 0: 65, 1: 85, 2: 163, 3: 197 };
+const PLACE_X_OFFSET = { 0: 64, 1: 62, 2: 70, 3: 94 };
+const PLACE_Y_OFFSET = { 0: 38, 1: 61, 2: 82, 3: 104 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
 const DIGIT_X_OFFSET = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
@@ -60,8 +60,8 @@ const FIRST_PLACE_DIGIT_X_OFFSET = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15
 // place => horizontal positions of the zeros in the base number
 const ZERO_OFFSET = {
   0: [],
-  1: [ 335 ],
-  2: [ 560, 314 ],
+  1: [ 272 ],
+  2: [ 530, 284 ],
   3: [ 825, 580, 335 ]
 };
 
@@ -121,7 +121,7 @@ BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP, mipm
  *                             BaseNumberNode relative to a 1-digit BaseNumberNode.
  */
 BaseNumberNode.IMAGE_OFFSETS = [
-  new Vector2( 0, 0 ),
+  new Vector2( -14, 0 ),
   new Vector2( -70, -( PLACE_Y_OFFSET[ 1 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE ),
   new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_Y_OFFSET[ 2 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE ),
   new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_Y_OFFSET[ 3 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE )
