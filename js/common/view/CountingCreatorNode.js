@@ -2,7 +2,7 @@
 
 /**
  * Node that can display a 1, 10, 100, or play object which can be clicked/dragged to create draggable paper numbers or
- * play objects.
+ * play objects. Factored out from ExplorePanel.js in make-a-ten, see https://github.com/phetsims/number-play/issues/19
  *
  * @author Chris Klusendorf (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
