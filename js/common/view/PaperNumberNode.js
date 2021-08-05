@@ -288,7 +288,16 @@ class PaperNumberNode extends Node {
     const attachableNodeCandidates = allPaperNumberNodes.slice();
     arrayRemove( attachableNodeCandidates, this );
 
-    return attachableNodeCandidates.filter( candidateNode => PaperNumber.arePaperNumbersAttachable( this.paperNumber, candidateNode.paperNumber ) );
+    // find all other paper number nodes that are overlapping the dropped node
+    const unorderedAttachableNodes = attachableNodeCandidates.filter( candidateNode => {
+      return candidateNode.bounds.intersectsBounds( this.bounds );
+    } );
+
+    // sort by how much area they are overlapping the dropped node
+    return _.sortBy( unorderedAttachableNodes, attachableNode => {
+      const overlappingBounds = attachableNode.bounds.intersection( this.bounds );
+      return overlappingBounds.width * overlappingBounds.height;
+    } );
   }
 
   /**

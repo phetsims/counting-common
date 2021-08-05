@@ -259,29 +259,6 @@ class PaperNumber {
 
     return result;
   }
-
-  /**
-   * Returns whether the two paper numbers are close enough to be "attached" to each other.
-   * @public
-   *
-   * @param {PaperNumber} paperNumber1
-   * @param {PaperNumber} paperNumber2
-   * @returns {boolean}
-   */
-  static arePaperNumbersAttachable( paperNumber1, paperNumber2 ) {
-    const firstLarger = paperNumber1.numberValueProperty.value > paperNumber2.numberValueProperty.value;
-    const largePaperNumber = firstLarger ? paperNumber1 : paperNumber2;
-    const smallPaperNumber = firstLarger ? paperNumber2 : paperNumber1;
-
-    const smallCenter = smallPaperNumber.positionProperty.value.plus( smallPaperNumber.getLocalBounds().center );
-    const largePosition = largePaperNumber.positionProperty.value;
-    const largeBounds = largePaperNumber.getLocalBounds().shiftedXY( largePosition.x, largePosition.y );
-
-    const unitX = ( smallCenter.x - largeBounds.centerX ) / ( largeBounds.width / 2 );
-    const unitY = ( smallCenter.y - largeBounds.centerY ) / ( largeBounds.height / 2 );
-
-    return unitX * unitX + 2 * unitY * unitY < 1;
-  }
 }
 
 countingCommon.register( 'PaperNumber', PaperNumber );
