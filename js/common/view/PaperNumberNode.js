@@ -8,7 +8,6 @@
 
 import Emitter from '../../../../axon/js/Emitter.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
@@ -16,6 +15,7 @@ import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import BaseNumber from '../model/BaseNumber.js';
+import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import PaperNumber from '../model/PaperNumber.js';
 import BaseNumberNode from './BaseNumberNode.js';
 import BasePictorialNode from './BasePictorialNode.js';
@@ -156,7 +156,7 @@ class PaperNumberNode extends Node {
    */
   updateNumber() {
     const breakApartNumbers = this.groupingLinkingTypeProperty &&
-                        this.groupingLinkingTypeProperty.value === GroupingLinkingType.NO_GROUPING;
+                              this.groupingLinkingTypeProperty.value === GroupingLinkingType.NO_GROUPING;
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
@@ -222,17 +222,20 @@ class PaperNumberNode extends Node {
   }
 
   /**
-   * Implements the API for ClosestDragListener.
+   * Implements the API for ClosestDragListener. Only pass through events if this paper number is still pickable, see
+   * https://github.com/phetsims/number-play/issues/39
    * @public
    *
    * @param {SceneryEvent} event - Scenery event from the relevant input handler
    */
   startDrag( event ) {
-    if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
-      this.splitDragHandler.down( event );
-    }
-    else {
-      this.moveDragHandler.press( event );
+    if ( this.pickable !== false ) {
+      if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
+        this.splitDragHandler.down( event );
+      }
+      else {
+        this.moveDragHandler.press( event );
+      }
     }
   }
 
