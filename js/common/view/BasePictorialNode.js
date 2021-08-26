@@ -8,6 +8,7 @@
  */
 
 import Shape from '../../../../kite/js/Shape.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Image from '../../../../scenery/js/nodes/Image.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -35,7 +36,8 @@ class BasePictorialNode extends Node {
     // saves the case from when value is 0
     value = Math.max( baseNumber.numberValue, value );
 
-    let backgroundNode;
+    // @public (read-only)
+    this.backgroundNode = null;
     const objectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const objectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const stackOffset = 10;
@@ -46,19 +48,46 @@ class BasePictorialNode extends Node {
       const backgroundWidth = objectWidth + 2 * sideMargin + ( value - 1 ) * stackOffset;
       const backgroundHeight = objectHeight + 3 * sideMargin + value * stackOffset;
 
-      backgroundNode = new Rectangle( 0, 0, backgroundWidth, backgroundHeight, {
+      this.backgroundNode = new Rectangle( 0, 0, backgroundWidth, backgroundHeight, {
         fill: '#e8f6ff',
         cornerRadius: 10
       } );
 
+      // TODO: don't duplicate from BaseNumberNode, see https://github.com/phetsims/counting-common/issues/1
       // create and add the corner peel
       const cornerPeelImageNode = new Image( cornerPeelImage, {
         maxHeight: 18,
-        top: backgroundNode.top,
-        right: backgroundNode.right
+        top: this.backgroundNode.top,
+        right: this.backgroundNode.right
       } );
-      backgroundNode.addChild( cornerPeelImageNode );
-      this.addChild( backgroundNode );
+      this.backgroundNode.addChild( cornerPeelImageNode );
+      this.addChild( this.backgroundNode );
+
+      // create and add the handle
+      const lineWidth = 1.5;
+      const handleHeight = 20;
+      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleHeight );
+
+      // @public (read-only)
+      this.handleStemNode = new Path( handleStemShape, {
+        stroke: 'black',
+        lineWidth: lineWidth
+      } );
+      this.handleStemNode.centerX = this.backgroundNode.centerX;
+      this.handleStemNode.bottom = this.backgroundNode.top;
+      this.addChild( this.handleStemNode );
+
+      const handleCircle = new Circle( 5.5, {
+        fill: 'white',
+        stroke: 'black',
+        lineWidth: lineWidth
+      } );
+      handleCircle.addChild( new Circle( 2.5, {
+        fill: 'black'
+      } ) );
+      handleCircle.centerX = this.handleStemNode.centerX;
+      handleCircle.bottom = this.handleStemNode.top;
+      this.addChild( handleCircle );
     }
 
     // add and position the object images
@@ -95,8 +124,8 @@ class BasePictorialNode extends Node {
         .moveTo( 0, 0 ).lineTo( lineLength, 0 ).moveTo( 0, lineSeparation ).lineTo( lineLength, lineSeparation ).close(), {
         stroke: 'rgb( 204, 204, 204 )',
         lineWidth: 1,
-        centerX: backgroundNode.centerX,
-        bottom: backgroundNode.bottom - yMargin
+        centerX: this.backgroundNode.centerX,
+        bottom: this.backgroundNode.bottom - yMargin
       } );
       this.addChild( grippyLines );
     }

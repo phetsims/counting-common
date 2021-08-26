@@ -8,8 +8,11 @@
 
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
+import Shape from '../../../../kite/js/Shape.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Image from '../../../../scenery/js/nodes/Image.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
 import imageDigit0 from '../../../mipmaps/digit-0_png.js';
 import imageDigit1 from '../../../mipmaps/digit-1_png.js';
 import imageDigit2 from '../../../mipmaps/digit-2_png.js';
@@ -51,6 +54,10 @@ const DIGIT_IMAGE_MAP = {
 const PLACE_X_OFFSET = { 0: 64, 1: 62, 2: 70, 3: 94 };
 const PLACE_Y_OFFSET = { 0: 38, 1: 61, 2: 82, 3: 104 };
 
+// place => x/y offsets for the handle in each place
+const PLACE_HANDLE_X_OFFSET = { 0: 130, 1: 142, 2: 151, 3: 171 };
+const PLACE_HANDLE_Y_OFFSET = { 0: 97, 1: 74, 2: 53, 3: 31 };
+
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
 const DIGIT_X_OFFSET = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
 
@@ -72,9 +79,13 @@ class BaseNumberNode extends Node {
   /**
    * @param {BaseNumber} baseNumber
    * @param {number} opacity
-   * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
+   * TODO: refactor as options? https://github.com/phetsims/counting-common/issues/1
+   * @param {boolean} includeHandles
+   * @param {boolean} isLargestBaseNumber
+   * @param {boolean} hasDescendant
+   * @param {boolean} isPartOfStack
    */
-  constructor( baseNumber, opacity, isPartOfStack ) {
+  constructor( baseNumber, opacity, includeHandles, isLargestBaseNumber, hasDescendant, isPartOfStack ) {
     super( { scale: SCALE } );
 
     // Position of the initial digit
@@ -90,9 +101,58 @@ class BaseNumberNode extends Node {
     this.translation = baseNumber.offset;
 
     // The paper behind the numbers
-    this.addChild( new Image( BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
+    const paperBackgroundNode = new Image( BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
       imageOpacity: opacity
-    } ) );
+    } );
+
+    // TODO: needs better logic and or docs in this section, see https://github.com/phetsims/counting-common/issues/1
+    // aside from checking the option includeHandles, don't include a handle if this base number is a standalone 1, or
+    // if removing the largest base number in this paper number would separate itself from its descendants (as opposed
+    // to just removing one part of the largest base number). for example, with the paper number 1200, the 1 should not
+    // get a handle because grabbing it would pull 1000 away from 200, and this can be accomplished by pulling the 200
+    // off instead. in the case of 2200, the first 2 should get a handle because grabbing it would pull off one 1000.
+    if ( includeHandles && !( baseNumber.numberValue === 1 && !isPartOfStack )
+    && !( isLargestBaseNumber && baseNumber.digit === 1 && hasDescendant ) ) {
+
+      const lineWidth = 6;
+
+      // The handle that attaches to the paper
+      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, PLACE_HANDLE_Y_OFFSET[ baseNumber.place ] );
+
+      // @public (read-only)
+      this.handleStemNode = new Path( handleStemShape, {
+        stroke: 'black',
+        lineWidth: lineWidth
+      } );
+      this.handleStemNode.centerX = hasDescendant ? PLACE_HANDLE_X_OFFSET[ baseNumber.place ] : paperBackgroundNode.centerX;
+      this.handleStemNode.bottom = paperBackgroundNode.top + 10;
+      this.addChild( this.handleStemNode );
+
+      let handleCircle;
+      const outerCircleRadius = 22;
+
+      if ( isLargestBaseNumber ) {
+        handleCircle = new Circle( outerCircleRadius, {
+          fill: 'white',
+          stroke: 'black',
+          lineWidth: lineWidth
+        } );
+        handleCircle.addChild( new Circle( 10, {
+          fill: 'black'
+        } ) );
+      }
+      else {
+        handleCircle = new Circle( outerCircleRadius, {
+          fill: 'black'
+        } );
+      }
+      handleCircle.centerX = this.handleStemNode.centerX;
+      handleCircle.bottom = this.handleStemNode.top;
+      this.addChild( handleCircle );
+    }
+
+    // add the background paper on top of the handle
+    this.addChild( paperBackgroundNode );
 
     // The initial (non-zero) digit
     this.addChild( new Image( DIGIT_IMAGE_MAP[ baseNumber.digit ], {

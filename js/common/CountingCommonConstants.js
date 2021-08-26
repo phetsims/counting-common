@@ -27,7 +27,8 @@ const CountingCommonConstants = {
 
   /**
    * {number} - Where is the boundary between paper number "move" targets and "split" targets, where 0 would be the
-   * bottom of the paper number and 1 would be the top.
+   * bottom of the paper number and 1 would be the top. TODO: should be removed with the completion of
+   * https://github.com/phetsims/counting-common/issues/1
    */
   SPLIT_BOUNDARY_HEIGHT_PROPORTION: 0.55,
 

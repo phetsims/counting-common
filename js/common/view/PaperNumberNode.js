@@ -168,37 +168,59 @@ class PaperNumberNode extends Node {
 
     // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
     if ( this.playObjectTypeProperty ) {
-      this.numberImageContainer.children = [ new BasePictorialNode( reversedBaseNumbers[ reversedBaseNumbers.length - 1 ], this.paperNumber.numberValueProperty.value,
-        reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers ) ];
-      fullBounds = this.numberImageContainer.bounds;
-      this.paperNumber.alternateBounds = fullBounds.copy();
+      const basePictorialNode = new BasePictorialNode( reversedBaseNumbers[ reversedBaseNumbers.length - 1 ], this.paperNumber.numberValueProperty.value,
+        reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers );
+      this.numberImageContainer.children = [ basePictorialNode ];
+
+      const backgroundNode = basePictorialNode.backgroundNode;
+      fullBounds = backgroundNode ? basePictorialNode.localToParentBounds( backgroundNode.bounds ) :
+                   this.numberImageContainer.bounds;
     }
     else {
       this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
-        return new BaseNumberNode( baseNumber, 0.95 * Math.pow( 0.97, index ), reversedBaseNumbers.length > 1 );
+        const hasDescendant = reversedBaseNumbers[ index + 1 ] !== undefined;
+
+        return new BaseNumberNode(
+          baseNumber,
+          0.95 * Math.pow( 0.97, index ),
+          true,
+          index === 0,
+          hasDescendant,
+          reversedBaseNumbers.length > 1
+        );
       } );
 
       // Grab the bounds of the biggest base number for the full bounds
       fullBounds = this.paperNumber.baseNumbers[ this.paperNumber.baseNumbers.length - 1 ].bounds;
     }
 
-    // Split target only visible if our number is > 1. Move target can resize as needed.
-    if ( this.paperNumber.numberValueProperty.value === 1 ) {
-      this.splitTarget.visible = false;
-      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds;
-      this.splitTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = new Bounds2( 0, 0, 0, 0 );
-    }
-    else if ( !breakApartNumbers ) {
+    this.paperNumber.alternateBounds = this.numberImageContainer.bounds.copy();
+
+    if ( !breakApartNumbers ) {
       this.splitTarget.visible = true;
 
-      // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
-      // Locate the boundary between the "move" input area and "split" input area.
-      const boundaryY = this.playObjectTypeProperty ? this.paperNumber.getBoundaryY( fullBounds ) :
-                        this.paperNumber.getBoundaryY();
+      let firstHandleXPosition;
+      let lastHandleXPosition;
 
-      // Modify our move/split targets
-      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds.withMinY( boundaryY );
-      this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = fullBounds.withMaxY( boundaryY );
+      this.numberImageContainer.children.forEach( baseNumberNode => {
+        if ( baseNumberNode.handleStemNode && !firstHandleXPosition ) {
+          firstHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleStemNode.bounds ).centerX;
+        }
+        if ( baseNumberNode.handleStemNode ) {
+          lastHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleStemNode.bounds ).centerX;
+        }
+      } );
+      const padding = 18;
+
+      const splitTargetBounds = firstHandleXPosition ? new Bounds2(
+        firstHandleXPosition - padding,
+        this.numberImageContainer.bounds.minY - padding / 2,
+        lastHandleXPosition + padding,
+        fullBounds.minY
+      ) : new Bounds2( 0, 0, 0, 0 );
+
+      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds;
+      this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = splitTargetBounds;
     }
     else {
       this.splitTarget.visible = true;
@@ -296,12 +318,13 @@ class PaperNumberNode extends Node {
 
     // find all other paper number nodes that are overlapping the dropped node
     const unorderedAttachableNodes = attachableNodeCandidates.filter( candidateNode => {
-      return candidateNode.bounds.intersectsBounds( this.bounds );
+      return candidateNode.localToParentBounds( candidateNode.moveTarget.bounds )
+        .intersectsBounds( this.localToParentBounds( this.moveTarget.bounds ) );
     } );
 
     // sort by how much area they are overlapping the dropped node
     return _.sortBy( unorderedAttachableNodes, attachableNode => {
-      const overlappingBounds = attachableNode.bounds.intersection( this.bounds );
+      const overlappingBounds = attachableNode.moveTarget.bounds.intersection( this.moveTarget.bounds );
       return overlappingBounds.width * overlappingBounds.height;
     } );
   }
