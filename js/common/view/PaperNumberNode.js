@@ -114,7 +114,10 @@ class PaperNumberNode extends Node {
 
         // Determine how much (if any) gets moved off
         const pulledPlace = paperNumber.getBaseNumberAt( this.parentToLocalPoint( viewPosition ) ).place;
-        const amountToRemove = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
+
+        // TODO, handle this in general way, see https://github.com/phetsims/number-play/issues/51
+        const amountToRemoveIfPaper = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
+        const amountToRemove = this.playObjectTypeProperty && amountToRemoveIfPaper > 1 ? 1 : amountToRemoveIfPaper;
         const amountRemaining = paperNumber.numberValueProperty.value - amountToRemove;
 
         // it cannot be split - so start moving
