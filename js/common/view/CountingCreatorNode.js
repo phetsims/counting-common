@@ -50,7 +50,7 @@ class CountingCreatorNode extends Node {
 
       // TODO: needs attention, see https://github.com/phetsims/number-play/issues/19
       if ( options.playObjectTypeProperty ) {
-        targetNode = new BasePictorialNode( new BaseNumber( 1, place ), 1, false, options.playObjectTypeProperty );
+        targetNode = new BasePictorialNode( new BaseNumber( 1, place ), 1, false, options.playObjectTypeProperty, true );
         targetNode.scale( 0.85 );
       }
       else {
