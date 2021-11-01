@@ -7,13 +7,13 @@
  * @author Chris Klusendorf (PhET Interactive Simulations), copied from counting-common and modified for number-play
  */
 
+import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Shape from '../../../../kite/js/Shape.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Image from '../../../../scenery/js/nodes/Image.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
-import cornerPeelImage from '../../../images/corner-peel_png.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 
@@ -38,29 +38,21 @@ class BasePictorialNode extends Node {
 
     // @public (read-only)
     this.backgroundNode = null;
-    const objectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
-    const objectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
-    const stackOffset = 10;
-    const sideMargin = 10;
 
-    // add a background if there's a least 2 objects together
-    if ( value > 1 && !separateNumbers ) {
-      const backgroundWidth = objectWidth + 2 * sideMargin + ( value - 1 ) * stackOffset;
-      const backgroundHeight = objectHeight + 3 * sideMargin + value * stackOffset;
+    const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
+    const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
+    const singleCardSize = new Dimension2( 62, 100 );
+    const doubleCardSize = new Dimension2( 118, 105 );
+    const backgroundWidth = value < 10 ? singleCardSize.width : doubleCardSize.width;
+    const backgroundHeight = value < 10 ? singleCardSize.height : doubleCardSize.height;
+    const sideMargin = ( singleCardSize.width - fullObjectWidth ) / 2;
+
+    if ( !separateNumbers ) {
 
       this.backgroundNode = new Rectangle( 0, 0, backgroundWidth, backgroundHeight, {
-        fill: '#e8f6ff',
-        cornerRadius: 10
+        fill: '#fafafa',
+        cornerRadius: 8
       } );
-
-      // TODO: don't duplicate from BaseNumberNode, see https://github.com/phetsims/counting-common/issues/1
-      // create and add the corner peel
-      const cornerPeelImageNode = new Image( cornerPeelImage, {
-        maxHeight: 18,
-        top: this.backgroundNode.top,
-        right: this.backgroundNode.right
-      } );
-      this.backgroundNode.addChild( cornerPeelImageNode );
       this.addChild( this.backgroundNode );
 
       // create and add the handle
@@ -68,40 +60,61 @@ class BasePictorialNode extends Node {
       const handleHeight = 20;
       const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleHeight );
 
-      // @public (read-only)
-      this.handleStemNode = new Path( handleStemShape, {
-        stroke: 'black',
-        lineWidth: lineWidth
-      } );
-      this.handleStemNode.centerX = this.backgroundNode.centerX;
-      this.handleStemNode.bottom = this.backgroundNode.top;
-      this.addChild( this.handleStemNode );
+      if ( value > 1 ) {
 
-      const handleCircle = new Circle( 5.5, {
-        fill: 'white',
-        stroke: 'black',
-        lineWidth: lineWidth
-      } );
-      handleCircle.addChild( new Circle( 2.5, {
-        fill: 'black'
-      } ) );
-      handleCircle.centerX = this.handleStemNode.centerX;
-      handleCircle.bottom = this.handleStemNode.top;
-      this.addChild( handleCircle );
+        // @public (read-only)
+        this.handleStemNode = new Path( handleStemShape, {
+          stroke: 'black',
+          lineWidth: lineWidth
+        } );
+        this.handleStemNode.centerX = this.backgroundNode.centerX;
+        this.handleStemNode.bottom = this.backgroundNode.top;
+        this.addChild( this.handleStemNode );
+
+        const handleCircle = new Circle( 5.5, {
+          fill: 'white',
+          stroke: 'black',
+          lineWidth: lineWidth
+        } );
+        handleCircle.addChild( new Circle( 2.5, {
+          fill: 'black'
+        } ) );
+        handleCircle.centerX = this.handleStemNode.centerX;
+        handleCircle.bottom = this.handleStemNode.top;
+        this.addChild( handleCircle );
+      }
     }
+
+    // TODO: temporary way to organize objects, needs work
+    const numberOfRows = value === 1 ? 1 : 5;
+    const numberOfColumns = value === 1 ? 1 : 2;
+    const scale = value === 1 ? 1 : 0.3;
 
     // add and position the object images
     const objectImages = [];
-    for ( let i = 0; i < value; i++ ) {
-      const offset = ( sideMargin + i * stackOffset );
-      const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
-        maxWidth: objectWidth,
-        maxHeight: objectHeight,
-        x: offset,
-        y: offset
-      } );
-      this.addChild( objectImage );
-      objectImages.push( objectImage );
+    for ( let i = 0; i < numberOfRows; i++ ) {
+      for ( let j = 0; j < numberOfColumns; j++ ) {
+
+        const width = value < 20 ? singleCardSize.width : backgroundWidth;
+        const height = value < 20 ? singleCardSize.height : backgroundHeight;
+
+        const columnWidth = ( width - ( ( numberOfColumns + 1 ) * sideMargin ) ) / numberOfColumns;
+        const centerX = ( ( j + 1 ) * sideMargin ) + ( j * columnWidth ) + ( columnWidth / 2 );
+
+        const rowHeight = ( height - ( ( numberOfRows + 1 ) * sideMargin ) ) / numberOfRows;
+        const centerY = ( ( i + 1 ) * sideMargin ) + ( i * rowHeight ) + ( rowHeight / 2 );
+
+        if ( objectImages.length < value ) {
+          const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
+            maxWidth: fullObjectWidth * scale,
+            maxHeight: fullObjectHeight * scale,
+            centerX: centerX,
+            centerY: centerY
+          } );
+          this.addChild( objectImage );
+          objectImages.push( objectImage );
+        }
+      }
     }
 
     // @private
@@ -111,24 +124,6 @@ class BasePictorialNode extends Node {
       } );
     };
     this.playObjectTypeProperty.link( this.playObjectTypeListener );
-
-    // TODO: these should be elminated with future designs, see https://github.com/phetsims/number-play/issues/19
-    // add the grippy lines if this number is on the top layer
-    if ( value > 1 && !separateNumbers ) {
-
-      // empirically determined to put the grippy in the same place in relation to the paper number's digit
-      const yMargin = baseNumber.place >= 1 ? 22 : 13;
-      const lineLength = 40;    // empirically determined
-      const lineSeparation = 4; // empirically determined
-      const grippyLines = new Path( new Shape()
-        .moveTo( 0, 0 ).lineTo( lineLength, 0 ).moveTo( 0, lineSeparation ).lineTo( lineLength, lineSeparation ).close(), {
-        stroke: 'rgb( 204, 204, 204 )',
-        lineWidth: 1,
-        centerX: this.backgroundNode.centerX,
-        bottom: this.backgroundNode.bottom - yMargin
-      } );
-      this.addChild( grippyLines );
-    }
   }
 
   /**
