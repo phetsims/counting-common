@@ -39,12 +39,15 @@ class BasePictorialNode extends Node {
     // @public (read-only)
     this.backgroundNode = null;
 
+    const ONE = 1;
+    const TEN = 10;
+
     const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
     const singleCardSize = new Dimension2( 62, 100 );
     const doubleCardSize = new Dimension2( 118, 105 );
-    const backgroundWidth = value < 10 ? singleCardSize.width : doubleCardSize.width;
-    const backgroundHeight = value < 10 ? singleCardSize.height : doubleCardSize.height;
+    const backgroundWidth = value < TEN ? singleCardSize.width : doubleCardSize.width;
+    const backgroundHeight = value < TEN ? singleCardSize.height : doubleCardSize.height;
     const sideMargin = ( singleCardSize.width - fullObjectWidth ) / 2;
 
     if ( !separateNumbers ) {
@@ -86,33 +89,36 @@ class BasePictorialNode extends Node {
     }
 
     // TODO: temporary way to organize objects, needs work
-    const numberOfRows = value === 1 ? 1 : 5;
-    const numberOfColumns = value === 1 ? 1 : 2;
-    const scale = value === 1 ? 1 : 0.3;
+    const numberOfRows = value === ONE ? 1 : 5;
+    const numberOfColumns = value === ONE ? 1 : 2;
+    const scale = value === ONE ? 1 : 0.3;
+    const resetPoint = doubleCardSize.width / 2;
 
     // add and position the object images
     const objectImages = [];
-    for ( let i = 0; i < numberOfRows; i++ ) {
-      for ( let j = 0; j < numberOfColumns; j++ ) {
+    for ( let i = 0; i < 2; i++ ) {
+      for ( let j = 0; j < numberOfRows; j++ ) {
+        for ( let k = 0; k < numberOfColumns; k++ ) {
 
-        const width = value < 20 ? singleCardSize.width : backgroundWidth;
-        const height = value < 20 ? singleCardSize.height : backgroundHeight;
+          const width = singleCardSize.width;
+          const height = singleCardSize.height;
 
-        const columnWidth = ( width - ( ( numberOfColumns + 1 ) * sideMargin ) ) / numberOfColumns;
-        const centerX = ( ( j + 1 ) * sideMargin ) + ( j * columnWidth ) + ( columnWidth / 2 );
+          const columnWidth = ( width - ( ( numberOfColumns + 1 ) * sideMargin ) ) / numberOfColumns;
+          const centerX = i * resetPoint + ( ( k + 1 ) * sideMargin ) + ( k * columnWidth ) + ( columnWidth / 2 );
 
-        const rowHeight = ( height - ( ( numberOfRows + 1 ) * sideMargin ) ) / numberOfRows;
-        const centerY = ( ( i + 1 ) * sideMargin ) + ( i * rowHeight ) + ( rowHeight / 2 );
+          const rowHeight = ( height - ( ( numberOfRows + 1 ) * sideMargin ) ) / numberOfRows;
+          const centerY = ( ( j + 1 ) * sideMargin ) + ( j * rowHeight ) + ( rowHeight / 2 );
 
-        if ( objectImages.length < value ) {
-          const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
-            maxWidth: fullObjectWidth * scale,
-            maxHeight: fullObjectHeight * scale,
-            centerX: centerX,
-            centerY: centerY
-          } );
-          this.addChild( objectImage );
-          objectImages.push( objectImage );
+          if ( objectImages.length < value ) {
+            const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
+              maxWidth: fullObjectWidth * scale,
+              maxHeight: fullObjectHeight * scale,
+              centerX: centerX,
+              centerY: centerY
+            } );
+            this.addChild( objectImage );
+            objectImages.push( objectImage );
+          }
         }
       }
     }
