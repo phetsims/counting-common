@@ -9,8 +9,8 @@
 import Property from '../../../../axon/js/Property.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import Node from '../../../../scenery/js/nodes/Node.js';
-import Plane from '../../../../scenery/js/nodes/Plane.js';
+import { Node } from '../../../../scenery/js/imports.js';
+import { Plane } from '../../../../scenery/js/imports.js';
 import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';

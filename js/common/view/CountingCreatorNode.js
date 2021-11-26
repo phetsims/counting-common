@@ -15,7 +15,7 @@ import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumbe
 import BasePictorialNode from '../../../../counting-common/js/common/view/BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import merge from '../../../../phet-core/js/merge.js';
-import Node from '../../../../scenery/js/nodes/Node.js';
+import { Node } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 
 class CountingCreatorNode extends Node {

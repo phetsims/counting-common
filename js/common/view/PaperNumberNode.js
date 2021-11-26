@@ -9,9 +9,9 @@
 import Emitter from '../../../../axon/js/Emitter.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
-import DragListener from '../../../../scenery/js/listeners/DragListener.js';
-import Node from '../../../../scenery/js/nodes/Node.js';
-import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
+import { DragListener } from '../../../../scenery/js/imports.js';
+import { Node } from '../../../../scenery/js/imports.js';
+import { Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import BaseNumber from '../model/BaseNumber.js';
