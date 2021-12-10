@@ -9,11 +9,7 @@
 
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Shape from '../../../../kite/js/Shape.js';
-import { Circle } from '../../../../scenery/js/imports.js';
-import { Image } from '../../../../scenery/js/imports.js';
-import { Node } from '../../../../scenery/js/imports.js';
-import { Path } from '../../../../scenery/js/imports.js';
-import { Rectangle } from '../../../../scenery/js/imports.js';
+import { Circle, Color, Image, Node, Path, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 
@@ -54,7 +50,8 @@ class BasePictorialNode extends Node {
 
       this.backgroundNode = new Rectangle( 0, 0, backgroundWidth, backgroundHeight, {
         fill: '#fafafa',
-        cornerRadius: 8
+        cornerRadius: 8,
+        stroke: Color.LIGHT_GRAY
       } );
       this.addChild( this.backgroundNode );
 
