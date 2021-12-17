@@ -13,41 +13,41 @@ import { Circle } from '../../../../scenery/js/imports.js';
 import { Image } from '../../../../scenery/js/imports.js';
 import { Node } from '../../../../scenery/js/imports.js';
 import { Path } from '../../../../scenery/js/imports.js';
-import imageDigit0 from '../../../mipmaps/digit-0_png.js';
-import imageDigit1 from '../../../mipmaps/digit-1_png.js';
-import imageDigit2 from '../../../mipmaps/digit-2_png.js';
-import imageDigit3 from '../../../mipmaps/digit-3_png.js';
-import imageDigit4 from '../../../mipmaps/digit-4_png.js';
-import imageDigit5 from '../../../mipmaps/digit-5_png.js';
-import imageDigit6 from '../../../mipmaps/digit-6_png.js';
-import imageDigit7 from '../../../mipmaps/digit-7_png.js';
-import imageDigit8 from '../../../mipmaps/digit-8_png.js';
-import imageDigit9 from '../../../mipmaps/digit-9_png.js';
-import imagePaperBackground1000 from '../../../mipmaps/paper-background-1000_png.js';
-import imagePaperBackground100 from '../../../mipmaps/paper-background-100_png.js';
-import imagePaperBackground10 from '../../../mipmaps/paper-background-10_png.js';
-import imagePaperBackground1 from '../../../mipmaps/paper-background-1_png.js';
+import digit0_png from '../../../mipmaps/digit0_png.js';
+import digit1_png from '../../../mipmaps/digit1_png.js';
+import digit2_png from '../../../mipmaps/digit2_png.js';
+import digit3_png from '../../../mipmaps/digit3_png.js';
+import digit4_png from '../../../mipmaps/digit4_png.js';
+import digit5_png from '../../../mipmaps/digit5_png.js';
+import digit6_png from '../../../mipmaps/digit6_png.js';
+import digit7_png from '../../../mipmaps/digit7_png.js';
+import digit8_png from '../../../mipmaps/digit8_png.js';
+import digit9_png from '../../../mipmaps/digit9_png.js';
+import paperBackground1000_png from '../../../mipmaps/paperBackground1000_png.js';
+import paperBackground100_png from '../../../mipmaps/paperBackground100_png.js';
+import paperBackground10_png from '../../../mipmaps/paperBackground10_png.js';
+import paperBackground1_png from '../../../mipmaps/paperBackground1_png.js';
 import countingCommon from '../../countingCommon.js';
 
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP = {
-  0: imagePaperBackground1,
-  1: imagePaperBackground10,
-  2: imagePaperBackground100,
-  3: imagePaperBackground1000
+  0: paperBackground1_png,
+  1: paperBackground10_png,
+  2: paperBackground100_png,
+  3: paperBackground1000_png
 };
 
 // digit => mipmap info
 const DIGIT_IMAGE_MAP = {
-  1: imageDigit1,
-  2: imageDigit2,
-  3: imageDigit3,
-  4: imageDigit4,
-  5: imageDigit5,
-  6: imageDigit6,
-  7: imageDigit7,
-  8: imageDigit8,
-  9: imageDigit9
+  1: digit1_png,
+  2: digit2_png,
+  3: digit3_png,
+  4: digit4_png,
+  5: digit5_png,
+  6: digit6_png,
+  7: digit7_png,
+  8: digit8_png,
+  9: digit9_png
 };
 
 // place => x/y offsets for the first digit in each place
@@ -163,7 +163,7 @@ class BaseNumberNode extends Node {
     // Add the zeros
     const digitZeroOffsets = ZERO_OFFSET[ baseNumber.place ];
     for ( let i = 0; i < digitZeroOffsets.length; i++ ) {
-      this.addChild( new Image( imageDigit0, {
+      this.addChild( new Image( digit0_png, {
         x: digitZeroOffsets[ i ],
         y: y
       } ) );

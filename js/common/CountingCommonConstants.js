@@ -8,18 +8,18 @@
 
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import countingCommon from '../countingCommon.js';
-import appleImage from '../../images/apple_png.js';
-import ballImage from '../../images/ball_png.js';
-import dogImage from '../../images/dog_png.js';
+import apple_png from '../../images/apple_png.js';
+import ball_png from '../../images/ball_png.js';
+import dog_png from '../../images/dog_png.js';
 import PlayObjectType from './model/PlayObjectType.js';
-import turtleImage from '../../images/turtle_png.js';
+import turtle_png from '../../images/turtle_png.js';
 
 // convenience map that links play object types to their corresponding images
 const PLAY_OBJECT_TYPE_TO_IMAGE = {};
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.DOG ] = dogImage;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.APPLE ] = appleImage;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.TURTLE ] = turtleImage;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.BALL ] = ballImage;
+PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.DOG ] = dog_png;
+PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.APPLE ] = apple_png;
+PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.TURTLE ] = turtle_png;
+PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.BALL ] = ball_png;
 
 const CountingCommonConstants = {
   // Common colors
