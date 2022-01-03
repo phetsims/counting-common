@@ -26,7 +26,7 @@ class PaperNumberNode extends Node {
    * @param {Property.<Bounds2>} availableViewBoundsProperty
    * @param {Function} addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
    * @param {Function} tryToCombineNumbers - function( paperNumber ), called to combine our paper number
-   * @param {EnumerationProperty.<PlayObjectType>|null} playObjectTypeProperty
+   * @param {RichEnumerationProperty.<PlayObjectType>|null} playObjectTypeProperty
    */
   constructor( paperNumber, availableViewBoundsProperty, addAndDragNumber, tryToCombineNumbers,
                playObjectTypeProperty = null, groupingLinkingTypeProperty = null ) {
@@ -51,10 +51,10 @@ class PaperNumberNode extends Node {
     // @private {Bounds2}
     this.availableViewBoundsProperty = availableViewBoundsProperty;
 
-    // @private {EnumerationProperty.<PlayObjectType>|null}
+    // @private {RichEnumerationProperty.<PlayObjectType>|null}
     this.playObjectTypeProperty = playObjectTypeProperty;
 
-    // @private {EnumerationProperty.<GroupingLinkingType>|null}
+    // @private {RichEnumerationProperty.<GroupingLinkingType>|null}
     this.groupingLinkingTypeProperty = groupingLinkingTypeProperty;
 
     // @private {Node} - Container for the digit image nodes

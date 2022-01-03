@@ -17,7 +17,7 @@ class BasePictorialNode extends Node {
   /**
    * @param {BaseNumber} baseNumber
    * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
-   * @param {EnumerationProperty.<PlayObjectType>} playObjectTypeProperty
+   * @param {RichEnumerationProperty.<PlayObjectType>} playObjectTypeProperty
    * @param {boolean} separateNumber - whether the objects should be show separated or grouped
    */
   constructor( baseNumber, value, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
@@ -26,7 +26,7 @@ class BasePictorialNode extends Node {
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
-    // @private {EnumerationProperty.<PlayObjectType>}
+    // @private {RichEnumerationProperty.<PlayObjectType>}
     this.playObjectTypeProperty = playObjectTypeProperty;
 
     // saves the case from when value is 0

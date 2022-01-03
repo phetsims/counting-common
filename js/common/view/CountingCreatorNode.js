@@ -30,7 +30,7 @@ class CountingCreatorNode extends Node {
 
     options = merge( {
       updateCurrentNumber: false,
-      playObjectTypeProperty: null // {EnumerationProperty.<PlayObjectType>|null}
+      playObjectTypeProperty: null // {RichEnumerationProperty.<PlayObjectType>|null}
     }, options );
 
     super();
