@@ -6,11 +6,20 @@
  * @author Chris Klusendorf
  */
 
-import Enumeration from '../../../../phet-core/js/Enumeration.js';
+import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
+import RichEnumeration from '../../../../phet-core/js/RichEnumeration.js';
 import countingCommon from '../../countingCommon.js';
 
-// @public
-const PlayObjectType = Enumeration.byKeys( [ 'DOG', 'APPLE', 'TURTLE', 'BALL' ] );
+class PlayObjectType extends EnumerationValue {
+  static DOG = new PlayObjectType();
+  static APPLE = new PlayObjectType();
+  static TURTLE = new PlayObjectType();
+  static BALL = new PlayObjectType();
+
+  static enumeration = new RichEnumeration<PlayObjectType>( PlayObjectType );
+
+  private constructor() { super(); }
+}
 
 countingCommon.register( 'PlayObjectType', PlayObjectType );
 export default PlayObjectType;
