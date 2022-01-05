@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 
 /**
  * The 3 possible states of grouping + linking in a play area

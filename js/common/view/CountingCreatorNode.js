@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 
 /**
  * Node that can display a 1, 10, 100, or play object which can be clicked/dragged to create draggable paper numbers or
