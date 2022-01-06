@@ -6,7 +6,7 @@
  * @author Chris Klusendorf
  */
 
-const GroupingLinkingTypeValues = [ 'NO_GROUPING', 'GROUPING', 'GROUPING_AND_LINKED' ] as const;
+const GroupingLinkingTypeValues = [ 'UNGROUPED', 'GROUPED', 'GROUPED_AND_LINKED' ] as const;
 type GroupingLinkingType = typeof GroupingLinkingTypeValues[number];
 
 export { GroupingLinkingTypeValues };

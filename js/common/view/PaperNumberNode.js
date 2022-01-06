@@ -156,7 +156,7 @@ class PaperNumberNode extends Node {
    */
   updateNumber() {
     const breakApartNumbers = this.groupingLinkingTypeProperty &&
-                              this.groupingLinkingTypeProperty.value === 'NO_GROUPING';
+                              this.groupingLinkingTypeProperty.value === 'UNGROUPED';
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
