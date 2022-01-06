@@ -6,19 +6,8 @@
  * @author Chris Klusendorf
  */
 
-import countingCommon from '../../countingCommon.js';
-import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
-import RichEnumeration from '../../../../phet-core/js/RichEnumeration.js';
+const GroupingLinkingTypeValues = [ 'NO_GROUPING', 'GROUPING', 'GROUPING_AND_LINKED' ] as const;
+type GroupingLinkingType = typeof GroupingLinkingTypeValues[number];
 
-class GroupingLinkingType extends EnumerationValue {
-  static NO_GROUPING = new GroupingLinkingType();
-  static GROUPING = new GroupingLinkingType();
-  static GROUPING_AND_LINKED = new GroupingLinkingType();
-
-  static enumeration = new RichEnumeration<GroupingLinkingType>( GroupingLinkingType );
-
-  private constructor() { super(); }
-}
-
-countingCommon.register( 'GroupingLinkingType', GroupingLinkingType );
-export default GroupingLinkingType;
+export { GroupingLinkingTypeValues };
+export type { GroupingLinkingType as default };

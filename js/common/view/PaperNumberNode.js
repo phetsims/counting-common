@@ -9,13 +9,10 @@
 import Emitter from '../../../../axon/js/Emitter.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
-import { DragListener } from '../../../../scenery/js/imports.js';
-import { Node } from '../../../../scenery/js/imports.js';
-import { Rectangle } from '../../../../scenery/js/imports.js';
+import { DragListener, Node, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import BaseNumber from '../model/BaseNumber.js';
-import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import PaperNumber from '../model/PaperNumber.js';
 import BaseNumberNode from './BaseNumberNode.js';
 import BasePictorialNode from './BasePictorialNode.js';
@@ -159,7 +156,7 @@ class PaperNumberNode extends Node {
    */
   updateNumber() {
     const breakApartNumbers = this.groupingLinkingTypeProperty &&
-                              this.groupingLinkingTypeProperty.value === GroupingLinkingType.NO_GROUPING;
+                              this.groupingLinkingTypeProperty.value === 'NO_GROUPING';
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();

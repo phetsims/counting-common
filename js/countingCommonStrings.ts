@@ -3,11 +3,17 @@
 /**
  * Auto-generated from modulify, DO NOT manually modify.
  */
-
+/* eslint-disable */
 import getStringModule from '../../chipper/js/getStringModule.js';
 import countingCommon from './countingCommon.js';
 
-const countingCommonStrings = getStringModule( 'COUNTING_COMMON' );
+type StringsType = {
+  'counting-common': {
+    'title': string
+  }
+};
+
+const countingCommonStrings = getStringModule( 'COUNTING_COMMON' ) as StringsType;
 
 countingCommon.register( 'countingCommonStrings', countingCommonStrings );
 
