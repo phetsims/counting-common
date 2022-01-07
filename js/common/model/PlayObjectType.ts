@@ -16,9 +16,7 @@ class PlayObjectType extends EnumerationValue {
   static TURTLE = new PlayObjectType();
   static BALL = new PlayObjectType();
 
-  static enumeration = new RichEnumeration<PlayObjectType>( PlayObjectType );
-
-  private constructor() { super(); }
+  static enumeration = new RichEnumeration( PlayObjectType );
 }
 
 countingCommon.register( 'PlayObjectType', PlayObjectType );
