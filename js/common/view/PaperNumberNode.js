@@ -24,6 +24,7 @@ class PaperNumberNode extends Node {
    * @param {Function} addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
    * @param {Function} tryToCombineNumbers - function( paperNumber ), called to combine our paper number
    * @param {RichEnumerationProperty.<PlayObjectType>|null} playObjectTypeProperty
+   * @param {Property<GroupingLinkingType>|null} groupingLinkingTypeProperty
    */
   constructor( paperNumber, availableViewBoundsProperty, addAndDragNumber, tryToCombineNumbers,
                playObjectTypeProperty = null, groupingLinkingTypeProperty = null ) {
@@ -152,7 +153,7 @@ class PaperNumberNode extends Node {
 
   /**
    * Rebuilds the image nodes that display the actual paper number, and resizes the mouse/touch targets.
-   * @private
+   * @public
    */
   updateNumber() {
     const breakApartNumbers = this.groupingLinkingTypeProperty &&
