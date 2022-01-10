@@ -22,56 +22,68 @@ import BaseNumber from './BaseNumber.js';
 let nextPaperNumberId = 1;
 
 class PaperNumber {
+  public readonly id: number;
+  public readonly numberValueProperty: NumberProperty;
+  public readonly positionProperty: Vector2Property;
+  public readonly userControlledProperty: BooleanProperty;
+  private destination: Vector2;
+  private animating: boolean;
+  public baseNumbers: BaseNumber[];
+  public readonly endDragEmitter: Emitter<any>;
+  public readonly endAnimationEmitter: Emitter<any>;
+  public alternateBounds: null | Bounds2;
+  public viewHasIndependentModel: boolean;
+
   /**
-   * @param {number} numberValue - Numeric value, e.g. 123
-   * @param {Vector2} initialPosition
+   * @param numberValue - Numeric value, e.g. 123
+   * @param initialPosition
    */
-  constructor( numberValue, initialPosition ) {
-    // @public {number} - IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
+  constructor( numberValue: number, initialPosition: Vector2 ) {
+
+    // IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
     this.id = nextPaperNumberId++;
 
-    // @public {NumberProperty} - The number that this model represents, e.g. 324
+    // The number that this model represents, e.g. 324
     this.numberValueProperty = new NumberProperty( numberValue );
 
-    // @public Property that indicates where in model space the upper left corner of this shape is. In general, this
-    // should not be set directly outside of this type, and should be manipulated through the methods defined below.
+    // Property that indicates where in model space the upper left corner of this shape is. In general, this should not
+    // be set directly outside of this type, and should be manipulated through the methods defined below.
     this.positionProperty = new Vector2Property( initialPosition.copy() );
 
-    // @public {BooleanProperty} - Flag that tracks whether the user is dragging this number around. Should be set
-    //                             externally, generally by the view node.
+    // Flag that tracks whether the user is dragging this number around. Should be set externally, generally by the
+    // view node.
     this.userControlledProperty = new BooleanProperty( false );
 
-    // @public {Vector2} - Destination is used for animation, and should be set through accessor methods only.
-    this.destination = initialPosition.copy(); // @private
+    // Destination is used for animation, and should be set through accessor methods only.
+    this.destination = initialPosition.copy();
 
-    // @public {boolean} - Whether this element is animating from one position to another, do not set externally.
+    // Whether this element is animating from one position to another, do not set externally.
     this.animating = false;
 
-    // @public {Array.<BaseNumber>} - Represents the non-zero place values in this number. 1034 will have three place
-    //                                values, 4, 30 and 1000, which when summed will equal our number.
+    // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
+    // when summed will equal our number.
     this.baseNumbers = PaperNumber.getBaseNumbers( this.numberValueProperty.value );
 
-    // @public {Emitter} - Fires when the user stops dragging a paper number.
+    // Fires when the user stops dragging a paper number.
     this.endDragEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
-    // @public {Emitter} - Fires when the animation towards our destination ends (we hit our destination).
+    // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
     // TODO: these should probably be refactored, see https://github.com/phetsims/number-play/issues/19
-    // @public {Bounds2|null} - alternate Bounds set by the view if needed for dragging
+    // alternate Bounds set by the view if needed for dragging
     this.alternateBounds = null;
 
-    // @public {boolean} - set later by the view
-    this.viewHasIndependentModel = null;
+    // also set later by the view
+    this.viewHasIndependentModel = true;
   }
 
   /**
    * Animates the number towards its destination.
-   * @public
    *
-   * @param {number} dt
+   * @param dt - in seconds
    */
-  step( dt ) {
+  public step( dt: number ): void {
     if ( !this.userControlledProperty.value ) {
       const currentPosition = this.positionProperty.value;
       assert && assert( currentPosition.isFinite() );
@@ -97,11 +109,8 @@ class PaperNumber {
 
   /**
    * The number of digits in the number, including zeros, e.g. 1204 has 4 digits.
-   * @public
-   *
-   * @returns {number}
    */
-  get digitLength() {
+  public get digitLength(): number {
     assert && assert( this.numberValueProperty.value > 0 );
 
     return CountingCommonUtils.digitsInNumber( this.numberValueProperty.value );
@@ -109,11 +118,8 @@ class PaperNumber {
 
   /**
    * Returns the bounds of the paper number relative to the paper number's origin.
-   * @public
-   *
-   * @returns {Bounds2}
    */
-  getLocalBounds() {
+  public getLocalBounds(): Bounds2 {
     // TODO: this is a temporary band-aid for https://github.com/phetsims/number-play/issues/19
     // Use the largest base number unless this model is independent and uses objects in the view
     return this.viewHasIndependentModel && this.alternateBounds ? this.alternateBounds :
@@ -122,25 +128,18 @@ class PaperNumber {
 
   /**
    * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds or provided
-   * bounds. // TODO: this is a temporary band-aid for https://github.com/phetsims/number-play/issues/19
-   * @public
-   *
-   * @param {Bounds2} [bounds]
-   * @returns {Bounds2}
+   * bounds.
    */
-  getBoundaryY( bounds = null ) {
-    bounds = bounds || this.getLocalBounds();
+  public getBoundaryY(): number {
+    const bounds = this.getLocalBounds();
     const moveToSplitRatio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
     return bounds.maxY * ( 1 - moveToSplitRatio ) + bounds.minY * moveToSplitRatio;
   }
 
   /**
    * Returns the ideal spot to "drag" a number from (near the center of its move target) relative to its origin.
-   * @public
-   *
-   * @returns {Vector2}
    */
-  getDragTargetOffset() {
+  public getDragTargetOffset(): Vector2 {
     const bounds = this.getLocalBounds();
 
     const ratio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION / 2;
@@ -149,26 +148,20 @@ class PaperNumber {
 
   /**
    * Changes the number that this paper number represents.
-   * @public
-   *
-   * @param {number} numberValue
    */
-  changeNumber( numberValue ) {
-    assert && assert( typeof numberValue === 'number' );
-
+  public changeNumber( numberValue: number ): void {
     this.baseNumbers = PaperNumber.getBaseNumbers( numberValue );
     this.numberValueProperty.value = numberValue;
   }
 
   /**
    * Sets the destination of the number. If animate is false, it also sets the position.
-   * @public
    *
-   * @param {Vector2} destination
-   * @param {boolean} animate - Whether to animate. If true, it will slide towards the destination. If false, it will
-   *                            immediately set the position to be the same as the destination.
+   * @param destination
+   * @param animate - Whether to animate. If true, it will slide towards the destination. If false, it will immediately
+   *                  set the position to be the same as the destination.
    */
-  setDestination( destination, animate ) {
+  public setDestination( destination: Vector2, animate: boolean ): void {
     assert && assert( destination.isFinite() );
 
     this.destination = destination;
@@ -183,16 +176,19 @@ class PaperNumber {
 
   /**
    * If our paper number is outside of the available view bounds, move in inside those bounds.
-   * @public
    *
-   * @param {Bounds2} viewBounds
-   * @param {Vector2} position
-   * @param {boolean} [animate] - Indicates if the new constrained position should be directly set or animated
-   * @param {boolean} [useAlternateBounds] - Indicates if the alternate bounds should
+   * @param viewBounds
+   * @param newDestination
+   * @param [animate] - Indicates if the new constrained position should be directly set or animated
+   * @param [useAlternateBounds] - Indicates if the alternate bounds should
    */
-  setConstrainedDestination( viewBounds, newDestination, animate, useAlternateBounds ) {
+  // TODO remove this when removing alternate bounds
+  // eslint-disable-next-line default-param-last
+  public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false, useAlternateBounds?: boolean ): void {
+
     // Determine how our number's origin can be placed in the bounds
-    const localBounds = useAlternateBounds ? this.alternateBounds : this.getLocalBounds();
+    // @ts-ignore TODO-TS: Specified type wont be needed for localBounds once alternateBounds is removed
+    const localBounds: Bounds2 = useAlternateBounds ? this.alternateBounds : this.getLocalBounds();
     const padding = 10;
     const originBounds = new Bounds2( viewBounds.left - localBounds.left,
       viewBounds.top - localBounds.top,
@@ -203,12 +199,10 @@ class PaperNumber {
 
   /**
    * Returns the lowest place number whose bounds include the position.
-   * @public
    *
-   * @param {Vector2} position - Position relative to this number's origin.
-   * @returns {BaseNumber}
+   * @param position - Position relative to this number's origin.
    */
-  getBaseNumberAt( position ) {
+  public getBaseNumberAt( position: Vector2 ): BaseNumber {
     for ( let i = 0; i < this.baseNumbers.length; i++ ) {
       assert && assert( i === 0 || this.baseNumbers[ i ].place > this.baseNumbers[ i - 1 ].place,
         'Ensure that we start at lower places, required for this to work properly' );
@@ -234,12 +228,10 @@ class PaperNumber {
 
   /**
    * Given a number, returns an array of BaseNumbers that will represent the digit places.
-   * @public
    *
-   * @param {number} number - The number we want to break into digit places.
-   * @returns {Array.<BaseNumber>}
+   * @param number - The number we want to break into digit places.
    */
-  static getBaseNumbers( number ) {
+  public static getBaseNumbers( number: number ): BaseNumber[] {
     assert && assert( number > 0 && number % 1 === 0 );
 
     const result = [];
