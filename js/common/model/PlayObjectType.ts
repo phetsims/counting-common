@@ -13,7 +13,7 @@ import countingCommon from '../../countingCommon.js';
 class PlayObjectType extends EnumerationValue {
   static DOG = new PlayObjectType();
   static APPLE = new PlayObjectType();
-  static TURTLE = new PlayObjectType();
+  static CUPCAKE = new PlayObjectType();
   static BALL = new PlayObjectType();
 
   static enumeration = new RichEnumeration( PlayObjectType );

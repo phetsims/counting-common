@@ -12,13 +12,13 @@ import apple_png from '../../images/apple_png.js';
 import ball_png from '../../images/ball_png.js';
 import dog_png from '../../images/dog_png.js';
 import PlayObjectType from './model/PlayObjectType.js';
-import turtle_png from '../../images/turtle_png.js';
+import cupcake_png from '../../images/cupcake_png.js';
 
 // convenience map that links play object types to their corresponding images
 const PLAY_OBJECT_TYPE_TO_IMAGE = {};
 PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.DOG ] = dog_png;
 PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.APPLE ] = apple_png;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.TURTLE ] = turtle_png;
+PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.CUPCAKE ] = cupcake_png;
 PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.BALL ] = ball_png;
 
 const CountingCommonConstants = {

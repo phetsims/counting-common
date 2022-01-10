@@ -38,13 +38,5 @@
     "projectURL": "https://phet.colorado.edu",
     "license": "contact phethelp@colorado.edu",
     "notes": "created by Mariah Hermsmeyer"
-  },
-  "turtle.png": {
-    "text": [
-      "Copyright 2017-2019 University of Colorado Boulder"
-    ],
-    "projectURL": "https://phet.colorado.edu",
-    "license": "contact phethelp@colorado.edu",
-    "notes": "created by Cheryl McCutchan"
   }
 }
