@@ -100,7 +100,7 @@ class BaseNumberNode extends Node {
   public readonly handleStemNode: Path | undefined;
 
   // TODO: refactor as options? https://github.com/phetsims/counting-common/issues/1
-  constructor( baseNumber: BaseNumber, opacity: number, includeHandles: boolean, isLargestBaseNumber: boolean, hasDescendant: boolean, isPartOfStack: boolean ) {
+  constructor( baseNumber: BaseNumber, opacity: number, includeHandles: boolean, isLargestBaseNumber?: boolean, hasDescendant?: boolean, isPartOfStack?: boolean ) {
     super( { scale: SCALE } );
 
     // Position of the initial digit

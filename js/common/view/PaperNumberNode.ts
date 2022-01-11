@@ -20,6 +20,7 @@ import PlayObjectType from '../model/PlayObjectType.js';
 import BaseNumberNode from './BaseNumberNode.js';
 import BasePictorialNode from './BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
@@ -28,7 +29,7 @@ class PaperNumberNode extends Node {
   public readonly interactionStartedEmitter: Emitter<any>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
-  private readonly playObjectTypeProperty: Property<PlayObjectType> | null;
+  private readonly playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null;
   private readonly groupingLinkingTypeProperty: Property<GroupingLinkingType> | null;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
@@ -48,7 +49,7 @@ class PaperNumberNode extends Node {
    * @param groupingLinkingTypeProperty
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
-               tryToCombineNumbers: Function, playObjectTypeProperty: Property<PlayObjectType> | null = null,
+               tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null = null,
                groupingLinkingTypeProperty: Property<GroupingLinkingType> | null = null ) {
 
     super();

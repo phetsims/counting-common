@@ -14,10 +14,10 @@ import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import BaseNumber from '../model/BaseNumber.js';
 import PlayObjectType from '../model/PlayObjectType.js';
-import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 
 class BasePictorialNode extends Node {
-  private playObjectTypeProperty: RichEnumerationProperty<PlayObjectType>;
+  private playObjectTypeProperty: IReadOnlyProperty<PlayObjectType>;
   public readonly backgroundNode: Rectangle | null;
   public readonly handleStemNode: Path | undefined;
   private readonly playObjectTypeListener: ( playObjectType: PlayObjectType ) => void;
@@ -29,7 +29,7 @@ class BasePictorialNode extends Node {
    * @param playObjectTypeProperty
    * @param separateNumbers - whether the objects should be show separated or grouped
    */
-  constructor( baseNumber: BaseNumber, value: number, isPartOfStack: boolean, playObjectTypeProperty: RichEnumerationProperty<PlayObjectType>, separateNumbers: boolean ) {
+  constructor( baseNumber: BaseNumber, value: number, isPartOfStack: boolean, playObjectTypeProperty: IReadOnlyProperty<PlayObjectType>, separateNumbers: boolean ) {
     super();
 
     // Translate everything by our offset

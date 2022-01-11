@@ -9,55 +9,64 @@
 import Property from '../../../../axon/js/Property.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import { Node } from '../../../../scenery/js/imports.js';
+import { Node, SceneryEvent } from '../../../../scenery/js/imports.js';
 import { Plane } from '../../../../scenery/js/imports.js';
 import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumberNode from './PaperNumberNode.js';
+import CountingCommonModel from '../model/CountingCommonModel.js';
+import PaperNumber from '../model/PaperNumber.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+
+// types
+export type PaperNumberNodeMap = {
+  [ key: number ]: PaperNumberNode
+};
 
 class CountingCommonView extends ScreenView {
-  /**
-   * @param {CountingCommonModel} model
-   */
-  constructor( model ) {
+  public model: CountingCommonModel;
+  protected paperNumberLayerNode: Node;
+  private readonly tryToCombineNumbersCallback: OmitThisParameter<( draggedPaperNumber: PaperNumber ) => void>;
+  private readonly availableViewBoundsProperty: Property<Bounds2>;
+  protected readonly resetAllButton: ResetAllButton;
+  private readonly closestDragListener: ClosestDragListener;
+  private readonly addAndDragNumberCallback: OmitThisParameter<( event: SceneryEvent, paperNumber: PaperNumber ) => void>;
+  private readonly paperNumberNodeMap: PaperNumberNodeMap;
+
+  constructor( model: CountingCommonModel ) {
     super();
 
-    // @public {CountingCommonModel}
     this.model = model;
 
-    // @protected {Node} - Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the
-    //                     proper place in layering (this common view doesn't do that).
+    // Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the proper place in layering
+    // (this common view doesn't do that).
     this.paperNumberLayerNode = new Node();
 
-    // @private {Function}
     this.tryToCombineNumbersCallback = this.tryToCombineNumbers.bind( this );
 
-    // @private {Function}
     this.addAndDragNumberCallback = this.addAndDragNumber.bind( this );
 
     // @private {number} PaperNumber.id => {PaperNumberNode} - lookup map for efficiency
     this.paperNumberNodeMap = {};
 
-    // @public {Property.<Bounds2>} - The view coordinates where numbers can be dragged. Can update when the sim
-    //                                is resized.
+    // The view coordinates where numbers can be dragged. Can update when the sim is resized.
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
-    // @private {ClosestDragListener} - Handle touches nearby to the numbers, and interpret those as the proper drag.
+    // Handle touches nearby to the numbers, and interpret those as the proper drag.
     this.closestDragListener = new ClosestDragListener( 30, 0 );
     const backgroundDragTarget = new Plane();
     backgroundDragTarget.addInputListener( this.closestDragListener );
     this.addChild( backgroundDragTarget );
 
     // Persistent, no need to unlink
-    this.availableViewBoundsProperty.lazyLink( availableViewBounds => {
+    this.availableViewBoundsProperty.lazyLink( ( availableViewBounds: Bounds2 ) => {
       model.paperNumbers.forEach( paperNumber => {
         paperNumber.setConstrainedDestination( availableViewBounds, paperNumber.positionProperty.value );
       } );
     } );
 
-    // @protected {ResetAllButton}
     this.resetAllButton = new ResetAllButton( {
       listener: () => {
         model.reset();
@@ -69,9 +78,8 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Used to work around super initialization order
-   * @public
    */
-  finishInitialization() {
+  public finishInitialization(): void {
     const paperNumberAddedListener = this.onPaperNumberAdded.bind( this );
     const paperNumberRemovedListener = this.onPaperNumberRemoved.bind( this );
 
@@ -85,12 +93,11 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Add a paper number to the model and immediately start dragging it with the provided event.
-   * @public
    *
    * @param {SceneryEvent} event - The Scenery event that triggered this.
    * @param {PaperNumber} paperNumber - The paper number to add and then drag
    */
-  addAndDragNumber( event, paperNumber ) {
+  public addAndDragNumber( event: SceneryEvent, paperNumber: PaperNumber ): void {
     // Add it and lookup the related node.
     this.model.addPaperNumber( paperNumber );
 
@@ -100,12 +107,10 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Creates and adds a PaperNumberNode.
-   * @public
    *
-   * @param {PaperNumber} paperNumber
-   * @returns {PaperNumberNode} - The created node
+   * @returns - The created node
    */
-  onPaperNumberAdded( paperNumber ) {
+  public onPaperNumberAdded( paperNumber: PaperNumber ): PaperNumberNode {
     const paperNumberNode = new PaperNumberNode( paperNumber, this.availableViewBoundsProperty,
       this.addAndDragNumberCallback, this.tryToCombineNumbersCallback );
 
@@ -120,11 +125,8 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Handles removing the relevant PaperNumberNode
-   * @public
-   *
-   * @param {PaperNumber} paperNumber
    */
-  onPaperNumberRemoved( paperNumber ) {
+  public onPaperNumberRemoved( paperNumber: PaperNumber ): void {
     const paperNumberNode = this.findPaperNumberNode( paperNumber );
 
     delete this.paperNumberNodeMap[ paperNumberNode.paperNumber.id ];
@@ -134,12 +136,8 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Given a {PaperNumber}, find our current display ({PaperNumberNode}) of it.
-   * @public
-   *
-   * @param {PaperNumber} paperNumber
-   * @returns {PaperNumberNode}
    */
-  findPaperNumberNode( paperNumber ) {
+  public findPaperNumberNode( paperNumber: PaperNumber ): PaperNumberNode {
     const result = this.paperNumberNodeMap[ paperNumber.id ];
     assert && assert( result, 'Did not find matching Node' );
     return result;
@@ -147,15 +145,12 @@ class CountingCommonView extends ScreenView {
 
   /**
    * When the user drops a paper number they were dragging, see if it can combine with any other nearby paper numbers.
-   * @public
-   *
-   * @param {PaperNumber} draggedPaperNumber
    */
-  tryToCombineNumbers( draggedPaperNumber ) {
+  public tryToCombineNumbers( draggedPaperNumber: PaperNumber ): void {
     const draggedNode = this.findPaperNumberNode( draggedPaperNumber );
     const draggedNumberValue = draggedPaperNumber.numberValueProperty.value;
     const allPaperNumberNodes = this.paperNumberLayerNode.children;
-    const droppedNodes = draggedNode.findAttachableNodes( allPaperNumberNodes );
+    const droppedNodes = draggedNode.findAttachableNodes( allPaperNumberNodes as PaperNumberNode[] );
 
     // Check them in reverse order (the one on the top should get more priority)
     droppedNodes.reverse();
@@ -172,9 +167,12 @@ class CountingCommonView extends ScreenView {
       else {
         // repel numbers - show rejection
         this.model.repelAway( this.availableViewBoundsProperty.value, draggedPaperNumber, droppedPaperNumber,
-          ( leftPaperNumber, rightPaperNumber ) => {
+          ( leftPaperNumber: PaperNumber, rightPaperNumber: PaperNumber ) => {
+
             return {
+              // @ts-ignore TODO-TS: Remove when CountingCommonConstants is converted to TS
               left: -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftPaperNumber.digitLength ],
+              // @ts-ignore TODO-TS: Remove when CountingCommonConstants is converted to TS
               right: CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightPaperNumber.digitLength ]
             };
           } );
@@ -202,9 +200,8 @@ class CountingCommonView extends ScreenView {
   /**
    * Meant for subtypes to override to do additional component layout. Can't override layout(), as it takes additional
    * parameters that we may not have access to.
-   * @protected
    */
-  layoutControls() {
+  protected layoutControls(): void {
     this.resetAllButton.right = this.visibleBoundsProperty.value.right - 10;
     this.resetAllButton.bottom = this.visibleBoundsProperty.value.bottom - 10;
   }
@@ -212,20 +209,18 @@ class CountingCommonView extends ScreenView {
   /**
    * Some views may need to constrain the vertical room at the top (for dragging numbers) due to a status bar.
    * This should be overridden to return the value required.
-   * @public
    *
-   * @returns {number} - Amount in view coordinates to leave at the top of the screen
+   * @returns - Amount in view coordinates to leave at the top of the screen
    */
-  getTopBoundsOffset() {
+  public getTopBoundsOffset(): number {
     return 0;
   }
 
   /**
-   * @public
    * @override
    */
-  layout( width, height ) {
-    super.layout( width, height );
+  public layout( bounds: Bounds2 ): void {
+    super.layout( bounds );
 
     // Some views may need to make extra room for a status bar
     const top = this.visibleBoundsProperty.value.minY + this.getTopBoundsOffset();
@@ -236,9 +231,8 @@ class CountingCommonView extends ScreenView {
 
   /**
    * To reset the view, should be overridden
-   * @public
    */
-  reset() {
+  public reset(): void {
     // Meant to be overridden
   }
 }

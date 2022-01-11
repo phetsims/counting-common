@@ -17,35 +17,36 @@ import Vector2 from '../../../../dot/js/Vector2.js';
 import merge from '../../../../phet-core/js/merge.js';
 import { Node } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
+import CountingCommonView from './CountingCommonView.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import PlayObjectType from '../model/PlayObjectType.js';
+import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
+
+// types
+type CountingCreatorNodeOptions = {
+  updateCurrentNumber: boolean,
+  playObjectTypeProperty: RichEnumerationProperty<PlayObjectType> | null
+};
 
 class CountingCreatorNode extends Node {
+  private screenView: CountingCommonView;
+  private readonly targetNode: Node;
 
-  /**
-   * @param {number} place
-   * @param {CountingCommonView} screenView
-   * @param {NumberProperty} sumProperty
-   * @param {Object} [options]
-   */
-  constructor( place, screenView, sumProperty, options ) {
+  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions: Partial<CountingCreatorNodeOptions> ) {
 
-    options = merge( {
+    const options = merge( {
       updateCurrentNumber: false,
-      playObjectTypeProperty: null // {RichEnumerationProperty.<PlayObjectType>|null}
-    }, options );
+      playObjectTypeProperty: null
+    }, providedOptions ) as CountingCreatorNodeOptions;
 
     super();
 
     assert && assert( sumProperty.range, `Range is required: ${sumProperty.range}` );
-    const maxSum = sumProperty.range.max;
+    const maxSum = sumProperty.range!.max;
 
-    // @private {CountingCommonView}
     this.screenView = screenView;
 
-    /**
-     * @param {number} offset
-     * @returns {BaseNumberNode|BasePictorialNode}
-     */
-    const createSingleTargetNode = offset => {
+    const createSingleTargetNode = ( offset: Vector2 ): BaseNumberNode | BasePictorialNode => {
       let targetNode;
 
       // TODO: needs attention, see https://github.com/phetsims/number-play/issues/19
@@ -67,7 +68,6 @@ class CountingCreatorNode extends Node {
     const backTargetNode = createSingleTargetNode( new Vector2( -9, -9 ) );
     const frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
 
-    // @private {Node}
     this.targetNode = new Node( {
       cursor: 'pointer',
       children: [ backTargetNode, frontTargetNode ]
@@ -83,7 +83,7 @@ class CountingCreatorNode extends Node {
       sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( backTargetNode, 'visible' );
 
     this.targetNode.addInputListener( {
-      down: event => {
+      down: ( event: any ) => {
         if ( !event.canStartPress() ) { return; }
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
@@ -101,11 +101,15 @@ class CountingCreatorNode extends Node {
 
         // TODO: the need for this guard means that the play areas are not in sync, and should be eliminated when https://github.com/phetsims/number-play/issues/6 is fixed.
         if ( options.updateCurrentNumber &&
+             // @ts-ignore TODO-TS: Remove when above issue is fixed
              screenView.playArea.currentNumberProperty.value < screenView.playArea.currentNumberProperty.range.max ) {
 
           // a user grabbed a new number, so update the sim's currentNumberProperty
+          // @ts-ignore
           screenView.playArea.isControllingCurrentNumber = true;
+          // @ts-ignore
           screenView.playArea.currentNumberProperty.value++;
+          // @ts-ignore
           screenView.playArea.isControllingCurrentNumber = false;
         }
       }
@@ -116,11 +120,8 @@ class CountingCreatorNode extends Node {
 
   /**
    * Return the view coordinates of the target.
-   * @public
-   *
-   * @returns {Vector2}
    */
-  getOriginPosition() {
+  public getOriginPosition(): Vector2 {
 
     // Trail to screenView, not including the screenView
     let trail = this.screenView.getUniqueLeafTrailTo( this.targetNode );
