@@ -12,27 +12,34 @@ import Shape from '../../../../kite/js/Shape.js';
 import { Circle, Color, Image, Node, Path, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
+import BaseNumber from '../model/BaseNumber.js';
+import PlayObjectType from '../model/PlayObjectType.js';
+import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
 
 class BasePictorialNode extends Node {
+  private playObjectTypeProperty: RichEnumerationProperty<PlayObjectType>;
+  public readonly backgroundNode: Rectangle | null;
+  public readonly handleStemNode: Path | undefined;
+  private readonly playObjectTypeListener: ( playObjectType: PlayObjectType ) => void;
+
   /**
-   * @param {BaseNumber} baseNumber
-   * @param {boolean} isPartOfStack - does this baseNumber have other layers to it?
-   * @param {RichEnumerationProperty.<PlayObjectType>} playObjectTypeProperty
-   * @param {boolean} separateNumber - whether the objects should be show separated or grouped
+   * @param baseNumber
+   * @param value
+   * @param isPartOfStack - does this baseNumber have other layers to it?
+   * @param playObjectTypeProperty
+   * @param separateNumbers - whether the objects should be show separated or grouped
    */
-  constructor( baseNumber, value, isPartOfStack, playObjectTypeProperty, separateNumbers ) {
+  constructor( baseNumber: BaseNumber, value: number, isPartOfStack: boolean, playObjectTypeProperty: RichEnumerationProperty<PlayObjectType>, separateNumbers: boolean ) {
     super();
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
-    // @private {RichEnumerationProperty.<PlayObjectType>}
     this.playObjectTypeProperty = playObjectTypeProperty;
 
     // saves the case from when value is 0
     value = Math.max( baseNumber.numberValue, value );
 
-    // @public (read-only)
     this.backgroundNode = null;
 
     const ONE = 1;
@@ -62,7 +69,6 @@ class BasePictorialNode extends Node {
 
       if ( value > 1 ) {
 
-        // @public (read-only)
         this.handleStemNode = new Path( handleStemShape, {
           stroke: 'black',
           lineWidth: lineWidth
@@ -92,7 +98,7 @@ class BasePictorialNode extends Node {
     const resetPoint = doubleCardSize.width / 2;
 
     // add and position the object images
-    const objectImages = [];
+    const objectImages: Image[] = [];
     for ( let i = 0; i < 2; i++ ) {
       for ( let j = 0; j < numberOfRows; j++ ) {
         for ( let k = 0; k < numberOfColumns; k++ ) {
@@ -107,6 +113,7 @@ class BasePictorialNode extends Node {
           const centerY = ( ( j + 1 ) * sideMargin ) + ( j * rowHeight ) + ( rowHeight / 2 );
 
           if ( objectImages.length < value ) {
+            // @ts-ignore TODO-TS: Convert PLAY_OBJECT_TYPE_TO_IMAGE into a map
             const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
               maxWidth: fullObjectWidth * scale,
               maxHeight: fullObjectHeight * scale,
@@ -120,19 +127,16 @@ class BasePictorialNode extends Node {
       }
     }
 
-    // @private
     this.playObjectTypeListener = playObjectType => {
       objectImages.forEach( objectImage => {
+        // @ts-ignore TODO-TS: Convert PLAY_OBJECT_TYPE_TO_IMAGE into a map
         objectImage.image = CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectType ];
       } );
     };
     this.playObjectTypeProperty.link( this.playObjectTypeListener );
   }
 
-  /**
-   * @public
-   */
-  dispose() {
+  public dispose() {
     this.playObjectTypeProperty.unlink( this.playObjectTypeListener );
     super.dispose();
   }
