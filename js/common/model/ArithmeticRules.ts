@@ -13,15 +13,8 @@ import CountingCommonUtils from '../CountingCommonUtils.js';
 class ArithmeticRules {
   /**
    * Whether the two numbers can be added together.
-   * @public
-   *
-   * @param {number} a
-   * @param {number} b
-   * @returns {boolean}
    */
-  static canAddNumbers( a, b ) {
-    assert && assert( typeof a === 'number' );
-    assert && assert( typeof b === 'number' );
+  public static canAddNumbers( a: number, b: number ): boolean {
 
     // Don't allow carrying "past" the 10s, 100s or 1000s place.
     return ( a % 1000 ) + ( b % 1000 ) <= 1000 &&
@@ -32,18 +25,17 @@ class ArithmeticRules {
 
   /**
    * Determines how much of a number can be pulled off at a specific place in the number.
-   * @public
    *
    * e.g.:
    * - If our number is 102, and our pulledPlace is 0 (mouse at the 2), it will pull 2 off.
    * - If our number is 102, and our pulledPlace is 2 (mouse at the 1), it will pull 100 off.
    *
-   * @param {number} numberValue - Numeric value that could potentially be pulled apart.
-   * @param {number} pulledPlace - Index in number where the user dragged. 0 is the 1s place, 1 is the 10s place, 2
+   * @param numberValue - Numeric value that could potentially be pulled apart.
+   * @param pulledPlace - Index in number where the user dragged. 0 is the 1s place, 1 is the 10s place, 2
    *                 is the 100s place, and 3 is the 1000s place.
-   * @returns {number} - How much to remove from numberValue (0 indicates can't be pulled off)
+   * @returns - How much to remove from numberValue (0 indicates can't be pulled off)
    */
-  static pullApartNumbers( numberValue, pulledPlace ) {
+  public static pullApartNumbers( numberValue: number, pulledPlace: number ): number | null {
     if ( numberValue <= 1 ) {
       return null;
     }

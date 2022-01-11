@@ -129,7 +129,9 @@ class PaperNumberNode extends Node {
 
         // TODO, handle this in general way, see https://github.com/phetsims/number-play/issues/51
         const amountToRemoveIfPaper = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
+        // @ts-ignore TODO-TS: Remove when pullApartNumbers is refactored
         const amountToRemove = this.playObjectTypeProperty && amountToRemoveIfPaper > 1 ? 1 : amountToRemoveIfPaper;
+        // @ts-ignore TODO-TS: Remove when pullApartNumbers is refactored
         const amountRemaining = paperNumber.numberValueProperty.value - amountToRemove;
 
         // it cannot be split - so start moving
