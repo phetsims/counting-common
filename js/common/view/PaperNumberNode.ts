@@ -169,8 +169,8 @@ class PaperNumberNode extends Node {
    * Rebuilds the image nodes that display the actual paper number, and resizes the mouse/touch targets.
    */
   public updateNumber(): void {
-    const breakApartNumbers = this.groupingLinkingTypeProperty &&
-                              this.groupingLinkingTypeProperty.value === 'UNGROUPED';
+    const breakApartNumbers = !!this.groupingLinkingTypeProperty &&
+                              !!( this.groupingLinkingTypeProperty.value === 'UNGROUPED' );
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
@@ -180,6 +180,7 @@ class PaperNumberNode extends Node {
     // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
     if ( this.playObjectTypeProperty ) {
       const basePictorialNode = new BasePictorialNode( reversedBaseNumbers[ reversedBaseNumbers.length - 1 ], this.paperNumber.numberValueProperty.value,
+
         reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers );
       this.numberImageContainer.children = [ basePictorialNode ];
 
