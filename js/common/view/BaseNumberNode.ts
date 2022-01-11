@@ -43,6 +43,10 @@ type ImageMap = {
   [ key: number ]: any // TODO-TS: Figure out the type for mipmaps
 };
 
+type PaperNumberDimensions = {
+  [ key: number ]: Dimension2
+};
+
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP: ImageMap = {
   0: paperBackground1_png,
@@ -91,7 +95,7 @@ const SCALE = 72 / 300;
 
 class BaseNumberNode extends Node {
 
-  public static PAPER_NUMBER_DIMENSIONS: Object;
+  public static PAPER_NUMBER_DIMENSIONS: PaperNumberDimensions;
   public static IMAGE_OFFSETS: Vector2[];
   public readonly handleStemNode: Path | undefined;
 

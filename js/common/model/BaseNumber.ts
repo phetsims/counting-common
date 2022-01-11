@@ -11,6 +11,8 @@
 import countingCommon from '../../countingCommon.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumberNode from '../view/BaseNumberNode.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
 
 // Precompute bounds for each digit
 const DIGIT_BOUNDS = [ 0, 1, 2, 3 ].map( place => {
@@ -20,29 +22,36 @@ const DIGIT_BOUNDS = [ 0, 1, 2, 3 ].map( place => {
 } );
 
 class BaseNumber {
+  public readonly numberValue: number;
+  public digitLength: number;
+  public readonly place: number;
+  public offset: Vector2;
+  public bounds: Bounds2;
+  public digit: number;
+
   /**
-   * @param {number} digit - The digit (1 to 9, won't create for a 0).
-   * @param {number} place - The decimal exponent for the number digit * 10^place.
+   * @param digit - The digit (1 to 9, won't create for a 0).
+   * @param place - The decimal exponent for the number digit * 10^place.
    */
-  constructor( digit, place ) {
-    // @public {number} - The numeric value, e.g. 200 if digit is 2 and place is 2
+  constructor( digit: number, place: number ) {
+    // The numeric value, e.g. 200 if digit is 2 and place is 2
     this.numberValue = digit * Math.pow( 10, place );
 
-    // @public {number} - Number of digits in our numeric value
+    // Number of digits in our numeric value
     this.digitLength = CountingCommonUtils.digitsInNumber( this.numberValue );
 
-    // @public {number} - The place in the number (power of 10) that our digit would be multiplied by to sum, e.g.
-    //                    place 2 with a digit 3 has a numberValue = 300, i.e. 3 * 10^2.
+    // The place in the number (power of 10) that our digit would be multiplied by to sum, e.g. place 2 with a digit 3
+    // has a numberValue = 300, i.e. 3 * 10^2.
     this.place = place;
 
-    // @public {Vector2} - The offset (relatve to the number origin) for the placement of the upper-left corner of the
-    //                     image representing this place value.
+    // The offset (relative to the number origin) for the placement of the upper-left corner of the image representing
+    // this place value.
     this.offset = BaseNumberNode.IMAGE_OFFSETS[ this.place ];
 
-    // @public {Bounds2} - The bounds (relative to the number origin) that this digit place will take up.
+    // The bounds (relative to the number origin) that this digit place will take up.
     this.bounds = DIGIT_BOUNDS[ this.place ];
 
-    // @public {number} - The leading digit of the number, e.g. 2 for 200.
+    // The leading digit of the number, e.g. 2 for 200.
     this.digit = digit;
   }
 }
