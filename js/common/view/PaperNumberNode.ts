@@ -21,6 +21,7 @@ import BaseNumberNode from './BaseNumberNode.js';
 import BasePictorialNode from './BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
@@ -30,7 +31,7 @@ class PaperNumberNode extends Node {
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   private readonly playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null;
-  private readonly groupingLinkingTypeProperty: Property<GroupingLinkingType> | null;
+  private readonly groupingLinkingTypeProperty: RichEnumerationProperty<GroupingLinkingType> | null;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
@@ -50,7 +51,7 @@ class PaperNumberNode extends Node {
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
                tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null = null,
-               groupingLinkingTypeProperty: Property<GroupingLinkingType> | null = null ) {
+               groupingLinkingTypeProperty: RichEnumerationProperty<GroupingLinkingType> | null = null ) {
 
     super();
 
@@ -173,7 +174,7 @@ class PaperNumberNode extends Node {
    */
   public updateNumber(): void {
     const breakApartNumbers = !!this.groupingLinkingTypeProperty &&
-                              !!( this.groupingLinkingTypeProperty.value === 'UNGROUPED' );
+                              !!( this.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED );
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
