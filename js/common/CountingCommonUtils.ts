@@ -11,11 +11,10 @@ import countingCommon from '../countingCommon.js';
 const CountingCommonUtils = {
   /**
    * Common way of determining number of digits in a number.
-   * @public
    *
-   * @param {number} number - Should be an integer.
+   * @param number Should be an integer.
    */
-  digitsInNumber( number ) {
+  digitsInNumber( number: number ): number {
     assert && assert( number % 1 === 0, 'Should be an integer' );
 
     // Not using log10, since phet.dot.Utils.log10( 1000 ) => 2.9999999999999996, which behaved badly with floor.

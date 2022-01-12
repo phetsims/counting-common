@@ -113,8 +113,7 @@ class BasePictorialNode extends Node {
           const centerY = ( ( j + 1 ) * sideMargin ) + ( j * rowHeight ) + ( rowHeight / 2 );
 
           if ( objectImages.length < value ) {
-            // @ts-ignore TODO-TS: Convert PLAY_OBJECT_TYPE_TO_IMAGE into a map
-            const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectTypeProperty.value ], {
+            const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( playObjectTypeProperty.value.name ), {
               maxWidth: fullObjectWidth * scale,
               maxHeight: fullObjectHeight * scale,
               centerX: centerX,
@@ -129,8 +128,7 @@ class BasePictorialNode extends Node {
 
     this.playObjectTypeListener = playObjectType => {
       objectImages.forEach( objectImage => {
-        // @ts-ignore TODO-TS: Convert PLAY_OBJECT_TYPE_TO_IMAGE into a map
-        objectImage.image = CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE[ playObjectType ];
+        objectImage.image = CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( playObjectType.name );
       } );
     };
     this.playObjectTypeProperty.link( this.playObjectTypeListener );

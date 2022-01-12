@@ -15,11 +15,12 @@ import PlayObjectType from './model/PlayObjectType.js';
 import cupcake_png from '../../images/cupcake_png.js';
 
 // convenience map that links play object types to their corresponding images
-const PLAY_OBJECT_TYPE_TO_IMAGE = {};
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.DOG ] = dog_png;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.APPLE ] = apple_png;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.CUPCAKE ] = cupcake_png;
-PLAY_OBJECT_TYPE_TO_IMAGE[ PlayObjectType.BALL ] = ball_png;
+// TODO: .name needed because ComparePlayObjectType needs to use this Map as well
+const PLAY_OBJECT_TYPE_TO_IMAGE = new Map();
+PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.DOG.name, dog_png );
+PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.APPLE.name, apple_png );
+PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.CUPCAKE.name, cupcake_png );
+PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.BALL.name, ball_png );
 
 const CountingCommonConstants = {
   // Common colors
