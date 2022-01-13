@@ -7,7 +7,7 @@
  */
 
 import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
-import RichEnumeration from '../../../../phet-core/js/RichEnumeration.js';
+import Enumeration from '../../../../phet-core/js/Enumeration.js';
 import countingCommon from '../../countingCommon.js';
 
 class PlayObjectType extends EnumerationValue {
@@ -16,7 +16,7 @@ class PlayObjectType extends EnumerationValue {
   static CUPCAKE = new PlayObjectType();
   static BALL = new PlayObjectType();
 
-  static enumeration = new RichEnumeration( PlayObjectType );
+  static enumeration = new Enumeration( PlayObjectType );
 }
 
 countingCommon.register( 'PlayObjectType', PlayObjectType );

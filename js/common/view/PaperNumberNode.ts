@@ -21,7 +21,7 @@ import BaseNumberNode from './BaseNumberNode.js';
 import BasePictorialNode from './BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
-import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
@@ -31,7 +31,7 @@ class PaperNumberNode extends Node {
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   private readonly playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null;
-  private readonly groupingLinkingTypeProperty: RichEnumerationProperty<GroupingLinkingType> | null;
+  private readonly groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
@@ -51,7 +51,7 @@ class PaperNumberNode extends Node {
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
                tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null = null,
-               groupingLinkingTypeProperty: RichEnumerationProperty<GroupingLinkingType> | null = null ) {
+               groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null = null ) {
 
     super();
 

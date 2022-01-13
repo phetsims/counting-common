@@ -20,12 +20,12 @@ import countingCommon from '../../countingCommon.js';
 import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import PlayObjectType from '../model/PlayObjectType.js';
-import RichEnumerationProperty from '../../../../axon/js/RichEnumerationProperty.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 
 // types
 type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
-  playObjectTypeProperty: RichEnumerationProperty<PlayObjectType> | null
+  playObjectTypeProperty: EnumerationProperty<PlayObjectType> | null
 };
 
 class CountingCreatorNode extends Node {

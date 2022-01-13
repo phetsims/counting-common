@@ -7,7 +7,7 @@
  */
 
 import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
-import RichEnumeration from '../../../../phet-core/js/RichEnumeration.js';
+import Enumeration from '../../../../phet-core/js/Enumeration.js';
 import countingCommon from '../../countingCommon.js';
 
 class GroupingLinkingType extends EnumerationValue {
@@ -15,7 +15,7 @@ class GroupingLinkingType extends EnumerationValue {
   static GROUPED = new GroupingLinkingType();
   static GROUPED_AND_LINKED = new GroupingLinkingType();
 
-  static enumeration = new RichEnumeration( GroupingLinkingType );
+  static enumeration = new Enumeration( GroupingLinkingType );
 }
 
 countingCommon.register( 'GroupingLinkingType', GroupingLinkingType );
