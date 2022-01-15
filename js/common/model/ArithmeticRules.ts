@@ -35,9 +35,9 @@ class ArithmeticRules {
    *                 is the 100s place, and 3 is the 1000s place.
    * @returns - How much to remove from numberValue (0 indicates can't be pulled off)
    */
-  public static pullApartNumbers( numberValue: number, pulledPlace: number ): number | null {
+  public static pullApartNumbers( numberValue: number, pulledPlace: number ): number {
     if ( numberValue <= 1 ) {
-      return null;
+      return 0;
     }
 
     // Find the minimum place (0: singles, 1: doubles, etc.) where we can pull off from

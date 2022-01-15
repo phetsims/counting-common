@@ -13,15 +13,13 @@ import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import { DragListener, Node, Rectangle, SceneryEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
-import BaseNumber from '../model/BaseNumber.js';
 import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import PaperNumber from '../model/PaperNumber.js';
-import PlayObjectType from '../model/PlayObjectType.js';
 import BaseNumberNode from './BaseNumberNode.js';
-import BasePictorialNode from './BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import CountingObjectType from '../model/CountingObjectType.js';
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
@@ -30,7 +28,7 @@ class PaperNumberNode extends Node {
   public readonly interactionStartedEmitter: Emitter<any>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
-  private readonly playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null;
+  private readonly playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
   private readonly groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
@@ -50,7 +48,7 @@ class PaperNumberNode extends Node {
    * @param groupingLinkingTypeProperty
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
-               tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<PlayObjectType> | null = null,
+               tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
                groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null = null ) {
 
     super();
@@ -129,11 +127,7 @@ class PaperNumberNode extends Node {
         // Determine how much (if any) gets moved off
         const pulledPlace = paperNumber.getBaseNumberAt( this.parentToLocalPoint( viewPosition ) ).place;
 
-        // TODO, handle this in general way, see https://github.com/phetsims/number-play/issues/51
-        const amountToRemoveIfPaper = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
-        // @ts-ignore TODO-TS: Remove when pullApartNumbers is refactored
-        const amountToRemove = this.playObjectTypeProperty && amountToRemoveIfPaper > 1 ? 1 : amountToRemoveIfPaper;
-        // @ts-ignore TODO-TS: Remove when pullApartNumbers is refactored
+        const amountToRemove = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
         const amountRemaining = paperNumber.numberValueProperty.value - amountToRemove;
 
         // it cannot be split - so start moving
@@ -167,52 +161,49 @@ class PaperNumberNode extends Node {
         this.moveToFront();
       }
     };
+
+    this.playObjectTypeProperty.lazyLink( playObjectType => {
+      this.updateNumber();
+    } );
   }
 
   /**
    * Rebuilds the image nodes that display the actual paper number, and resizes the mouse/touch targets.
    */
   public updateNumber(): void {
-    const breakApartNumbers = !!this.groupingLinkingTypeProperty &&
-                              !!( this.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED );
+    let isGroupable = true;
+    if ( this.groupingLinkingTypeProperty && this.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED ) {
+      isGroupable = false;
+    }
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
 
-    let fullBounds;
+    this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
+      const hasDescendant = reversedBaseNumbers[ index + 1 ] !== undefined;
 
-    // TODO: needs improvement, see https://github.com/phetsims/number-play/issues/19
-    if ( this.playObjectTypeProperty ) {
-      const basePictorialNode = new BasePictorialNode( reversedBaseNumbers[ reversedBaseNumbers.length - 1 ], this.paperNumber.numberValueProperty.value,
+      return new BaseNumberNode(
+        baseNumber,
+        0.95 * Math.pow( 0.97, index ), {
+          playObjectTypeProperty: this.playObjectTypeProperty,
+          includeHandles: true,
+          isGroupable: isGroupable,
+          isLargestBaseNumber: index === 0,
+          hasDescendant: hasDescendant,
+          isPartOfStack: reversedBaseNumbers.length > 1
+        } );
+    } );
 
-        reversedBaseNumbers.length > 1, this.playObjectTypeProperty, breakApartNumbers );
-      this.numberImageContainer.children = [ basePictorialNode ];
+    const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ];
 
-      const backgroundNode = basePictorialNode.backgroundNode;
-      fullBounds = backgroundNode ? basePictorialNode.localToParentBounds( backgroundNode.bounds ) :
-                   this.numberImageContainer.bounds;
-    }
-    else {
-      this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
-        const hasDescendant = reversedBaseNumbers[ index + 1 ] !== undefined;
-
-        return new BaseNumberNode(
-          baseNumber,
-          0.95 * Math.pow( 0.97, index ),
-          true,
-          index === 0,
-          hasDescendant,
-          reversedBaseNumbers.length > 1
-        );
-      } );
-
-      // Grab the bounds of the biggest base number for the full bounds
-      fullBounds = this.paperNumber.baseNumbers[ this.paperNumber.baseNumbers.length - 1 ].bounds;
-    }
+    // @ts-ignore
+    const backgroundNode = biggestBaseNumberNode.backgroundNode;
+    const boundsWithoutHandle = backgroundNode ? biggestBaseNumberNode.localToParentBounds( backgroundNode.bounds ) :
+                 this.numberImageContainer.bounds;
 
     this.paperNumber.alternateBounds = this.numberImageContainer.bounds.copy();
 
-    if ( !breakApartNumbers ) {
+    if ( isGroupable ) {
       this.splitTarget.visible = true;
 
       let firstHandleXPosition: number;
@@ -235,16 +226,16 @@ class PaperNumberNode extends Node {
         this.numberImageContainer.bounds.minY - padding / 2,
         // @ts-ignore TODO-TS: needs refactor
         lastHandleXPosition + padding,
-        fullBounds.minY
+        boundsWithoutHandle.minY
       ) : new Bounds2( 0, 0, 0, 0 );
 
-      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = fullBounds;
+      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = boundsWithoutHandle;
       this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = splitTargetBounds;
     }
     else {
-      this.splitTarget.visible = true;
-      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = new Bounds2( 0, 0, 0, 0 );
-      this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = fullBounds;
+      this.splitTarget.visible = false;
+      this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = boundsWithoutHandle;
+      this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = new Bounds2( 0, 0, 0, 0 );
     }
 
     // Changing the number must have happened from an interaction. If combined, we want to put cues on this.
@@ -335,14 +326,6 @@ class PaperNumberNode extends Node {
       const overlappingBounds = attachableNode.moveTarget.bounds.intersection( this.moveTarget.bounds );
       return overlappingBounds.width * overlappingBounds.height;
     } );
-  }
-
-  /**
-   * Given a number's digit and place, looks up the associated image.
-   */
-  public static getNumberImage( digit: number, place: number ): BaseNumberNode {
-    // @ts-ignore TODO-TS: update BaseNumberNode signature
-    return new BaseNumberNode( new BaseNumber( digit, place ), 1 );
   }
 }
 

@@ -9,10 +9,7 @@
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
-import { Circle } from '../../../../scenery/js/imports.js';
-import { Image } from '../../../../scenery/js/imports.js';
-import { Node } from '../../../../scenery/js/imports.js';
-import { Path } from '../../../../scenery/js/imports.js';
+import { Circle, Image, Node, Path } from '../../../../scenery/js/imports.js';
 import digit0_png from '../../../mipmaps/digit0_png.js';
 import digit1_png from '../../../mipmaps/digit1_png.js';
 import digit2_png from '../../../mipmaps/digit2_png.js';
@@ -29,31 +26,51 @@ import paperBackground10_png from '../../../mipmaps/paperBackground10_png.js';
 import paperBackground1_png from '../../../mipmaps/paperBackground1_png.js';
 import countingCommon from '../../countingCommon.js';
 import BaseNumber from '../model/BaseNumber.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import PlayObjectType from '../model/PlayObjectType.js';
+import groupBackground1_png from '../../../mipmaps/groupBackground1_png.js';
+import CountingObjectType from '../model/CountingObjectType.js';
+import groupBackground10_png from '../../../mipmaps/groupBackground10_png.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import merge from '../../../../phet-core/js/merge.js';
+import CountingCommonConstants from '../CountingCommonConstants.js';
 
 // types
 type XorYoffset = {
   [ key: number ]: number
 };
-
 type ZeroOffset = {
   [ key: number ]: number[]
 }
-
 type ImageMap = {
   [ key: number ]: any // TODO-TS: Figure out the type for mipmaps
 };
-
 type PaperNumberDimensions = {
   [ key: number ]: Dimension2
 };
+type BaseNumberNodeOptions = {
+  playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
+  isGroupable: boolean,
+  includeHandles: boolean
+  isLargestBaseNumber: boolean,
+  hasDescendant: boolean,
+  isPartOfStack: boolean
+};
 
 // place => mipmap info
-const BACKGROUND_IMAGE_MAP: ImageMap = {
+const BACKGROUND_IMAGE_MAP = new Map();
+BACKGROUND_IMAGE_MAP.set( CountingObjectType.PAPER_NUMBER.name, {
   0: paperBackground1_png,
   1: paperBackground10_png,
   2: paperBackground100_png,
   3: paperBackground1000_png
-};
+} );
+PlayObjectType.enumeration.values.forEach( playObjectType => {
+  BACKGROUND_IMAGE_MAP.set( playObjectType.name, {
+    0: groupBackground1_png,
+    1: groupBackground10_png
+  } );
+} );
 
 // digit => mipmap info
 const DIGIT_IMAGE_MAP: ImageMap = {
@@ -98,25 +115,35 @@ class BaseNumberNode extends Node {
   public static PAPER_NUMBER_DIMENSIONS: PaperNumberDimensions;
   public static IMAGE_OFFSETS: Vector2[];
   public readonly handleStemNode: Path | undefined;
+  public readonly backgroundNode: Image | null = null;
 
-  // TODO: refactor as options? https://github.com/phetsims/counting-common/issues/1
-  constructor( baseNumber: BaseNumber, opacity: number, includeHandles: boolean, isLargestBaseNumber?: boolean, hasDescendant?: boolean, isPartOfStack?: boolean ) {
+  constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
     super( { scale: SCALE } );
 
-    // Position of the initial digit
-    let x = PLACE_X_OFFSET[ baseNumber.place ] + DIGIT_X_OFFSET[ baseNumber.digit ];
-    const y = PLACE_Y_OFFSET[ baseNumber.place ];
+    const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
+      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
+      includeHandles: false,
+      isGroupable: true,
 
-    // We need to slightly offset some
-    if ( baseNumber.place === 0 ) {
-      x += FIRST_PLACE_DIGIT_X_OFFSET[ baseNumber.digit ];
+      // TODO: docs?
+      isLargestBaseNumber: true,
+      hasDescendant: false,
+      isPartOfStack: false
+    }, providedOptions );
+
+    let isGroupable = options.isGroupable;
+    if ( providedOptions === undefined || providedOptions?.isGroupable === undefined ) {
+      isGroupable = options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER;
     }
+
+    assert && !isGroupable && assert( options.playObjectTypeProperty.value !== CountingObjectType.PAPER_NUMBER,
+      'Paper numbers are not allowed to turn off grouping.' );
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
     // The paper behind the numbers
-    const paperBackgroundNode = new Image( BACKGROUND_IMAGE_MAP[ baseNumber.place ], {
+    const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.playObjectTypeProperty.value.name )[ baseNumber.place ], {
       imageOpacity: opacity
     } );
 
@@ -126,8 +153,8 @@ class BaseNumberNode extends Node {
     // to just removing one part of the largest base number). for example, with the paper number 1200, the 1 should not
     // get a handle because grabbing it would pull 1000 away from 200, and this can be accomplished by pulling the 200
     // off instead. in the case of 2200, the first 2 should get a handle because grabbing it would pull off one 1000.
-    if ( includeHandles && !( baseNumber.numberValue === 1 && !isPartOfStack )
-         && !( isLargestBaseNumber && baseNumber.digit === 1 && hasDescendant ) ) {
+    if ( options.includeHandles && !( baseNumber.numberValue === 1 && !options.isPartOfStack )
+         && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 6;
 
@@ -138,14 +165,14 @@ class BaseNumberNode extends Node {
         stroke: 'black',
         lineWidth: lineWidth
       } );
-      this.handleStemNode.centerX = hasDescendant ? PLACE_HANDLE_X_OFFSET[ baseNumber.place ] : paperBackgroundNode.centerX;
-      this.handleStemNode.bottom = paperBackgroundNode.top + 10;
+      this.handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_X_OFFSET[ baseNumber.place ] : backgroundNode.centerX;
+      this.handleStemNode.bottom = backgroundNode.top + 10;
       this.addChild( this.handleStemNode );
 
       let handleCircle;
       const outerCircleRadius = 22;
 
-      if ( isLargestBaseNumber ) {
+      if ( options.isLargestBaseNumber ) {
         handleCircle = new Circle( outerCircleRadius, {
           fill: 'white',
           stroke: 'black',
@@ -166,29 +193,89 @@ class BaseNumberNode extends Node {
     }
 
     // add the background paper on top of the handle
-    this.addChild( paperBackgroundNode );
+    if ( isGroupable ) {
+      this.addChild( backgroundNode );
+      this.backgroundNode = backgroundNode;
+    }
 
-    // The initial (non-zero) digit
-    this.addChild( new Image( DIGIT_IMAGE_MAP[ baseNumber.digit ], {
-      x: x,
-      y: y
-    } ) );
+    // add a number to the background if our type is paper number
+    if ( options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER ) {
 
-    // Add the zeros
-    const digitZeroOffsets = ZERO_OFFSET[ baseNumber.place ];
-    for ( let i = 0; i < digitZeroOffsets.length; i++ ) {
-      this.addChild( new Image( digit0_png, {
-        x: digitZeroOffsets[ i ],
+      // Position of the initial digit
+      let x = PLACE_X_OFFSET[ baseNumber.place ] + DIGIT_X_OFFSET[ baseNumber.digit ];
+      const y = PLACE_Y_OFFSET[ baseNumber.place ];
+
+      // We need to slightly offset some
+      if ( baseNumber.place === 0 ) {
+        x += FIRST_PLACE_DIGIT_X_OFFSET[ baseNumber.digit ];
+      }
+
+      // The initial (non-zero) digit
+      this.addChild( new Image( DIGIT_IMAGE_MAP[ baseNumber.digit ], {
+        x: x,
         y: y
       } ) );
+
+      // Add the zeros
+      const digitZeroOffsets = ZERO_OFFSET[ baseNumber.place ];
+      for ( let i = 0; i < digitZeroOffsets.length; i++ ) {
+        this.addChild( new Image( digit0_png, {
+          x: digitZeroOffsets[ i ],
+          y: y
+        } ) );
+      }
     }
+    else {
+
+      const ONE = 1;
+      const value = baseNumber.numberValue;
+
+      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
+      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
+      const singleCardSize = new Dimension2( backgroundNode.width, backgroundNode.height );
+      const sideMargin = ( singleCardSize.width - fullObjectWidth ) / 2;
+
+      // TODO: temporary way to organize objects, needs work
+      const numberOfRows = value === ONE ? 1 : 5;
+      const numberOfColumns = value === ONE ? 1 : 2;
+      const scale = value === ONE ? 1 : 0.3;
+
+      // add and position the object images
+      const objectImages: Image[] = [];
+      for ( let i = 0; i < numberOfRows; i++ ) {
+        for ( let j = 0; j < numberOfColumns; j++ ) {
+
+          const width = singleCardSize.width;
+          const height = singleCardSize.height;
+
+          const columnWidth = ( width - ( ( numberOfColumns + 1 ) * sideMargin ) ) / numberOfColumns;
+          const centerX = ( ( j + 1 ) * sideMargin ) + ( j * columnWidth ) + ( columnWidth / 2 );
+
+          const rowHeight = ( height - ( ( numberOfRows + 1 ) * sideMargin ) ) / numberOfRows;
+          const centerY = ( ( i + 1 ) * sideMargin ) + ( i * rowHeight ) + ( rowHeight / 2 );
+
+          if ( objectImages.length < value ) {
+            const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.playObjectTypeProperty.value.name ), {
+              maxWidth: fullObjectWidth * scale,
+              maxHeight: fullObjectHeight * scale,
+              centerX: centerX,
+              centerY: centerY
+            } );
+            this.addChild( objectImage );
+            objectImages.push( objectImage );
+          }
+        }
+      }
+    }
+
   }
 }
 
 /**
  * Maps place (0-3) to a {Dimension2} with the width/height
  */
-BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP, mipmap => new Dimension2( mipmap[ 0 ].width * SCALE, mipmap[ 0 ].height * SCALE ) );
+BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER.name ),
+  mipmap => new Dimension2( mipmap[ 0 ].width * SCALE, mipmap[ 0 ].height * SCALE ) );
 
 /**
  * Maps place (0-3) to a {Vector2} that is the offset of the upper-left corner of the BaseNumberNode relative to a

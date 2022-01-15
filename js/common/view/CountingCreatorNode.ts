@@ -12,20 +12,19 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.js';
 import PaperNumber from '../../../../counting-common/js/common/model/PaperNumber.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
-import BasePictorialNode from '../../../../counting-common/js/common/view/BasePictorialNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import merge from '../../../../phet-core/js/merge.js';
 import { Node } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
-import PlayObjectType from '../model/PlayObjectType.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import CountingObjectType from '../model/CountingObjectType.js';
 
 // types
 type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
-  playObjectTypeProperty: EnumerationProperty<PlayObjectType> | null
+  playObjectTypeProperty: EnumerationProperty<CountingObjectType>
 };
 
 class CountingCreatorNode extends Node {
@@ -36,7 +35,7 @@ class CountingCreatorNode extends Node {
 
     const options = merge( {
       updateCurrentNumber: false,
-      playObjectTypeProperty: null
+      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER )
     }, providedOptions ) as CountingCreatorNodeOptions;
 
     super();
@@ -46,18 +45,21 @@ class CountingCreatorNode extends Node {
 
     this.screenView = screenView;
 
-    const createSingleTargetNode = ( offset: Vector2 ): BaseNumberNode | BasePictorialNode => {
-      let targetNode;
+    const createSingleTargetNode = ( offset: Vector2 ): Node => {
+      const targetNode = new Node();
 
-      // TODO: needs attention, see https://github.com/phetsims/number-play/issues/19
-      if ( options.playObjectTypeProperty ) {
-        targetNode = new BasePictorialNode( new BaseNumber( 1, place ), 1, false, options.playObjectTypeProperty, true );
-        targetNode.scale( 0.85 );
-      }
-      else {
-        targetNode = new BaseNumberNode( new BaseNumber( 1, place ), 1, false );
+      targetNode.addChild( new BaseNumberNode( new BaseNumber( 1, place ), 1, {
+        includeHandles: false,
+        playObjectTypeProperty: options.playObjectTypeProperty
+      } ) );
+
+      if ( options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER ) {
         targetNode.scale( 0.64, 0.55 );
       }
+      else {
+        targetNode.scale( 0.85 );
+      }
+
       targetNode.translation = offset;
       return targetNode;
     };
@@ -73,6 +75,17 @@ class CountingCreatorNode extends Node {
       children: [ backTargetNode, frontTargetNode ]
     } );
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
+
+    options.playObjectTypeProperty.lazyLink( playObjectType => {
+      this.targetNode.children.forEach( targetNode => {
+        targetNode.removeAllChildren();
+
+        targetNode.addChild( new BaseNumberNode( new BaseNumber( 1, place ), 1, {
+          includeHandles: false,
+          playObjectTypeProperty: options.playObjectTypeProperty
+        } ) );
+      } );
+    } );
 
     // We need to be disabled if adding this number would increase the sum past the maximum sum.
     new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );

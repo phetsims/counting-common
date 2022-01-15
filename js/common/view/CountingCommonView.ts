@@ -9,8 +9,7 @@
 import Property from '../../../../axon/js/Property.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import { Node, SceneryEvent } from '../../../../scenery/js/imports.js';
-import { Plane } from '../../../../scenery/js/imports.js';
+import { Node, Plane, SceneryEvent } from '../../../../scenery/js/imports.js';
 import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
@@ -19,6 +18,8 @@ import PaperNumberNode from './PaperNumberNode.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import PaperNumber from '../model/PaperNumber.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import CountingObjectType from '../model/CountingObjectType.js';
 
 // types
 export type PaperNumberNodeMap = {
@@ -112,7 +113,7 @@ class CountingCommonView extends ScreenView {
    */
   public onPaperNumberAdded( paperNumber: PaperNumber ): PaperNumberNode {
     const paperNumberNode = new PaperNumberNode( paperNumber, this.availableViewBoundsProperty,
-      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback );
+      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback, new EnumerationProperty( CountingObjectType.PAPER_NUMBER ) );
 
     this.paperNumberNodeMap[ paperNumberNode.paperNumber.id ] = paperNumberNode;
     this.paperNumberLayerNode.addChild( paperNumberNode );
