@@ -133,10 +133,10 @@ class BaseNumberNode extends Node {
 
     let isGroupable = options.isGroupable;
     if ( providedOptions === undefined || providedOptions?.isGroupable === undefined ) {
-      isGroupable = options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER;
+      isGroupable = options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name;
     }
 
-    assert && !isGroupable && assert( options.playObjectTypeProperty.value !== CountingObjectType.PAPER_NUMBER,
+    assert && !isGroupable && assert( options.playObjectTypeProperty.value.name !== CountingObjectType.PAPER_NUMBER.name,
       'Paper numbers are not allowed to turn off grouping.' );
 
     // Translate everything by our offset
@@ -199,7 +199,7 @@ class BaseNumberNode extends Node {
     }
 
     // add a number to the background if our type is paper number
-    if ( options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER ) {
+    if ( options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name ) {
 
       // Position of the initial digit
       let x = PLACE_X_OFFSET[ baseNumber.place ] + DIGIT_X_OFFSET[ baseNumber.digit ];
@@ -232,7 +232,7 @@ class BaseNumberNode extends Node {
 
       const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
       const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
-      const singleCardSize = new Dimension2( backgroundNode.width, backgroundNode.height );
+      const singleCardSize = new Dimension2( 62 / SCALE, 100 / SCALE );
       const sideMargin = ( singleCardSize.width - fullObjectWidth ) / 2;
 
       // TODO: temporary way to organize objects, needs work
