@@ -36,22 +36,23 @@ import merge from '../../../../phet-core/js/merge.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 
 // types
-type XorYoffset = {
+type ImageMap = {
+  [ key: number ]: any // TODO-TS: Figure out the type for mipmaps
+};
+type NumberMap = {
   [ key: number ]: number
 };
 type ZeroOffset = {
   [ key: number ]: number[]
 }
-type ImageMap = {
-  [ key: number ]: any // TODO-TS: Figure out the type for mipmaps
-};
 type PaperNumberDimensions = {
   [ key: number ]: Dimension2
 };
-type BaseNumberNodeOptions = {
+export type BaseNumberNodeOptions = {
   playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
   isGroupable: boolean,
   includeHandles: boolean
+  handleYOffset: number,
   isLargestBaseNumber: boolean,
   hasDescendant: boolean,
   isPartOfStack: boolean
@@ -86,18 +87,18 @@ const DIGIT_IMAGE_MAP: ImageMap = {
 };
 
 // place => x/y offsets for the first digit in each place
-const PLACE_X_OFFSET: XorYoffset = { 0: 64, 1: 62, 2: 70, 3: 94 };
-const PLACE_Y_OFFSET: XorYoffset = { 0: 38, 1: 61, 2: 82, 3: 104 };
+const PLACE_X_OFFSET: NumberMap = { 0: 64, 1: 62, 2: 70, 3: 94 };
+const PLACE_Y_OFFSET: NumberMap = { 0: 38, 1: 61, 2: 82, 3: 104 };
 
 // place => x/y offsets for the handle in each place
-const PLACE_HANDLE_X_OFFSET: XorYoffset = { 0: 130, 1: 142, 2: 151, 3: 171 };
-const PLACE_HANDLE_Y_OFFSET: XorYoffset = { 0: 97, 1: 74, 2: 53, 3: 31 };
+const PLACE_HANDLE_X_OFFSET: NumberMap = { 0: 130, 1: 142, 2: 151, 3: 171 };
+const PLACE_HANDLE_Y_OFFSET: NumberMap = { 0: 97, 1: 74, 2: 53, 3: 31 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
-const DIGIT_X_OFFSET: XorYoffset = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
+const DIGIT_X_OFFSET: NumberMap = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
 
 // digit => horizontal offset, customized for each single digit base number
-const FIRST_PLACE_DIGIT_X_OFFSET: XorYoffset = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15, 8: 10, 9: 15 };
+const FIRST_PLACE_DIGIT_X_OFFSET: NumberMap = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15, 8: 10, 9: 15 };
 
 // place => horizontal positions of the zeros in the base number
 const ZERO_OFFSET: ZeroOffset = {
@@ -123,6 +124,7 @@ class BaseNumberNode extends Node {
     const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
       playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       includeHandles: false,
+      handleYOffset: 0,
       isGroupable: true,
 
       // TODO: docs?
@@ -157,9 +159,10 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 6;
+      const handleYOffset = PLACE_HANDLE_Y_OFFSET[ baseNumber.place ] + options.handleYOffset;
 
       // The handle that attaches to the paper
-      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, PLACE_HANDLE_Y_OFFSET[ baseNumber.place ] );
+      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleYOffset );
 
       this.handleStemNode = new Path( handleStemShape, {
         stroke: 'black',

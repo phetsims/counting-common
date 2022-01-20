@@ -15,11 +15,18 @@ import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import GroupingLinkingType from '../model/GroupingLinkingType.js';
 import PaperNumber from '../model/PaperNumber.js';
-import BaseNumberNode from './BaseNumberNode.js';
+import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
+import merge from '../../../../phet-core/js/merge.js';
+
+// types
+type PaperNumberNodeOptions = {
+  groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null,
+  baseNumberNodeOptions: Partial<BaseNumberNodeOptions>
+}
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
@@ -38,6 +45,7 @@ class PaperNumberNode extends Node {
   private readonly translationListener: ( position: any ) => void;
   private readonly updateNumberListener: () => void;
   private readonly userControlledListener: ( userControlled: any ) => void;
+  private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
 
   /**
    * @param paperNumber
@@ -45,13 +53,18 @@ class PaperNumberNode extends Node {
    * @param addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
    * @param tryToCombineNumbers - function( paperNumber ), called to combine our paper number
    * @param playObjectTypeProperty
-   * @param groupingLinkingTypeProperty
+   * @param providedOptions
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
                tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
-               groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null = null ) {
+               providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
+
+    const options = merge( {
+      groupingLinkingTypeProperty: null,
+      baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
+    }, providedOptions ) as PaperNumberNodeOptions;
 
     this.paperNumber = paperNumber;
 
@@ -70,7 +83,8 @@ class PaperNumberNode extends Node {
     this.availableViewBoundsProperty = availableViewBoundsProperty;
 
     this.playObjectTypeProperty = playObjectTypeProperty;
-    this.groupingLinkingTypeProperty = groupingLinkingTypeProperty;
+    this.groupingLinkingTypeProperty = options.groupingLinkingTypeProperty;
+    this.baseNumberNodeOptions = options.baseNumberNodeOptions;
 
     // Container for the digit image nodes
     this.numberImageContainer = new Node( {
@@ -184,14 +198,14 @@ class PaperNumberNode extends Node {
 
       return new BaseNumberNode(
         baseNumber,
-        0.95 * Math.pow( 0.97, index ), {
+        0.95 * Math.pow( 0.97, index ), merge( {
           playObjectTypeProperty: this.playObjectTypeProperty,
           includeHandles: true,
           isGroupable: isGroupable,
           isLargestBaseNumber: index === 0,
           hasDescendant: hasDescendant,
           isPartOfStack: reversedBaseNumbers.length > 1
-        } );
+        }, this.baseNumberNodeOptions ) );
     } );
 
     const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ];
