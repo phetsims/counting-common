@@ -52,7 +52,7 @@ export type BaseNumberNodeOptions = {
   playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
   isGroupable: boolean,
   includeHandles: boolean
-  handleYOffset: number,
+  handleOffsetY: number,
   isLargestBaseNumber: boolean,
   hasDescendant: boolean,
   isPartOfStack: boolean
@@ -87,18 +87,18 @@ const DIGIT_IMAGE_MAP: ImageMap = {
 };
 
 // place => x/y offsets for the first digit in each place
-const PLACE_X_OFFSET: NumberMap = { 0: 64, 1: 62, 2: 70, 3: 94 };
-const PLACE_Y_OFFSET: NumberMap = { 0: 38, 1: 61, 2: 82, 3: 104 };
+const PLACE_OFFSET_X: NumberMap = { 0: 64, 1: 62, 2: 70, 3: 94 };
+const PLACE_OFFSET_Y: NumberMap = { 0: 38, 1: 61, 2: 82, 3: 104 };
 
 // place => x/y offsets for the handle in each place
-const PLACE_HANDLE_X_OFFSET: NumberMap = { 0: 130, 1: 142, 2: 151, 3: 171 };
-const PLACE_HANDLE_Y_OFFSET: NumberMap = { 0: 97, 1: 74, 2: 53, 3: 31 };
+const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 130, 1: 142, 2: 151, 3: 171 };
+const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 97, 1: 74, 2: 53, 3: 31 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
-const DIGIT_X_OFFSET: NumberMap = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
+const DIGIT_OFFSET_X: NumberMap = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
 
 // digit => horizontal offset, customized for each single digit base number
-const FIRST_PLACE_DIGIT_X_OFFSET: NumberMap = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15, 8: 10, 9: 15 };
+const FIRST_PLACE_DIGIT_OFFSET_X: NumberMap = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15, 8: 10, 9: 15 };
 
 // place => horizontal positions of the zeros in the base number
 const ZERO_OFFSET: ZeroOffset = {
@@ -124,7 +124,7 @@ class BaseNumberNode extends Node {
     const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
       playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       includeHandles: false,
-      handleYOffset: 0,
+      handleOffsetY: 0,
       isGroupable: true,
 
       // TODO: docs?
@@ -159,16 +159,16 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 6;
-      const handleYOffset = PLACE_HANDLE_Y_OFFSET[ baseNumber.place ] + options.handleYOffset;
+      const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY;
 
       // The handle that attaches to the paper
-      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleYOffset );
+      const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleOffsetY );
 
       this.handleStemNode = new Path( handleStemShape, {
         stroke: 'black',
         lineWidth: lineWidth
       } );
-      this.handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_X_OFFSET[ baseNumber.place ] : backgroundNode.centerX;
+      this.handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_OFFSET_X[ baseNumber.place ] : backgroundNode.centerX;
       this.handleStemNode.bottom = backgroundNode.top + 10;
       this.addChild( this.handleStemNode );
 
@@ -205,12 +205,12 @@ class BaseNumberNode extends Node {
     if ( options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name ) {
 
       // Position of the initial digit
-      let x = PLACE_X_OFFSET[ baseNumber.place ] + DIGIT_X_OFFSET[ baseNumber.digit ];
-      const y = PLACE_Y_OFFSET[ baseNumber.place ];
+      let x = PLACE_OFFSET_X[ baseNumber.place ] + DIGIT_OFFSET_X[ baseNumber.digit ];
+      const y = PLACE_OFFSET_Y[ baseNumber.place ];
 
       // We need to slightly offset some
       if ( baseNumber.place === 0 ) {
-        x += FIRST_PLACE_DIGIT_X_OFFSET[ baseNumber.digit ];
+        x += FIRST_PLACE_DIGIT_OFFSET_X[ baseNumber.digit ];
       }
 
       // The initial (non-zero) digit
@@ -286,9 +286,9 @@ BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( 
  */
 BaseNumberNode.IMAGE_OFFSETS = [
   new Vector2( -14, 0 ),
-  new Vector2( -70, -( PLACE_Y_OFFSET[ 1 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_Y_OFFSET[ 2 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_Y_OFFSET[ 3 ] - PLACE_Y_OFFSET[ 0 ] ) * SCALE )
+  new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE ),
+  new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE ),
+  new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE )
 ];
 
 countingCommon.register( 'BaseNumberNode', BaseNumberNode );
