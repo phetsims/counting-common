@@ -88,11 +88,11 @@ const DIGIT_IMAGE_MAP: ImageMap = {
 
 // place => x/y offsets for the first digit in each place
 const PLACE_OFFSET_X: NumberMap = { 0: 64, 1: 62, 2: 70, 3: 94 };
-const PLACE_OFFSET_Y: NumberMap = { 0: 38, 1: 61, 2: 82, 3: 104 };
+const PLACE_OFFSET_Y: NumberMap = { 0: 38, 1: 59, 2: 80, 3: 102 };
 
 // place => x/y offsets for the handle in each place
 const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 130, 1: 142, 2: 151, 3: 171 };
-const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 97, 1: 74, 2: 53, 3: 31 };
+const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 95, 1: 74, 2: 53, 3: 31 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
 const DIGIT_OFFSET_X: NumberMap = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
@@ -107,6 +107,14 @@ const ZERO_OFFSET: ZeroOffset = {
   2: [ 530, 284 ],
   3: [ 825, 580, 335 ]
 };
+
+// distance that the handle stem should overlap with a paper number (since they don't have a clean edge, we want enough
+// extra length to make sure there is no gap between the paper number background and the stem)
+const PAPER_NUMBER_HANDLE_OVERLAP_Y = 10;
+
+// distance that the handle stem should overlap with a play object card. TODO: should be 0 but not quite working,
+// get cleaner-edged images from AM
+const PLAY_OBJECT_HANDLE_OVERLAP_Y = 2;
 
 // Scale was increased from 72dpi (pixels) to 300dpi, so that we can have crisper graphics.
 const SCALE = 72 / 300;
@@ -138,6 +146,8 @@ class BaseNumberNode extends Node {
       isGroupable = options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name;
     }
 
+    const isPaperNumber = options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name;
+
     assert && !isGroupable && assert( options.playObjectTypeProperty.value.name !== CountingObjectType.PAPER_NUMBER.name,
       'Paper numbers are not allowed to turn off grouping.' );
 
@@ -159,7 +169,9 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 6;
-      const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY;
+      const handleOverlapLength = isPaperNumber ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
+      const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
+      const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
 
       // The handle that attaches to the paper
       const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleOffsetY );
@@ -169,7 +181,7 @@ class BaseNumberNode extends Node {
         lineWidth: lineWidth
       } );
       this.handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_OFFSET_X[ baseNumber.place ] : backgroundNode.centerX;
-      this.handleStemNode.bottom = backgroundNode.top + 10;
+      this.handleStemNode.bottom = backgroundNode.top + handleOverlapLength;
       this.addChild( this.handleStemNode );
 
       let handleCircle;
@@ -202,7 +214,7 @@ class BaseNumberNode extends Node {
     }
 
     // add a number to the background if our type is paper number
-    if ( options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name ) {
+    if ( isPaperNumber ) {
 
       // Position of the initial digit
       let x = PLACE_OFFSET_X[ baseNumber.place ] + DIGIT_OFFSET_X[ baseNumber.digit ];
@@ -233,39 +245,50 @@ class BaseNumberNode extends Node {
       const ONE = 1;
       const value = baseNumber.numberValue;
 
-      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
-      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
-      const singleCardSize = new Dimension2( 62 / SCALE, 100 / SCALE );
-      const sideMargin = ( singleCardSize.width - fullObjectWidth ) / 2;
-
       // TODO: temporary way to organize objects, needs work
       const numberOfRows = value === ONE ? 1 : 5;
       const numberOfColumns = value === ONE ? 1 : 2;
-      const scale = value === ONE ? 1 : 0.3;
+      const numberOfSets = value === 20 ? 2 : 1;
+      const objectScale = value === ONE ? 1 : 0.3;
+
+      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
+      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height / SCALE;
+      const renderedObjectWidth = fullObjectWidth * objectScale;
+      const renderedObjectHeight = fullObjectHeight * objectScale;
+      const singleCardSize = new Dimension2( 62.4 / SCALE, 100.32 / SCALE );
+
+      const xMargin = ( singleCardSize.width - fullObjectWidth ) * 0.5;
+      const yMargin = ( singleCardSize.height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
+      const yExtraMarginTop = backgroundNode.height - yMargin * ( numberOfRows + 1 ) - renderedObjectHeight * numberOfRows;
 
       // add and position the object images
       const objectImages: Image[] = [];
-      for ( let i = 0; i < numberOfRows; i++ ) {
-        for ( let j = 0; j < numberOfColumns; j++ ) {
+      for ( let z = 0; z < numberOfSets; z++ ) {
+        for ( let i = 0; i < numberOfRows; i++ ) {
+          for ( let j = 0; j < numberOfColumns; j++ ) {
 
-          const width = singleCardSize.width;
-          const height = singleCardSize.height;
+            const width = singleCardSize.width;
+            const height = singleCardSize.height;
 
-          const columnWidth = ( width - ( ( numberOfColumns + 1 ) * sideMargin ) ) / numberOfColumns;
-          const centerX = ( ( j + 1 ) * sideMargin ) + ( j * columnWidth ) + ( columnWidth / 2 );
+            const columnWidth = ( width - ( ( numberOfColumns + 1 ) * xMargin ) ) / numberOfColumns;
+            const centerX = ( ( j + 1 ) * xMargin ) + ( j * columnWidth ) + ( columnWidth / 2 ) +
+                            // used to draw a second set for a double card exactly where the objects are when stacked
+                            // from a single card on a double
+                            z * ( backgroundNode.width - singleCardSize.width + 0.5 );
 
-          const rowHeight = ( height - ( ( numberOfRows + 1 ) * sideMargin ) ) / numberOfRows;
-          const centerY = ( ( i + 1 ) * sideMargin ) + ( i * rowHeight ) + ( rowHeight / 2 );
+            const rowHeight = ( height - ( ( numberOfRows + 1 ) * yMargin ) ) / numberOfRows;
+            const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;
 
-          if ( objectImages.length < value ) {
-            const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.playObjectTypeProperty.value.name ), {
-              maxWidth: fullObjectWidth * scale,
-              maxHeight: fullObjectHeight * scale,
-              centerX: centerX,
-              centerY: centerY
-            } );
-            this.addChild( objectImage );
-            objectImages.push( objectImage );
+            if ( objectImages.length < value ) {
+              const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.playObjectTypeProperty.value.name ), {
+                maxWidth: renderedObjectWidth,
+                maxHeight: renderedObjectHeight,
+                centerX: centerX,
+                centerY: centerY
+              } );
+              this.addChild( objectImage );
+              objectImages.push( objectImage );
+            }
           }
         }
       }
