@@ -31,8 +31,7 @@ class PaperNumber {
   public baseNumbers: BaseNumber[];
   public readonly endDragEmitter: Emitter<any>;
   public readonly endAnimationEmitter: Emitter<any>;
-  public alternateBounds: null | Bounds2;
-  public viewHasIndependentModel: boolean;
+  public localBounds: Bounds2;
 
   /**
    * @param numberValue - Numeric value, e.g. 123
@@ -70,12 +69,8 @@ class PaperNumber {
     // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
-    // TODO: these should probably be refactored, see https://github.com/phetsims/number-play/issues/19
-    // alternate Bounds set by the view if needed for dragging
-    this.alternateBounds = null;
-
-    // also set later by the view
-    this.viewHasIndependentModel = true;
+    // local bounds set by the view
+    this.localBounds = new Bounds2( 0, 0, 0, 0 );
   }
 
   /**
@@ -117,33 +112,20 @@ class PaperNumber {
   }
 
   /**
-   * Returns the bounds of the paper number relative to the paper number's origin.
-   */
-  public getLocalBounds(): Bounds2 {
-    // TODO: this is a temporary band-aid for https://github.com/phetsims/number-play/issues/19
-    // Use the largest base number unless this model is independent and uses objects in the view
-    return this.viewHasIndependentModel && this.alternateBounds ? this.alternateBounds :
-           this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
-  }
-
-  /**
    * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds or provided
    * bounds.
    */
   public getBoundaryY(): number {
-    const bounds = this.getLocalBounds();
     const moveToSplitRatio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
-    return bounds.maxY * ( 1 - moveToSplitRatio ) + bounds.minY * moveToSplitRatio;
+    return this.localBounds.maxY * ( 1 - moveToSplitRatio ) + this.localBounds.minY * moveToSplitRatio;
   }
 
   /**
    * Returns the ideal spot to "drag" a number from (near the center of its move target) relative to its origin.
    */
   public getDragTargetOffset(): Vector2 {
-    const bounds = this.getLocalBounds();
-
     const ratio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION / 2;
-    return new Vector2( bounds.centerX, bounds.minY * ratio + bounds.maxY * ( 1 - ratio ) );
+    return new Vector2( this.localBounds.centerX, this.localBounds.minY * ratio + this.localBounds.maxY * ( 1 - ratio ) );
   }
 
   /**
@@ -180,20 +162,16 @@ class PaperNumber {
    * @param viewBounds
    * @param newDestination
    * @param [animate] - Indicates if the new constrained position should be directly set or animated
-   * @param [useAlternateBounds] - Indicates if the alternate bounds should
    */
-  // TODO remove this when removing alternate bounds
-  // eslint-disable-next-line default-param-last
-  public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false, useAlternateBounds?: boolean ): void {
+  public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false ): void {
 
     // Determine how our number's origin can be placed in the bounds
-    // @ts-ignore TODO-TS: Specified type wont be needed for localBounds once alternateBounds is removed
-    const localBounds: Bounds2 = useAlternateBounds ? this.alternateBounds : this.getLocalBounds();
     const padding = 10;
-    const originBounds = new Bounds2( viewBounds.left - localBounds.left,
-      viewBounds.top - localBounds.top,
-      viewBounds.right - localBounds.right,
-      viewBounds.bottom - localBounds.bottom ).eroded( padding );
+    const originBounds = new Bounds2(
+      viewBounds.left - this.localBounds.left,
+      viewBounds.top - this.localBounds.top,
+      viewBounds.right - this.localBounds.right,
+      viewBounds.bottom - this.localBounds.bottom ).eroded( padding );
     this.setDestination( originBounds.closestPointTo( newDestination ), animate );
   }
 

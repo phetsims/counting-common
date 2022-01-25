@@ -116,8 +116,7 @@ class PaperNumberNode extends Node {
       },
 
       drag: ( event: Event, listener: DragListener ) => {
-        paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false,
-          !!this.playObjectTypeProperty );
+        paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false );
       },
 
       end: ( event: Event ) => {
@@ -210,12 +209,12 @@ class PaperNumberNode extends Node {
 
     const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ];
 
+    const fullBounds = this.numberImageContainer.bounds.copy();
     // @ts-ignore
     const backgroundNode = biggestBaseNumberNode.backgroundNode;
     const boundsWithoutHandle = backgroundNode ? biggestBaseNumberNode.localToParentBounds( backgroundNode.bounds ) :
-                 this.numberImageContainer.bounds;
-
-    this.paperNumber.alternateBounds = this.numberImageContainer.bounds.copy();
+                                fullBounds;
+    this.paperNumber.localBounds = fullBounds;
 
     if ( isGroupable ) {
       this.splitTarget.visible = true;
@@ -237,7 +236,7 @@ class PaperNumberNode extends Node {
       // @ts-ignore TODO-TS: needs refactor
       const splitTargetBounds = firstHandleXPosition ? new Bounds2(
         firstHandleXPosition - padding,
-        this.numberImageContainer.bounds.minY - padding / 2,
+        fullBounds.minY - padding / 2,
         // @ts-ignore TODO-TS: needs refactor
         lastHandleXPosition + padding,
         boundsWithoutHandle.minY
@@ -294,7 +293,7 @@ class PaperNumberNode extends Node {
       return Number.POSITIVE_INFINITY;
     }
     else {
-      const globalBounds = this.localToGlobalBounds( this.paperNumber.getLocalBounds() );
+      const globalBounds = this.localToGlobalBounds( this.paperNumber.localBounds );
       return Math.sqrt( globalBounds.minimumDistanceToPointSquared( globalPoint ) );
     }
   }
