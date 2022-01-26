@@ -171,13 +171,12 @@ class PaperNumber {
    * Determine how our number's origin can be placed in the provided bounds.
    */
   public getOriginBounds( viewBounds: Bounds2 ): Bounds2 {
-    const padding = 10;
     return new Bounds2(
       viewBounds.left - this.localBounds.left,
       viewBounds.top - this.localBounds.top,
       viewBounds.right - this.localBounds.right,
       viewBounds.bottom - this.localBounds.bottom
-    ).eroded( padding );
+    ).eroded( CountingCommonConstants.COUNTING_PLAY_AREA_MARGIN );
   }
 
   /**
