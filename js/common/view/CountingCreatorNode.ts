@@ -20,11 +20,16 @@ import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
+import GroupingLinkingType from '../model/GroupingLinkingType.js';
+import Property from '../../../../axon/js/Property.js';
 
 // types
 type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
   playObjectTypeProperty: EnumerationProperty<CountingObjectType>
+  groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType>,
+  targetScale: number,
+  backTargetOffset: Vector2
 };
 
 class CountingCreatorNode extends Node {
@@ -35,7 +40,10 @@ class CountingCreatorNode extends Node {
 
     const options = merge( {
       updateCurrentNumber: false,
-      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER )
+      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
+      groupingLinkingTypeProperty: new EnumerationProperty( GroupingLinkingType.GROUPED ),
+      targetScale: 0.65,
+      backTargetOffset: new Vector2( -9, -9 )
     }, providedOptions ) as CountingCreatorNodeOptions;
 
     super();
@@ -48,17 +56,8 @@ class CountingCreatorNode extends Node {
     const createSingleTargetNode = ( offset: Vector2 ): Node => {
       const targetNode = new Node();
 
-      targetNode.addChild( new BaseNumberNode( new BaseNumber( 1, place ), 1, {
-        includeHandles: false,
-        playObjectTypeProperty: options.playObjectTypeProperty
-      } ) );
-
-      if ( options.playObjectTypeProperty.value === CountingObjectType.PAPER_NUMBER ) {
-        targetNode.scale( 0.64, 0.55 );
-      }
-      else {
-        targetNode.scale( 0.85 );
-      }
+      targetNode.addChild( this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupingLinkingTypeProperty ) );
+      targetNode.scale( options.targetScale );
 
       targetNode.translation = offset;
       return targetNode;
@@ -67,7 +66,7 @@ class CountingCreatorNode extends Node {
     const numberValue = Math.pow( 10, place );
 
     // empirically determined stacking
-    const backTargetNode = createSingleTargetNode( new Vector2( -9, -9 ) );
+    const backTargetNode = createSingleTargetNode( options.backTargetOffset );
     const frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
 
     this.targetNode = new Node( {
@@ -76,16 +75,16 @@ class CountingCreatorNode extends Node {
     } );
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
-    options.playObjectTypeProperty.lazyLink( playObjectType => {
-      this.targetNode.children.forEach( targetNode => {
-        targetNode.removeAllChildren();
+    Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupingLinkingTypeProperty ],
+      ( playObjectType, groupingLinkingType ) => {
+        this.targetNode.children.forEach( targetNode => {
+          targetNode.removeAllChildren();
 
-        targetNode.addChild( new BaseNumberNode( new BaseNumber( 1, place ), 1, {
-          includeHandles: false,
-          playObjectTypeProperty: options.playObjectTypeProperty
-        } ) );
+          targetNode.addChild(
+            this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupingLinkingTypeProperty )
+          );
+        } );
       } );
-    } );
 
     // We need to be disabled if adding this number would increase the sum past the maximum sum.
     new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );
@@ -139,6 +138,17 @@ class CountingCreatorNode extends Node {
 
     // Transformed to view coordinates
     return trail.localToGlobalPoint( this.targetNode.localBounds.center );
+  }
+
+  private createBaseNumberNode( place: number,
+                                playObjectTypeProperty: EnumerationProperty<CountingObjectType>,
+                                groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType>
+  ): BaseNumberNode {
+    return new BaseNumberNode( new BaseNumber( 1, place ), 1, {
+      includeHandles: false,
+      playObjectTypeProperty: playObjectTypeProperty,
+      isGroupable: groupingLinkingTypeProperty.value !== GroupingLinkingType.UNGROUPED
+    } );
   }
 }
 
