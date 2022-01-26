@@ -103,11 +103,8 @@ class CountingCreatorNode extends Node {
         const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
         const paperNumber = new PaperNumber( numberValue, new Vector2( 0, 0 ) );
 
-        // TODO: needs improvement, magic values determined from bounds of rendered play object nodes, see https://github.com/phetsims/number-play/issues/19
-        const dragTargetOffset = options.playObjectTypeProperty ? new Vector2( 41, 57 ) : paperNumber.getDragTargetOffset();
-
         // Once we have the number's bounds, we set the position so that our pointer is in the middle of the drag target.
-        paperNumber.setDestination( viewPosition.minus( dragTargetOffset ), false );
+        paperNumber.setDestination( viewPosition.minus( paperNumber.getDragTargetOffset() ), false );
 
         // Create and start dragging the new paper number node
         screenView.addAndDragNumber( event, paperNumber );

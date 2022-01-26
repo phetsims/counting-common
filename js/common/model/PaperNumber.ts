@@ -69,8 +69,8 @@ class PaperNumber {
     // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
-    // local bounds set by the view
-    this.localBounds = new Bounds2( 0, 0, 0, 0 );
+    // local bounds, also set later by the view TODO: How to get these in a better way
+    this.localBounds = CountingCommonConstants.SINGLE_COUNTING_OBJECT_BOUNDS;
   }
 
   /**
@@ -124,8 +124,7 @@ class PaperNumber {
    * Returns the ideal spot to "drag" a number from (near the center of its move target) relative to its origin.
    */
   public getDragTargetOffset(): Vector2 {
-    const ratio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION / 2;
-    return new Vector2( this.localBounds.centerX, this.localBounds.minY * ratio + this.localBounds.maxY * ( 1 - ratio ) );
+    return this.localBounds.center.plusXY( 0, 0.15 * this.localBounds.height );
   }
 
   /**
@@ -164,15 +163,21 @@ class PaperNumber {
    * @param [animate] - Indicates if the new constrained position should be directly set or animated
    */
   public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false ): void {
+    const originBounds = this.getOriginBounds( viewBounds );
+    this.setDestination( originBounds.closestPointTo( newDestination ), animate );
+  }
 
-    // Determine how our number's origin can be placed in the bounds
+  /**
+   * Determine how our number's origin can be placed in the provided bounds.
+   */
+  public getOriginBounds( viewBounds: Bounds2 ): Bounds2 {
     const padding = 10;
-    const originBounds = new Bounds2(
+    return new Bounds2(
       viewBounds.left - this.localBounds.left,
       viewBounds.top - this.localBounds.top,
       viewBounds.right - this.localBounds.right,
-      viewBounds.bottom - this.localBounds.bottom ).eroded( padding );
-    this.setDestination( originBounds.closestPointTo( newDestination ), animate );
+      viewBounds.bottom - this.localBounds.bottom
+    ).eroded( padding );
   }
 
   /**

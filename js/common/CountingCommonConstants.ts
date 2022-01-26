@@ -13,6 +13,7 @@ import ball_png from '../../images/ball_png.js';
 import dog_png from '../../images/dog_png.js';
 import PlayObjectType from './model/PlayObjectType.js';
 import cupcake_png from '../../images/cupcake_png.js';
+import Bounds2 from '../../../dot/js/Bounds2.js';
 
 // convenience map that links play object types to their corresponding images
 // TODO: .name needed because ComparePlayObjectType needs to use this Map as well
@@ -43,6 +44,7 @@ const CountingCommonConstants = {
    */
   MOVE_AWAY_DISTANCE: { 1: 50, 2: 100, 3: 150, 4: 160 },
 
+  SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -14, 0, 48.4, 100.32 ), // from rendered images TODO: consider better plan for this
   PLAY_OBJECT_TYPE_TO_IMAGE: PLAY_OBJECT_TYPE_TO_IMAGE,
   PLAY_OBJECT_SIZE: new Dimension2( 50, 50 ) // in screen coordinates
 };
