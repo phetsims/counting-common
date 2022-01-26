@@ -87,37 +87,37 @@ const DIGIT_IMAGE_MAP: ImageMap = {
 };
 
 // place => x/y offsets for the first digit in each place
-const PLACE_OFFSET_X: NumberMap = { 0: 64, 1: 62, 2: 70, 3: 94 };
-const PLACE_OFFSET_Y: NumberMap = { 0: 38, 1: 59, 2: 80, 3: 102 };
+const PLACE_OFFSET_X: NumberMap = { 0: 15, 1: 15, 2: 17, 3: 23 };
+const PLACE_OFFSET_Y: NumberMap = { 0: 9, 1: 14, 2: 19, 3: 24 };
 
 // place => x/y offsets for the handle in each place
-const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 130, 1: 142, 2: 151, 3: 171 };
-const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 95, 1: 74, 2: 53, 3: 31 };
+const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 31, 1: 34, 2: 36, 3: 41 };
+const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 23, 1: 18, 2: 13, 3: 7 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
-const DIGIT_OFFSET_X: NumberMap = { 1: 93, 2: -7, 3: -7, 4: -9, 5: -18, 6: -5, 7: -24, 8: -2, 9: -10 };
+const DIGIT_OFFSET_X: NumberMap = { 1: 22, 2: -1.7, 3: -1.7, 4: -2.1, 5: -4.3, 6: -1.2, 7: -5.8, 8: -0.5, 9: -2.4 };
 
 // digit => horizontal offset, customized for each single digit base number
-const FIRST_PLACE_DIGIT_OFFSET_X: NumberMap = { 1: -61, 2: 0, 3: 0, 4: 0, 5: 5, 6: 0, 7: 15, 8: 10, 9: 15 };
+const FIRST_PLACE_DIGIT_OFFSET_X: NumberMap = { 1: -14, 2: 0, 3: 0, 4: 0, 5: 1.2, 6: 0, 7: 3.6, 8: 2.4, 9: 3.6 };
 
 // place => horizontal positions of the zeros in the base number
 const ZERO_OFFSET: ZeroOffset = {
   0: [],
-  1: [ 272 ],
-  2: [ 530, 284 ],
-  3: [ 825, 580, 335 ]
+  1: [ 65 ],
+  2: [ 127, 68 ],
+  3: [ 198, 139, 80 ]
 };
 
 // distance that the handle stem should overlap with a paper number (since they don't have a clean edge, we want enough
 // extra length to make sure there is no gap between the paper number background and the stem)
-const PAPER_NUMBER_HANDLE_OVERLAP_Y = 10;
+const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
-// distance that the handle stem should overlap with a play object card. TODO: should be 0 but not quite working,
-// get cleaner-edged images from AM
-const PLAY_OBJECT_HANDLE_OVERLAP_Y = 2;
+// distance that the handle stem should overlap with a play object card. TODO: should be 0 but not quite working, get
+// cleaner-edged images from AM
+const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.5;
 
 // Scale was increased from 72dpi (pixels) to 300dpi, so that we can have crisper graphics.
-const SCALE = 72 / 300;
+const IMAGE_SCALE = 72 / 300;
 
 class BaseNumberNode extends Node {
 
@@ -127,7 +127,7 @@ class BaseNumberNode extends Node {
   public readonly backgroundNode: Image | null = null;
 
   constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
-    super( { scale: SCALE } );
+    super();
 
     const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
       playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
@@ -156,7 +156,8 @@ class BaseNumberNode extends Node {
 
     // The paper behind the numbers
     const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.playObjectTypeProperty.value.name )[ baseNumber.place ], {
-      imageOpacity: opacity
+      imageOpacity: opacity,
+      scale: IMAGE_SCALE
     } );
 
     // TODO: needs better logic and or docs in this section, see https://github.com/phetsims/counting-common/issues/1
@@ -168,7 +169,7 @@ class BaseNumberNode extends Node {
     if ( options.includeHandles && !( baseNumber.numberValue === 1 && !options.isPartOfStack )
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
-      const lineWidth = 6;
+      const lineWidth = 1.5;
       const handleOverlapLength = isPaperNumber ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
@@ -185,7 +186,7 @@ class BaseNumberNode extends Node {
       this.addChild( this.handleStemNode );
 
       let handleCircle;
-      const outerCircleRadius = 22;
+      const outerCircleRadius = 5.3;
 
       if ( options.isLargestBaseNumber ) {
         handleCircle = new Circle( outerCircleRadius, {
@@ -193,7 +194,7 @@ class BaseNumberNode extends Node {
           stroke: 'black',
           lineWidth: lineWidth
         } );
-        handleCircle.addChild( new Circle( 10, {
+        handleCircle.addChild( new Circle( 2.4, {
           fill: 'black'
         } ) );
       }
@@ -228,7 +229,8 @@ class BaseNumberNode extends Node {
       // The initial (non-zero) digit
       this.addChild( new Image( DIGIT_IMAGE_MAP[ baseNumber.digit ], {
         x: x,
-        y: y
+        y: y,
+        scale: IMAGE_SCALE
       } ) );
 
       // Add the zeros
@@ -236,7 +238,8 @@ class BaseNumberNode extends Node {
       for ( let i = 0; i < digitZeroOffsets.length; i++ ) {
         this.addChild( new Image( digit0_png, {
           x: digitZeroOffsets[ i ],
-          y: y
+          y: y,
+          scale: IMAGE_SCALE
         } ) );
       }
     }
@@ -251,11 +254,11 @@ class BaseNumberNode extends Node {
       const numberOfSets = value === 20 ? 2 : 1;
       const objectScale = value === ONE ? 1 : 0.3;
 
-      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width / SCALE;
-      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height / SCALE;
+      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
+      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height;
       const renderedObjectWidth = fullObjectWidth * objectScale;
       const renderedObjectHeight = fullObjectHeight * objectScale;
-      const singleCardSize = new Dimension2( 62.4 / SCALE, 100.32 / SCALE );
+      const singleCardSize = new Dimension2( 62.4, 100.32 );
 
       const xMargin = ( singleCardSize.width - fullObjectWidth ) * 0.5;
       const yMargin = ( singleCardSize.height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
@@ -274,7 +277,7 @@ class BaseNumberNode extends Node {
             const centerX = ( ( j + 1 ) * xMargin ) + ( j * columnWidth ) + ( columnWidth / 2 ) +
                             // used to draw a second set for a double card exactly where the objects are when stacked
                             // from a single card on a double
-                            z * ( backgroundNode.width - singleCardSize.width + 0.5 );
+                            z * ( backgroundNode.width - singleCardSize.width + 0.1 );
 
             const rowHeight = ( height - ( ( numberOfRows + 1 ) * yMargin ) ) / numberOfRows;
             const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;
@@ -301,7 +304,7 @@ class BaseNumberNode extends Node {
  * Maps place (0-3) to a {Dimension2} with the width/height
  */
 BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER.name ),
-  mipmap => new Dimension2( mipmap[ 0 ].width * SCALE, mipmap[ 0 ].height * SCALE ) );
+  mipmap => new Dimension2( mipmap[ 0 ].width, mipmap[ 0 ].height ) );
 
 /**
  * Maps place (0-3) to a {Vector2} that is the offset of the upper-left corner of the BaseNumberNode relative to a
@@ -309,9 +312,9 @@ BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( 
  */
 BaseNumberNode.IMAGE_OFFSETS = [
   new Vector2( -14, 0 ),
-  new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ) * SCALE, -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) * SCALE )
+  new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) ),
+  new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) ),
+  new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) )
 ];
 
 countingCommon.register( 'BaseNumberNode', BaseNumberNode );
