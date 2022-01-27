@@ -106,7 +106,7 @@ class CountingCreatorNode extends Node {
         const paperNumber = new PaperNumber( numberValue, new Vector2( 0, 0 ) );
 
         // Once we have the number's bounds, we set the position so that our pointer is in the middle of the drag target.
-        paperNumber.setDestination( viewPosition.minus( paperNumber.getDragTargetOffset() ), false );
+        paperNumber.setDestination( viewPosition.minus( paperNumber.getDragTargetOffset() ), false, 1 );
 
         // Create and start dragging the new paper number node
         screenView.addAndDragNumber( event, paperNumber );

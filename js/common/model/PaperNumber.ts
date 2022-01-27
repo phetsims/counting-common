@@ -17,9 +17,18 @@ import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumber from './BaseNumber.js';
+import Easing from '../../../../twixt/js/Easing.js';
+import Animation from '../../../../twixt/js/Animation.js';
+import Range from '../../../../dot/js/Range.js';
 
 // Incremented for PaperNumber IDs
 let nextPaperNumberId = 1;
+
+// constants
+const ANIMATION_SPEED = 300; // in screen coordinates per second
+const MAX_ANIMATION_TIME = 1; // in seconds
+const MIN_ANIMATION_TIME = 0.2; // in seconds
+const ANIMATION_TIME_RANGE = new Range( MIN_ANIMATION_TIME, MAX_ANIMATION_TIME );
 
 class PaperNumber {
   public readonly id: number;
@@ -32,6 +41,8 @@ class PaperNumber {
   public readonly endDragEmitter: Emitter<any>;
   public readonly endAnimationEmitter: Emitter<any>;
   public localBounds: Bounds2;
+  public readonly scaleProperty: NumberProperty;
+  private animation: Animation | null;
 
   /**
    * @param numberValue - Numeric value, e.g. 123
@@ -53,11 +64,16 @@ class PaperNumber {
     // view node.
     this.userControlledProperty = new BooleanProperty( false );
 
-    // Destination is used for animation, and should be set through accessor methods only.
+    this.scaleProperty = new NumberProperty( 1 );
+
+    // Should be set through accessor methods only.
     this.destination = initialPosition.copy();
 
     // Whether this element is animating from one position to another, do not set externally.
     this.animating = false;
+
+    // store any animations so we can check if one is still running
+    this.animation = null;
 
     // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
     // when summed will equal our number.
@@ -80,25 +96,31 @@ class PaperNumber {
    */
   public step( dt: number ): void {
     if ( !this.userControlledProperty.value ) {
-      const currentPosition = this.positionProperty.value;
-      assert && assert( currentPosition.isFinite() );
-      assert && assert( this.destination.isFinite() );
-
-      // perform any animation
-      const distanceToDestination = currentPosition.distance( this.destination );
-      if ( distanceToDestination > dt * CountingCommonConstants.ANIMATION_VELOCITY ) {
-        // Move a step toward the destination.
-        const stepVector = this.destination.minus( currentPosition ).setMagnitude( CountingCommonConstants.ANIMATION_VELOCITY * dt );
-        assert && assert( stepVector.isFinite() );
-        this.positionProperty.value = currentPosition.plus( stepVector );
-
-      }
-      else if ( this.animating ) {
-        // Less than one time step away, so just go to the destination.
-        this.positionProperty.value = this.destination;
-        this.animating = false;
-        this.endAnimationEmitter.emit( this );
-      }
+      // const currentPosition = this.positionProperty.value;
+      // assert && assert( currentPosition.isFinite() );
+      // assert && assert( this.destination.isFinite() );
+      //
+      // // perform any animation
+      // const distanceToDestination = currentPosition.distance( this.destination );
+      // if ( distanceToDestination > dt * CountingCommonConstants.ANIMATION_VELOCITY ) {
+      //
+      //   this.animationProgress = Math.min( 1, this.animationProgress + animationDt * animationSpeed );
+      //   const ratio = Easing.CUBIC_IN_OUT.value( this.animationProgress );
+      //   this.positionProperty.set(
+      //     new Vector2( this.animationStartPosition.blend( this.destination, ratio ).x, floorPosition ) );
+      //
+      //   // Move a step toward the destination.
+      //   const stepVector = this.destination.minus( currentPosition ).setMagnitude( CountingCommonConstants.ANIMATION_VELOCITY * dt );
+      //   assert && assert( stepVector.isFinite() );
+      //   this.positionProperty.value = currentPosition.plus( stepVector );
+      //
+      // }
+      // else if ( this.animating ) {
+      //   // Less than one time step away, so just go to the destination.
+      //   this.positionProperty.value = this.destination;
+      //   this.animating = false;
+      //   this.endAnimationEmitter.emit( this );
+      // }
     }
   }
 
@@ -149,16 +171,61 @@ class PaperNumber {
    * @param animate - Whether to animate. If true, it will slide towards the destination. If false, it will immediately
    *                  set the position to be the same as the destination.
    */
-  public setDestination( destination: Vector2, animate: boolean ): void {
+  // TODO: Clean up usage sites! Type and linking Properties likely need to be moved into the model.
+  public setDestination( destination: Vector2, animate: boolean, scale: number ): void {
     assert && assert( destination.isFinite() );
 
     this.destination = destination;
 
     if ( animate ) {
       this.animating = true;
+
+      this.animation && this.animation.stop();
+      const distance = this.positionProperty.value.distance( destination );
+
+      if ( distance > 0 ) {
+
+        // calculate the time needed to get to the destination
+        const animationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
+
+        this.animation = new Animation( {
+          duration: animationDuration,
+          targets: [ {
+            property: this.positionProperty,
+            to: destination,
+            easing: Easing.QUADRATIC_IN_OUT
+          }, {
+            property: this.scaleProperty,
+            to: scale,
+            from: this.scaleProperty.value
+          } ]
+        } );
+
+        this.animation.start();
+        this.animation.finishEmitter.addListener( () => {
+          this.animating = false;
+          this.endAnimationEmitter.emit( this );
+          this.animation = null;
+        } );
+      }
+      else {
+        this.animation = new Animation( {
+          property: this.scaleProperty,
+          to: scale,
+          from: this.scaleProperty.value,
+          duration: MAX_ANIMATION_TIME / 2
+        } );
+        this.animation.start();
+        this.animation.finishEmitter.addListener( () => {
+          this.animating = false;
+          this.endAnimationEmitter.emit( this );
+          this.animation = null;
+        } );
+      }
     }
     else {
       this.positionProperty.value = destination;
+      this.scaleProperty.value = scale;
     }
   }
 
@@ -171,7 +238,7 @@ class PaperNumber {
    */
   public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false ): void {
     const originBounds = this.getOriginBounds( viewBounds );
-    this.setDestination( originBounds.closestPointTo( newDestination ), animate );
+    this.setDestination( originBounds.closestPointTo( newDestination ), animate, 1 );
   }
 
   /**

@@ -49,6 +49,7 @@ class PaperNumberNode extends Node {
   private readonly updateNumberListener: () => void;
   private readonly userControlledListener: ( userControlled: any ) => void;
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
+  private readonly scaleListener: ( scale: number ) => void;
 
   /**
    * @param paperNumber
@@ -166,6 +167,10 @@ class PaperNumberNode extends Node {
     // Listener that hooks model position to view translation.
     this.translationListener = position => {
       this.translation = position;
+    };
+
+    this.scaleListener = scale => {
+      this.setScaleMagnitude( scale );
     };
 
     // Listener for when our number changes
@@ -306,6 +311,7 @@ class PaperNumberNode extends Node {
    */
   public attachListeners(): void {
     // mirrored unlinks in detachListeners()
+    this.paperNumber.scaleProperty.link( this.scaleListener );
     this.paperNumber.userControlledProperty.link( this.userControlledListener );
     this.paperNumber.numberValueProperty.link( this.updateNumberListener );
     this.paperNumber.positionProperty.link( this.translationListener );
@@ -318,6 +324,7 @@ class PaperNumberNode extends Node {
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
     this.paperNumber.userControlledProperty.unlink( this.userControlledListener );
+    this.paperNumber.scaleProperty.unlink( this.scaleListener );
 
     // remove any listeners on the children before detaching them
     this.numberImageContainer.children.forEach( child => child.dispose() );
