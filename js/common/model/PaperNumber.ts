@@ -112,6 +112,13 @@ class PaperNumber {
   }
 
   /**
+   * Getter for our animating state.
+   */
+  public get isAnimating() {
+    return this.animating;
+  }
+
+  /**
    * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds or provided
    * bounds.
    */
