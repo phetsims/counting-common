@@ -140,7 +140,7 @@ class CountingCreatorNode extends Node {
     trail = trail.slice( 1, trail.length );
 
     // Transformed to view coordinates
-    return trail.localToGlobalPoint( this.targetNode.localBounds.center );
+    return trail.localToGlobalPoint( this.targetNode.children[ 1 ].localBounds.center );
   }
 
   private createBaseNumberNode( place: number,
