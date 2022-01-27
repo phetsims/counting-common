@@ -79,11 +79,14 @@ class CountingCreatorNode extends Node {
     } );
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
+    // TODO: Too much duplication (and memory leaks)?
     Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupingLinkingTypeProperty ],
     ( playObjectType, groupingLinkingType ) => {
       this.targetNode.removeAllChildren();
       this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
       this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
+      new DerivedProperty( [ sumProperty ],
+        sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
     } );
 
     // We need to be disabled if adding this number would increase the sum past the maximum sum.
@@ -92,7 +95,7 @@ class CountingCreatorNode extends Node {
     // Don't show the one of the two parts of the target node if adding two numbers would increase the sum past the
     // maximum sum.
     new DerivedProperty( [ sumProperty ],
-      sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( backTargetNode, 'visible' );
+      sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
 
     this.targetNode.addInputListener( {
       down: ( event: any ) => {
