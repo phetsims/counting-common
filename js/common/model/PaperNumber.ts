@@ -172,7 +172,7 @@ class PaperNumber {
    *                  set the position to be the same as the destination.
    */
   // TODO: Clean up usage sites! Type and linking Properties likely need to be moved into the model.
-  public setDestination( destination: Vector2, animate: boolean, scale: number ): void {
+  public setDestination( destination: Vector2, animate: boolean, scale: number = 1 ): void {
     assert && assert( destination.isFinite() );
 
     this.destination = destination;
