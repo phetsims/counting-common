@@ -28,6 +28,9 @@ type PaperNumberNodeOptions = {
   baseNumberNodeOptions: Partial<BaseNumberNodeOptions>
 }
 
+// constants
+const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
+
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
   public readonly moveEmitter: Emitter<any>;
@@ -330,8 +333,8 @@ class PaperNumberNode extends Node {
 
     // find all other paper number nodes that are overlapping the dropped node
     const unorderedAttachableNodes = attachableNodeCandidates.filter( candidateNode => {
-      return candidateNode.localToParentBounds( candidateNode.moveTarget.bounds )
-        .intersectsBounds( this.localToParentBounds( this.moveTarget.bounds ) );
+      return candidateNode.localToParentBounds( candidateNode.moveTarget.bounds ).eroded( MINIMUM_OVERLAP_AMOUNT_TO_COMBINE )
+        .intersectsBounds( this.localToParentBounds( this.moveTarget.bounds ).eroded( MINIMUM_OVERLAP_AMOUNT_TO_COMBINE ) );
     } );
 
     // sort by how much area they are overlapping the dropped node
