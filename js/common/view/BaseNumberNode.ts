@@ -258,10 +258,10 @@ class BaseNumberNode extends Node {
       const value = baseNumber.numberValue;
 
       // TODO: temporary way to organize objects, needs work
-      const numberOfRows = value === ONE ? 1 : 5;
-      const numberOfColumns = value === ONE ? 1 : 2;
+      const numberOfRows = value === ONE && !options.isPartOfStack ? 1 : 5;
+      const numberOfColumns = value === ONE && !options.isPartOfStack ? 1 : 2;
+      const objectScale = value === ONE && !options.isPartOfStack ? 1 : 0.3;
       const numberOfSets = value === 20 ? 2 : 1;
-      const objectScale = value === ONE ? 1 : 0.3;
 
       const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
       const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height;
