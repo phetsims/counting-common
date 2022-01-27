@@ -87,25 +87,35 @@ const DIGIT_IMAGE_MAP: ImageMap = {
 };
 
 // place => x/y offsets for the first digit in each place
-const PLACE_OFFSET_X: NumberMap = { 0: 15, 1: 15, 2: 17, 3: 23 };
-const PLACE_OFFSET_Y: NumberMap = { 0: 9, 1: 14, 2: 19, 3: 24 };
+const PLACE_OFFSET_X: NumberMap = { 0: 13.44, 1: 13.02, 2: 14.7, 3: 19.74 };
+const PLACE_OFFSET_Y: NumberMap = { 0: 7.98, 1: 12.39, 2: 16.8, 3: 21.42 };
 
 // place => x/y offsets for the handle in each place
-const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 31, 1: 34, 2: 36, 3: 41 };
-const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 23, 1: 18, 2: 13, 3: 7 };
+const PLACE_HANDLE_OFFSET_X: NumberMap = { 0: 27.3, 1: 29.82, 2: 31.71, 3: 35.91 };
+const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 19.95, 1: 15.54, 2: 11.13, 3: 6.51 };
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
-const DIGIT_OFFSET_X: NumberMap = { 1: 22, 2: -1.7, 3: -1.7, 4: -2.1, 5: -4.3, 6: -1.2, 7: -5.8, 8: -0.5, 9: -2.4 };
+const DIGIT_OFFSET_X: NumberMap = {
+  1: 19.53,
+  2: -1.47,
+  3: -1.47,
+  4: -1.89,
+  5: -3.78,
+  6: -1.05,
+  7: -5.04,
+  8: -0.42,
+  9: -2.1
+};
 
 // digit => horizontal offset, customized for each single digit base number
-const FIRST_PLACE_DIGIT_OFFSET_X: NumberMap = { 1: -14, 2: 0, 3: 0, 4: 0, 5: 1.2, 6: 0, 7: 3.6, 8: 2.4, 9: 3.6 };
+const FIRST_PLACE_DIGIT_OFFSET_X: NumberMap = { 1: -12.81, 2: 0, 3: 0, 4: 0, 5: 1.05, 6: 0, 7: 3.15, 8: 2.1, 9: 3.15 };
 
 // place => horizontal positions of the zeros in the base number
 const ZERO_OFFSET: ZeroOffset = {
   0: [],
-  1: [ 65 ],
-  2: [ 127, 68 ],
-  3: [ 198, 139, 80 ]
+  1: [ 57.12 ],
+  2: [ 111.3, 59.64 ],
+  3: [ 173.25, 121.8, 70.35 ]
 };
 
 // distance that the handle stem should overlap with a paper number (since they don't have a clean edge, we want enough
@@ -114,10 +124,9 @@ const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
 // distance that the handle stem should overlap with a play object card. TODO: should be 0 but not quite working, get
 // cleaner-edged images from AM
-const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.5;
+const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.4;
 
-// Scale was increased from 72dpi (pixels) to 300dpi, so that we can have crisper graphics.
-const IMAGE_SCALE = 72 / 300;
+const IMAGE_SCALE = 0.21;
 
 class BaseNumberNode extends Node {
 
@@ -169,7 +178,7 @@ class BaseNumberNode extends Node {
     if ( options.includeHandles && !( baseNumber.numberValue === 1 && !options.isPartOfStack )
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
-      const lineWidth = 1.5;
+      const lineWidth = 1.24;
       const handleOverlapLength = isPaperNumber ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
@@ -186,7 +195,7 @@ class BaseNumberNode extends Node {
       this.addChild( this.handleStemNode );
 
       let handleCircle;
-      const outerCircleRadius = 5.3;
+      const outerCircleRadius = 4.6;
 
       if ( options.isLargestBaseNumber ) {
         handleCircle = new Circle( outerCircleRadius, {
@@ -194,7 +203,7 @@ class BaseNumberNode extends Node {
           stroke: 'black',
           lineWidth: lineWidth
         } );
-        handleCircle.addChild( new Circle( 2.4, {
+        handleCircle.addChild( new Circle( 2.1, {
           fill: 'black'
         } ) );
       }
@@ -258,10 +267,10 @@ class BaseNumberNode extends Node {
       const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height;
       const renderedObjectWidth = fullObjectWidth * objectScale;
       const renderedObjectHeight = fullObjectHeight * objectScale;
-      const singleCardSize = new Dimension2( 62.4, 100.32 );
+      const singleCardBounds = CountingCommonConstants.SINGLE_COUNTING_OBJECT_BOUNDS;
 
-      const xMargin = ( singleCardSize.width - fullObjectWidth ) * 0.5;
-      const yMargin = ( singleCardSize.height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
+      const xMargin = ( singleCardBounds.width - fullObjectWidth ) * 0.5;
+      const yMargin = ( singleCardBounds.height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
       const yExtraMarginTop = backgroundNode.height - yMargin * ( numberOfRows + 1 ) - renderedObjectHeight * numberOfRows;
 
       // add and position the object images
@@ -270,14 +279,14 @@ class BaseNumberNode extends Node {
         for ( let i = 0; i < numberOfRows; i++ ) {
           for ( let j = 0; j < numberOfColumns; j++ ) {
 
-            const width = singleCardSize.width;
-            const height = singleCardSize.height;
+            const width = singleCardBounds.width;
+            const height = singleCardBounds.height;
 
             const columnWidth = ( width - ( ( numberOfColumns + 1 ) * xMargin ) ) / numberOfColumns;
             const centerX = ( ( j + 1 ) * xMargin ) + ( j * columnWidth ) + ( columnWidth / 2 ) +
                             // used to draw a second set for a double card exactly where the objects are when stacked
                             // from a single card on a double
-                            z * ( backgroundNode.width - singleCardSize.width + 0.1 );
+                            z * ( backgroundNode.width - singleCardBounds.width + 0.1 );
 
             const rowHeight = ( height - ( ( numberOfRows + 1 ) * yMargin ) ) / numberOfRows;
             const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;
@@ -311,7 +320,7 @@ BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( 
  * 1-digit BaseNumberNode.
  */
 BaseNumberNode.IMAGE_OFFSETS = [
-  new Vector2( -14, 0 ),
+  new Vector2( -21, 0 ),
   new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) ),
   new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) ),
   new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) )

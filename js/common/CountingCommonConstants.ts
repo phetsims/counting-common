@@ -45,9 +45,9 @@ const CountingCommonConstants = {
   MOVE_AWAY_DISTANCE: { 1: 50, 2: 100, 3: 150, 4: 160 },
 
   COUNTING_PLAY_AREA_MARGIN: 10,
-  SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -14, 0, 48.4, 100.32 ), // from rendered images TODO: consider better plan for this
+  SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images TODO: need better plan for this
   PLAY_OBJECT_TYPE_TO_IMAGE: PLAY_OBJECT_TYPE_TO_IMAGE,
-  PLAY_OBJECT_SIZE: new Dimension2( 50, 50 ) // in screen coordinates
+  PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ) // in screen coordinates
 };
 
 countingCommon.register( 'CountingCommonConstants', CountingCommonConstants );
