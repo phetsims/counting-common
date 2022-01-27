@@ -28,7 +28,8 @@ type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
   playObjectTypeProperty: EnumerationProperty<CountingObjectType>
   groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType>,
-  targetScale: number,
+  groupedTargetScale: number,
+  ungroupedTargetScale: number,
   backTargetOffset: Vector2
 };
 
@@ -42,7 +43,8 @@ class CountingCreatorNode extends Node {
       updateCurrentNumber: false,
       playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingLinkingTypeProperty: new EnumerationProperty( GroupingLinkingType.GROUPED ),
-      targetScale: 0.65,
+      groupedTargetScale: 0.65,
+      ungroupedTargetScale: 1,
       backTargetOffset: new Vector2( -9, -9 )
     }, providedOptions ) as CountingCreatorNodeOptions;
 
@@ -57,7 +59,9 @@ class CountingCreatorNode extends Node {
       const targetNode = new Node();
 
       targetNode.addChild( this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupingLinkingTypeProperty ) );
-      targetNode.scale( options.targetScale );
+      const scale = options.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED ?
+                    options.ungroupedTargetScale : options.groupedTargetScale;
+      targetNode.scale( scale );
 
       targetNode.translation = offset;
       return targetNode;
@@ -76,15 +80,11 @@ class CountingCreatorNode extends Node {
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
     Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupingLinkingTypeProperty ],
-      ( playObjectType, groupingLinkingType ) => {
-        this.targetNode.children.forEach( targetNode => {
-          targetNode.removeAllChildren();
-
-          targetNode.addChild(
-            this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupingLinkingTypeProperty )
-          );
-        } );
-      } );
+    ( playObjectType, groupingLinkingType ) => {
+      this.targetNode.removeAllChildren();
+      this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
+      this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
+    } );
 
     // We need to be disabled if adding this number would increase the sum past the maximum sum.
     new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );
