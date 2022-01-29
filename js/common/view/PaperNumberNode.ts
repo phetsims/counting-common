@@ -169,6 +169,7 @@ class PaperNumberNode extends Node {
       this.translation = position;
     };
 
+    // Listener for when our scale changes
     this.scaleListener = scale => {
       this.setScaleMagnitude( scale );
     };
@@ -183,6 +184,7 @@ class PaperNumberNode extends Node {
       }
     };
 
+    // Listener for when our type changes
     this.playObjectTypeProperty.lazyLink( playObjectType => {
       this.updateNumber();
     } );
