@@ -20,14 +20,14 @@ import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import GroupingLinkingType from '../model/GroupingLinkingType.js';
+import GroupType from '../model/GroupType.js';
 import Property from '../../../../axon/js/Property.js';
 
 // types
 type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
   playObjectTypeProperty: EnumerationProperty<CountingObjectType>
-  groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType>,
+  groupTypeProperty: EnumerationProperty<GroupType>,
   groupedTargetScale: number,
   ungroupedTargetScale: number,
   backTargetOffset: Vector2
@@ -42,7 +42,7 @@ class CountingCreatorNode extends Node {
     const options = merge( {
       updateCurrentNumber: false,
       playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
-      groupingLinkingTypeProperty: new EnumerationProperty( GroupingLinkingType.GROUPED ),
+      groupTypeProperty: new EnumerationProperty( GroupType.GROUPED ),
       groupedTargetScale: 0.65,
       ungroupedTargetScale: 1,
       backTargetOffset: new Vector2( -9, -9 )
@@ -58,8 +58,8 @@ class CountingCreatorNode extends Node {
     const createSingleTargetNode = ( offset: Vector2 ): Node => {
       const targetNode = new Node();
 
-      targetNode.addChild( this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupingLinkingTypeProperty ) );
-      const scale = options.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED ?
+      targetNode.addChild( this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupTypeProperty ) );
+      const scale = options.groupTypeProperty.value === GroupType.UNGROUPED ?
                     options.ungroupedTargetScale : options.groupedTargetScale;
       targetNode.scale( scale );
 
@@ -80,8 +80,8 @@ class CountingCreatorNode extends Node {
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
     // TODO: Too much duplication (and memory leaks)?
-    Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupingLinkingTypeProperty ],
-    ( playObjectType, groupingLinkingType ) => {
+    Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupTypeProperty ],
+    ( playObjectType, GroupType ) => {
       this.targetNode.removeAllChildren();
       this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
       this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
@@ -145,12 +145,12 @@ class CountingCreatorNode extends Node {
 
   private createBaseNumberNode( place: number,
                                 playObjectTypeProperty: EnumerationProperty<CountingObjectType>,
-                                groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType>
+                                groupTypeProperty: EnumerationProperty<GroupType>
   ): BaseNumberNode {
     return new BaseNumberNode( new BaseNumber( 1, place ), 1, {
       includeHandles: false,
       playObjectTypeProperty: playObjectTypeProperty,
-      isGroupable: groupingLinkingTypeProperty.value !== GroupingLinkingType.UNGROUPED
+      isGroupable: groupTypeProperty.value !== GroupType.UNGROUPED
     } );
   }
 }

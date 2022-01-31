@@ -13,18 +13,17 @@ import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import { DragListener, Node, Rectangle, SceneryEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
-import GroupingLinkingType from '../model/GroupingLinkingType.js';
+import GroupType from '../model/GroupType.js';
 import PaperNumber from '../model/PaperNumber.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
-import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import merge from '../../../../phet-core/js/merge.js';
 
 // types
 type PaperNumberNodeOptions = {
-  groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null,
+  groupTypeProperty: IReadOnlyProperty<GroupType> | null,
   baseNumberNodeOptions: Partial<BaseNumberNodeOptions>
 }
 
@@ -39,7 +38,7 @@ class PaperNumberNode extends Node {
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   private readonly playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
-  private readonly groupingLinkingTypeProperty: EnumerationProperty<GroupingLinkingType> | null;
+  private readonly groupTypeProperty: IReadOnlyProperty<GroupType> | null;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
@@ -66,7 +65,7 @@ class PaperNumberNode extends Node {
     super();
 
     const options = merge( {
-      groupingLinkingTypeProperty: null,
+      groupTypeProperty: null,
       baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
     }, providedOptions ) as PaperNumberNodeOptions;
 
@@ -87,7 +86,7 @@ class PaperNumberNode extends Node {
     this.availableViewBoundsProperty = availableViewBoundsProperty;
 
     this.playObjectTypeProperty = playObjectTypeProperty;
-    this.groupingLinkingTypeProperty = options.groupingLinkingTypeProperty;
+    this.groupTypeProperty = options.groupTypeProperty;
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
 
     // Container for the digit image nodes
@@ -195,7 +194,7 @@ class PaperNumberNode extends Node {
    */
   public updateNumber(): void {
     let isGroupable = true;
-    if ( this.groupingLinkingTypeProperty && this.groupingLinkingTypeProperty.value === GroupingLinkingType.UNGROUPED ) {
+    if ( this.groupTypeProperty && this.groupTypeProperty.value === GroupType.UNGROUPED ) {
       isGroupable = false;
     }
 

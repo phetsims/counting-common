@@ -1,7 +1,7 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
 /**
- * The 3 possible states of grouping + linking in a play area
+ * The two possible states of grouping for counting objects.
  *
  * @author Chris Klusendorf
  */
@@ -10,13 +10,12 @@ import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
 import Enumeration from '../../../../phet-core/js/Enumeration.js';
 import countingCommon from '../../countingCommon.js';
 
-class GroupingLinkingType extends EnumerationValue {
-  static UNGROUPED = new GroupingLinkingType();
-  static GROUPED = new GroupingLinkingType();
-  static GROUPED_AND_LINKED = new GroupingLinkingType();
+class GroupType extends EnumerationValue {
+  static UNGROUPED = new GroupType();
+  static GROUPED = new GroupType();
 
-  static enumeration = new Enumeration( GroupingLinkingType );
+  static enumeration = new Enumeration( GroupType );
 }
 
-countingCommon.register( 'GroupingLinkingType', GroupingLinkingType );
-export default GroupingLinkingType;
+countingCommon.register( 'GroupType', GroupType );
+export default GroupType;
