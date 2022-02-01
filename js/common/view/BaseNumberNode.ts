@@ -26,12 +26,10 @@ import paperBackground10_png from '../../../mipmaps/paperBackground10_png.js';
 import paperBackground1_png from '../../../mipmaps/paperBackground1_png.js';
 import countingCommon from '../../countingCommon.js';
 import BaseNumber from '../model/BaseNumber.js';
-import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import PlayObjectType from '../model/PlayObjectType.js';
 import groupBackground1_png from '../../../mipmaps/groupBackground1_png.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import groupBackground10_png from '../../../mipmaps/groupBackground10_png.js';
-import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import merge from '../../../../phet-core/js/merge.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 
@@ -49,8 +47,8 @@ type PaperNumberDimensions = {
   [ key: number ]: Dimension2
 };
 export type BaseNumberNodeOptions = {
-  playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
-  isGroupable: boolean,
+  countingObjectType: CountingObjectType,
+  groupingEnabled: boolean,
   includeHandles: boolean
   handleOffsetY: number,
   isLargestBaseNumber: boolean,
@@ -139,10 +137,10 @@ class BaseNumberNode extends Node {
     super();
 
     const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
-      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
+      countingObjectType: CountingObjectType.PAPER_NUMBER,
       includeHandles: false,
       handleOffsetY: 0,
-      isGroupable: true,
+      groupingEnabled: true,
 
       // TODO: docs?
       isLargestBaseNumber: true,
@@ -150,21 +148,21 @@ class BaseNumberNode extends Node {
       isPartOfStack: false
     }, providedOptions );
 
-    let isGroupable = options.isGroupable;
-    if ( providedOptions === undefined || providedOptions?.isGroupable === undefined ) {
-      isGroupable = options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name;
+    let groupingEnabled = options.groupingEnabled;
+    if ( providedOptions === undefined || providedOptions?.groupingEnabled === undefined ) {
+      groupingEnabled = options.countingObjectType.name === CountingObjectType.PAPER_NUMBER.name;
     }
 
-    const isPaperNumber = options.playObjectTypeProperty.value.name === CountingObjectType.PAPER_NUMBER.name;
+    const isPaperNumber = options.countingObjectType.name === CountingObjectType.PAPER_NUMBER.name;
 
-    assert && !isGroupable && assert( options.playObjectTypeProperty.value.name !== CountingObjectType.PAPER_NUMBER.name,
+    assert && !groupingEnabled && assert( options.countingObjectType.name !== CountingObjectType.PAPER_NUMBER.name,
       'Paper numbers are not allowed to turn off grouping.' );
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
     // The paper behind the numbers
-    const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.playObjectTypeProperty.value.name )[ baseNumber.place ], {
+    const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.countingObjectType.name )[ baseNumber.place ], {
       imageOpacity: opacity,
       scale: IMAGE_SCALE
     } );
@@ -218,7 +216,7 @@ class BaseNumberNode extends Node {
     }
 
     // add the background paper on top of the handle
-    if ( isGroupable ) {
+    if ( groupingEnabled ) {
       this.addChild( backgroundNode );
       this.backgroundNode = backgroundNode;
     }
@@ -292,7 +290,7 @@ class BaseNumberNode extends Node {
             const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;
 
             if ( objectImages.length < value ) {
-              const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.playObjectTypeProperty.value.name ), {
+              const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.countingObjectType.name ), {
                 maxWidth: renderedObjectWidth,
                 maxHeight: renderedObjectHeight,
                 centerX: centerX,

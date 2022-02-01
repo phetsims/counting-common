@@ -20,14 +20,15 @@ import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import GroupType from '../model/GroupType.js';
 import Property from '../../../../axon/js/Property.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 
 // types
 type CountingCreatorNodeOptions = {
   updateCurrentNumber: boolean,
-  playObjectTypeProperty: EnumerationProperty<CountingObjectType>
-  groupTypeProperty: EnumerationProperty<GroupType>,
+  countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>
+  groupingEnabledProperty: IReadOnlyProperty<boolean>,
   groupedTargetScale: number,
   ungroupedTargetScale: number,
   backTargetOffset: Vector2
@@ -41,8 +42,8 @@ class CountingCreatorNode extends Node {
 
     const options = merge( {
       updateCurrentNumber: false,
-      playObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
-      groupTypeProperty: new EnumerationProperty( GroupType.GROUPED ),
+      countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
+      groupingEnabledProperty: new BooleanProperty( true ),
       groupedTargetScale: 0.65,
       ungroupedTargetScale: 1,
       backTargetOffset: new Vector2( -9, -9 )
@@ -58,9 +59,8 @@ class CountingCreatorNode extends Node {
     const createSingleTargetNode = ( offset: Vector2 ): Node => {
       const targetNode = new Node();
 
-      targetNode.addChild( this.createBaseNumberNode( place, options.playObjectTypeProperty, options.groupTypeProperty ) );
-      const scale = options.groupTypeProperty.value === GroupType.UNGROUPED ?
-                    options.ungroupedTargetScale : options.groupedTargetScale;
+      targetNode.addChild( this.createBaseNumberNode( place, options.countingObjectTypeProperty, options.groupingEnabledProperty ) );
+      const scale = options.groupingEnabledProperty.value ? options.groupedTargetScale : options.ungroupedTargetScale;
       targetNode.scale( scale );
 
       targetNode.translation = offset;
@@ -80,14 +80,14 @@ class CountingCreatorNode extends Node {
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
     // TODO: Too much duplication (and memory leaks)?
-    Property.lazyMultilink( [ options.playObjectTypeProperty, options.groupTypeProperty ],
-    ( playObjectType, GroupType ) => {
-      this.targetNode.removeAllChildren();
-      this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
-      this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
-      new DerivedProperty( [ sumProperty ],
-        sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
-    } );
+    Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
+      ( playObjectType, groupingEnabled ) => {
+        this.targetNode.removeAllChildren();
+        this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
+        this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
+        new DerivedProperty( [ sumProperty ],
+          sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
+      } );
 
     // We need to be disabled if adding this number would increase the sum past the maximum sum.
     new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );
@@ -103,7 +103,9 @@ class CountingCreatorNode extends Node {
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
         const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
-        const paperNumber = new PaperNumber( numberValue, new Vector2( 0, 0 ) );
+        const paperNumber = new PaperNumber( numberValue, new Vector2( 0, 0 ), {
+          groupingEnabledProperty: options.groupingEnabledProperty
+        } );
 
         // Once we have the number's bounds, we set the position so that our pointer is in the middle of the drag target.
         paperNumber.setDestination( viewPosition.minus( paperNumber.getDragTargetOffset() ), false, 1 );
@@ -144,13 +146,13 @@ class CountingCreatorNode extends Node {
   }
 
   private createBaseNumberNode( place: number,
-                                playObjectTypeProperty: EnumerationProperty<CountingObjectType>,
-                                groupTypeProperty: EnumerationProperty<GroupType>
+                                countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
+                                groupingEnabledProperty: IReadOnlyProperty<boolean>
   ): BaseNumberNode {
     return new BaseNumberNode( new BaseNumber( 1, place ), 1, {
       includeHandles: false,
-      playObjectTypeProperty: playObjectTypeProperty,
-      isGroupable: groupTypeProperty.value !== GroupType.UNGROUPED
+      countingObjectType: countingObjectTypeProperty.value,
+      groupingEnabled: groupingEnabledProperty.value
     } );
   }
 }

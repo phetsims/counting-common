@@ -18,8 +18,6 @@ import PaperNumberNode from './PaperNumberNode.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import PaperNumber from '../model/PaperNumber.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
-import CountingObjectType from '../model/CountingObjectType.js';
 
 // types
 export type PaperNumberNodeMap = {
@@ -113,7 +111,7 @@ class CountingCommonView extends ScreenView {
    */
   public onPaperNumberAdded( paperNumber: PaperNumber ): PaperNumberNode {
     const paperNumberNode = new PaperNumberNode( paperNumber, this.availableViewBoundsProperty,
-      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback, new EnumerationProperty( CountingObjectType.PAPER_NUMBER ) );
+      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback );
 
     this.paperNumberNodeMap[ paperNumberNode.paperNumber.id ] = paperNumberNode;
     this.paperNumberLayerNode.addChild( paperNumberNode );

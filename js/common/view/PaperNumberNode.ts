@@ -13,18 +13,20 @@ import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import { DragListener, Node, Rectangle, SceneryEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
-import GroupType from '../model/GroupType.js';
 import PaperNumber from '../model/PaperNumber.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import merge from '../../../../phet-core/js/merge.js';
+import Multilink from '../../../../axon/js/Multilink.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 
 // types
 type PaperNumberNodeOptions = {
-  groupTypeProperty: IReadOnlyProperty<GroupType> | null,
-  baseNumberNodeOptions: Partial<BaseNumberNodeOptions>
+  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>
+  baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>
 }
 
 // constants
@@ -37,8 +39,7 @@ class PaperNumberNode extends Node {
   public readonly interactionStartedEmitter: Emitter<any>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
-  private readonly playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
-  private readonly groupTypeProperty: IReadOnlyProperty<GroupType> | null;
+  public readonly countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
@@ -49,25 +50,25 @@ class PaperNumberNode extends Node {
   private readonly userControlledListener: ( userControlled: any ) => void;
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
   private readonly scaleListener: ( scale: number ) => void;
+  private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
+  private countingObjectTypeAndGroupTypeMultilink: Multilink<[ CountingObjectType, boolean ]> | null;
 
   /**
    * @param paperNumber
    * @param availableViewBoundsProperty
    * @param addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
    * @param tryToCombineNumbers - function( paperNumber ), called to combine our paper number
-   * @param playObjectTypeProperty
    * @param providedOptions
    */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
-               tryToCombineNumbers: Function, playObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
-               providedOptions?: Partial<PaperNumberNodeOptions> ) {
+               tryToCombineNumbers: Function, providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
 
-    const options = merge( {
-      groupTypeProperty: null,
+    const options = optionize<PaperNumberNodeOptions, PaperNumberNodeOptions>( {
+      countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
-    }, providedOptions ) as PaperNumberNodeOptions;
+    }, providedOptions );
 
     this.paperNumber = paperNumber;
 
@@ -85,8 +86,9 @@ class PaperNumberNode extends Node {
 
     this.availableViewBoundsProperty = availableViewBoundsProperty;
 
-    this.playObjectTypeProperty = playObjectTypeProperty;
-    this.groupTypeProperty = options.groupTypeProperty;
+    // indicates what CountingObjectType this is
+    this.countingObjectTypeProperty = options.countingObjectTypeProperty;
+
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
 
     // Container for the digit image nodes
@@ -183,20 +185,23 @@ class PaperNumberNode extends Node {
       }
     };
 
-    // Listener for when our type changes
-    this.playObjectTypeProperty.lazyLink( playObjectType => {
+    // Listener for when our counting type or group type changes
+    this.countingObjectTypeAndGroupTypeListener = ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => {
       this.updateNumber();
-    } );
+
+      if ( !paperNumber.isAnimating ) {
+        paperNumber.setConstrainedDestination( this.availableViewBoundsProperty.value, paperNumber.positionProperty.value );
+      }
+    };
+
+    this.countingObjectTypeAndGroupTypeMultilink = null;
   }
 
   /**
    * Rebuilds the image nodes that display the actual paper number, and resizes the mouse/touch targets.
    */
   public updateNumber(): void {
-    let isGroupable = true;
-    if ( this.groupTypeProperty && this.groupTypeProperty.value === GroupType.UNGROUPED ) {
-      isGroupable = false;
-    }
+    const groupingEnabled = this.paperNumber.groupingEnabledProperty.value;
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
@@ -207,9 +212,9 @@ class PaperNumberNode extends Node {
       return new BaseNumberNode(
         baseNumber,
         0.95 * Math.pow( 0.97, index ), merge( {
-          playObjectTypeProperty: this.playObjectTypeProperty,
+          countingObjectType: this.countingObjectTypeProperty.value,
           includeHandles: true,
-          isGroupable: isGroupable,
+          groupingEnabled: groupingEnabled,
           isLargestBaseNumber: index === 0,
           hasDescendant: hasDescendant,
           isPartOfStack: reversedBaseNumbers.length > 1
@@ -225,7 +230,7 @@ class PaperNumberNode extends Node {
                                 fullBounds;
     this.paperNumber.localBounds = fullBounds;
 
-    if ( isGroupable ) {
+    if ( groupingEnabled ) {
       this.splitTarget.visible = true;
 
       let firstHandleXPosition: number;
@@ -316,12 +321,16 @@ class PaperNumberNode extends Node {
     this.paperNumber.userControlledProperty.link( this.userControlledListener );
     this.paperNumber.numberValueProperty.link( this.updateNumberListener );
     this.paperNumber.positionProperty.link( this.translationListener );
+    this.countingObjectTypeAndGroupTypeMultilink = Property.lazyMultilink(
+      [ this.countingObjectTypeProperty, this.paperNumber.groupingEnabledProperty ],
+      this.countingObjectTypeAndGroupTypeListener );
   }
 
   /**
    * Removes listeners from the model. Should be called when removed from the scene graph.
    */
   public dispose(): void {
+    Property.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
     this.paperNumber.userControlledProperty.unlink( this.userControlledListener );

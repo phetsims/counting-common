@@ -20,6 +20,12 @@ import BaseNumber from './BaseNumber.js';
 import Easing from '../../../../twixt/js/Easing.js';
 import Animation from '../../../../twixt/js/Animation.js';
 import Range from '../../../../dot/js/Range.js';
+import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+
+type PaperNumberOptions = {
+  groupingEnabledProperty?: IReadOnlyProperty<boolean>
+}
 
 // Incremented for PaperNumber IDs
 let nextPaperNumberId = 1;
@@ -43,12 +49,18 @@ class PaperNumber {
   public localBounds: Bounds2;
   public readonly scaleProperty: NumberProperty;
   private animation: Animation | null;
+  public readonly groupingEnabledProperty: IReadOnlyProperty<boolean>;
 
   /**
    * @param numberValue - Numeric value, e.g. 123
    * @param initialPosition
+   * @param [providedOptions]
    */
-  constructor( numberValue: number, initialPosition: Vector2 ) {
+  constructor( numberValue: number, initialPosition: Vector2, providedOptions?: PaperNumberOptions ) {
+
+    const options = optionize<PaperNumberOptions, PaperNumberOptions>( {
+      groupingEnabledProperty: new BooleanProperty( true )
+    }, providedOptions );
 
     // IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
     this.id = nextPaperNumberId++;
@@ -64,7 +76,12 @@ class PaperNumber {
     // view node.
     this.userControlledProperty = new BooleanProperty( false );
 
+    // our scale, used for animations
     this.scaleProperty = new NumberProperty( 1 );
+
+    // whether grouping is enabled, which determines if this paper number is allowed to combine with others. groupable
+    // objects also have a background, non-groupable objects do not.
+    this.groupingEnabledProperty = options.groupingEnabledProperty;
 
     // Should be set through accessor methods only.
     this.destination = initialPosition.copy();
@@ -170,6 +187,7 @@ class PaperNumber {
    * @param destination
    * @param animate - Whether to animate. If true, it will slide towards the destination. If false, it will immediately
    *                  set the position to be the same as the destination.
+   * @param scale
    */
   // TODO: Clean up usage sites! Type and linking Properties likely need to be moved into the model.
   public setDestination( destination: Vector2, animate: boolean, scale: number = 1 ): void {
