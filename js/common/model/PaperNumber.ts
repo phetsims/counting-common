@@ -102,8 +102,8 @@ class PaperNumber {
     // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
-    // local bounds, also set later by the view TODO: How to get these in a better way
-    this.localBounds = CountingCommonConstants.SINGLE_COUNTING_OBJECT_BOUNDS;
+    // local bounds, also set later by the view
+    this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
   }
 
   /**
