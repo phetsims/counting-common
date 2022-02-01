@@ -311,7 +311,7 @@ class BaseNumberNode extends Node {
  * Maps place (0-3) to a {Dimension2} with the width/height
  */
 BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER.name ),
-  mipmap => new Dimension2( mipmap[ 0 ].width, mipmap[ 0 ].height ) );
+  mipmap => new Dimension2( mipmap[ 0 ].width * IMAGE_SCALE, mipmap[ 0 ].height * IMAGE_SCALE ) );
 
 /**
  * Maps place (0-3) to a {Vector2} that is the offset of the upper-left corner of the BaseNumberNode relative to a
