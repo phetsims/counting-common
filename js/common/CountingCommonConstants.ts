@@ -12,7 +12,7 @@ import apple_png from '../../images/apple_png.js';
 import ball_png from '../../images/ball_png.js';
 import dog_png from '../../images/dog_png.js';
 import PlayObjectType from './model/PlayObjectType.js';
-import cupcake_png from '../../images/cupcake_png.js';
+import butterfly_png from '../../images/butterfly_png.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 
 // convenience map that links play object types to their corresponding images
@@ -20,7 +20,7 @@ import Bounds2 from '../../../dot/js/Bounds2.js';
 const PLAY_OBJECT_TYPE_TO_IMAGE = new Map();
 PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.DOG.name, dog_png );
 PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.APPLE.name, apple_png );
-PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.CUPCAKE.name, cupcake_png );
+PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.BUTTERFLY.name, butterfly_png );
 PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.BALL.name, ball_png );
 
 const CountingCommonConstants = {
