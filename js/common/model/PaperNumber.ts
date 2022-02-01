@@ -187,13 +187,10 @@ class PaperNumber {
    * @param destination
    * @param animate - Whether to animate. If true, it will slide towards the destination. If false, it will immediately
    *                  set the position to be the same as the destination.
-   * @param scale
+   * @param [scale] - the scale to be once the destination is reached
    */
-  // TODO: Clean up usage sites! Type and linking Properties likely need to be moved into the model.
   public setDestination( destination: Vector2, animate: boolean, scale: number = 1 ): void {
     assert && assert( destination.isFinite() );
-
-    this.destination = destination;
 
     if ( animate ) {
       this.animating = true;
@@ -201,45 +198,28 @@ class PaperNumber {
       this.animation && this.animation.stop();
       const distance = this.positionProperty.value.distance( destination );
 
-      if ( distance > 0 ) {
+      // calculate the time needed to get to the destination
+      const animationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
 
-        // calculate the time needed to get to the destination
-        const animationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
-
-        this.animation = new Animation( {
-          duration: animationDuration,
-          targets: [ {
-            property: this.positionProperty,
-            to: destination,
-            easing: Easing.QUADRATIC_IN_OUT
-          }, {
-            property: this.scaleProperty,
-            to: scale,
-            from: this.scaleProperty.value
-          } ]
-        } );
-
-        this.animation.start();
-        this.animation.finishEmitter.addListener( () => {
-          this.animating = false;
-          this.endAnimationEmitter.emit( this );
-          this.animation = null;
-        } );
-      }
-      else {
-        this.animation = new Animation( {
+      this.animation = new Animation( {
+        duration: animationDuration,
+        targets: [ {
+          property: this.positionProperty,
+          to: destination,
+          easing: Easing.QUADRATIC_IN_OUT
+        }, {
           property: this.scaleProperty,
           to: scale,
-          from: this.scaleProperty.value,
-          duration: MAX_ANIMATION_TIME / 2
-        } );
-        this.animation.start();
-        this.animation.finishEmitter.addListener( () => {
-          this.animating = false;
-          this.endAnimationEmitter.emit( this );
-          this.animation = null;
-        } );
-      }
+          from: this.scaleProperty.value
+        } ]
+      } );
+
+      this.animation.start();
+      this.animation.finishEmitter.addListener( () => {
+        this.animating = false;
+        this.endAnimationEmitter.emit( this );
+        this.animation = null;
+      } );
     }
     else {
       this.positionProperty.value = destination;
@@ -256,7 +236,7 @@ class PaperNumber {
    */
   public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false ): void {
     const originBounds = this.getOriginBounds( viewBounds );
-    this.setDestination( originBounds.closestPointTo( newDestination ), animate, 1 );
+    this.setDestination( originBounds.closestPointTo( newDestination ), animate );
   }
 
   /**
