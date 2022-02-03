@@ -93,7 +93,7 @@ class CountingCreatorNode extends Node {
     new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );
 
     // Don't show the one of the two parts of the target node if adding two numbers would increase the sum past the
-    // maximum sum.
+    // maximum sum. TODO: Factor this out with duplicated link above?
     new DerivedProperty( [ sumProperty ],
       sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
 
