@@ -1,8 +1,8 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
 /**
- * Node that can display a 1, 10, 100, or play object which can be clicked/dragged to create draggable paper numbers or
- * play objects. Factored out from ExplorePanel.js in make-a-ten, see https://github.com/phetsims/number-play/issues/19
+ * Node that can display a 1, 10, 100, or counting object which can be clicked/dragged to create draggable paper numbers or
+ * counting objects. Factored out from ExplorePanel.js in make-a-ten, see https://github.com/phetsims/number-play/issues/19
  *
  * @author Chris Klusendorf (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
@@ -81,7 +81,7 @@ class CountingCreatorNode extends Node {
 
     // TODO: Too much duplication (and memory leaks)?
     Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
-      ( playObjectType, groupingEnabled ) => {
+      ( countingObjectType, groupingEnabled ) => {
         this.targetNode.removeAllChildren();
         this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
         this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );

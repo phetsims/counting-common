@@ -26,7 +26,6 @@ import paperBackground10_png from '../../../mipmaps/paperBackground10_png.js';
 import paperBackground1_png from '../../../mipmaps/paperBackground1_png.js';
 import countingCommon from '../../countingCommon.js';
 import BaseNumber from '../model/BaseNumber.js';
-import PlayObjectType from '../model/PlayObjectType.js';
 import groupBackground1_png from '../../../mipmaps/groupBackground1_png.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import groupBackground10_png from '../../../mipmaps/groupBackground10_png.js';
@@ -58,17 +57,21 @@ export type BaseNumberNodeOptions = {
 
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP = new Map();
-BACKGROUND_IMAGE_MAP.set( CountingObjectType.PAPER_NUMBER.name, {
-  0: paperBackground1_png,
-  1: paperBackground10_png,
-  2: paperBackground100_png,
-  3: paperBackground1000_png
-} );
-PlayObjectType.enumeration.values.forEach( playObjectType => {
-  BACKGROUND_IMAGE_MAP.set( playObjectType.name, {
-    0: groupBackground1_png,
-    1: groupBackground10_png
-  } );
+CountingObjectType.enumeration.values.forEach( countingObjectType => {
+  if ( countingObjectType === CountingObjectType.PAPER_NUMBER ) {
+    BACKGROUND_IMAGE_MAP.set( countingObjectType, {
+      0: paperBackground1_png,
+      1: paperBackground10_png,
+      2: paperBackground100_png,
+      3: paperBackground1000_png
+    } );
+  }
+  else {
+    BACKGROUND_IMAGE_MAP.set( countingObjectType, {
+      0: groupBackground1_png,
+      1: groupBackground10_png
+    } );
+  }
 } );
 
 // digit => mipmap info
@@ -120,7 +123,7 @@ const ZERO_OFFSET: ZeroOffset = {
 // extra length to make sure there is no gap between the paper number background and the stem)
 const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
-// distance that the handle stem should overlap with a play object card. TODO: should be 0 but not quite working, get
+// distance that the handle stem should overlap with a counting object card. TODO: should be 0 but not quite working, get
 // cleaner-edged images from AM
 const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.4;
 
@@ -150,19 +153,19 @@ class BaseNumberNode extends Node {
 
     let groupingEnabled = options.groupingEnabled;
     if ( providedOptions === undefined || providedOptions?.groupingEnabled === undefined ) {
-      groupingEnabled = options.countingObjectType.name === CountingObjectType.PAPER_NUMBER.name;
+      groupingEnabled = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
     }
 
-    const isPaperNumber = options.countingObjectType.name === CountingObjectType.PAPER_NUMBER.name;
+    const isPaperNumber = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
 
-    assert && !groupingEnabled && assert( options.countingObjectType.name !== CountingObjectType.PAPER_NUMBER.name,
+    assert && !groupingEnabled && assert( options.countingObjectType !== CountingObjectType.PAPER_NUMBER,
       'Paper numbers are not allowed to turn off grouping.' );
 
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
     // The paper behind the numbers
-    const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.countingObjectType.name )[ baseNumber.place ], {
+    const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.countingObjectType )[ baseNumber.place ], {
       imageOpacity: opacity,
       scale: IMAGE_SCALE
     } );
@@ -290,7 +293,7 @@ class BaseNumberNode extends Node {
             const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;
 
             if ( objectImages.length < value ) {
-              const objectImage = new Image( CountingCommonConstants.PLAY_OBJECT_TYPE_TO_IMAGE.get( options.countingObjectType.name ), {
+              const objectImage = new Image( CountingCommonConstants.COUNTING_OBJECT_TYPE_TO_IMAGE.get( options.countingObjectType ), {
                 maxWidth: renderedObjectWidth,
                 maxHeight: renderedObjectHeight,
                 centerX: centerX,
@@ -310,7 +313,7 @@ class BaseNumberNode extends Node {
 /**
  * Maps place (0-3) to a {Dimension2} with the width/height
  */
-BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER.name ),
+BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER ),
   mipmap => new Dimension2( mipmap[ 0 ].width * IMAGE_SCALE, mipmap[ 0 ].height * IMAGE_SCALE ) );
 
 /**

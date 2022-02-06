@@ -4,6 +4,7 @@
  * Constants that are shared between the various portions of Counting Common code
  *
  * @author Sharfudeen Ashraf
+ * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
 import Dimension2 from '../../../dot/js/Dimension2.js';
@@ -11,17 +12,16 @@ import countingCommon from '../countingCommon.js';
 import apple_png from '../../images/apple_png.js';
 import ball_png from '../../images/ball_png.js';
 import dog_png from '../../images/dog_png.js';
-import PlayObjectType from './model/PlayObjectType.js';
+import CountingObjectType from './model/CountingObjectType.js';
 import butterfly_png from '../../images/butterfly_png.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 
-// convenience map that links play object types to their corresponding images
-// TODO: .name needed because ComparePlayObjectType needs to use this Map as well
-const PLAY_OBJECT_TYPE_TO_IMAGE = new Map();
-PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.DOG.name, dog_png );
-PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.APPLE.name, apple_png );
-PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.BUTTERFLY.name, butterfly_png );
-PLAY_OBJECT_TYPE_TO_IMAGE.set( PlayObjectType.BALL.name, ball_png );
+// convenience map that links counting object types to their corresponding images
+const COUNTING_OBJECT_TYPE_TO_IMAGE = new Map();
+COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.DOG, dog_png );
+COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.APPLE, apple_png );
+COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.BUTTERFLY, butterfly_png );
+COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.BALL, ball_png );
 
 const CountingCommonConstants = {
   // Common colors
@@ -46,7 +46,7 @@ const CountingCommonConstants = {
 
   COUNTING_PLAY_AREA_MARGIN: 10,
   SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images TODO: need better plan for this
-  PLAY_OBJECT_TYPE_TO_IMAGE: PLAY_OBJECT_TYPE_TO_IMAGE,
+  COUNTING_OBJECT_TYPE_TO_IMAGE: COUNTING_OBJECT_TYPE_TO_IMAGE,
   PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ) // in screen coordinates
 };
 
