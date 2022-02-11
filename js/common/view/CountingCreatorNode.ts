@@ -8,7 +8,6 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.js';
 import PaperNumber from '../../../../counting-common/js/common/model/PaperNumber.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
@@ -37,7 +36,14 @@ type CountingCreatorNodeOptions = {
 class CountingCreatorNode extends Node {
   private screenView: CountingCommonView;
   private readonly targetNode: Node;
+  private readonly sumProperty: NumberProperty;
+  private readonly showFrontTargetNumber: number;
+  private readonly showBackTargetNumber: number;
+  private readonly backTargetOffset: Vector2;
+  private backTargetNode: Node;
+  private frontTargetNode: Node;
 
+  // TODO: Improve organization and docs in this file
   constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions: Partial<CountingCreatorNodeOptions> ) {
 
     const options = merge( {
@@ -52,9 +58,17 @@ class CountingCreatorNode extends Node {
     super();
 
     assert && assert( sumProperty.range, `Range is required: ${sumProperty.range}` );
-    const maxSum = sumProperty.range!.max;
+
+    const numberValue = Math.pow( 10, place );
 
     this.screenView = screenView;
+    this.sumProperty = sumProperty;
+
+    const maxSum = sumProperty.range!.max;
+    this.showFrontTargetNumber = maxSum - numberValue;
+    this.showBackTargetNumber = this.showFrontTargetNumber - numberValue;
+
+    this.backTargetOffset = options.backTargetOffset;
 
     const createSingleTargetNode = ( offset: Vector2 ): Node => {
       const targetNode = new Node();
@@ -67,35 +81,43 @@ class CountingCreatorNode extends Node {
       return targetNode;
     };
 
-    const numberValue = Math.pow( 10, place );
-
-    // empirically determined stacking
-    const backTargetNode = createSingleTargetNode( options.backTargetOffset );
-    const frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
+    this.backTargetNode = createSingleTargetNode( options.backTargetOffset );
+    this.frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
 
     this.targetNode = new Node( {
       cursor: 'pointer',
-      children: [ backTargetNode, frontTargetNode ]
+      children: [ this.backTargetNode, this.frontTargetNode ]
     } );
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
 
-    // TODO: Too much duplication (and memory leaks)?
+    // TODO: Too much duplication?
     Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
-        this.targetNode.removeAllChildren();
-        this.targetNode.addChild( createSingleTargetNode( options.backTargetOffset ) );
-        this.targetNode.addChild( createSingleTargetNode( new Vector2( 0, 0 ) ) );
-        new DerivedProperty( [ sumProperty ],
-          sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
+        const backTargetNodeVisibile = this.backTargetNode.visible;
+        const frontTargetNodeVisibile = this.frontTargetNode.visible;
+
+        this.backTargetNode = createSingleTargetNode( options.backTargetOffset );
+        this.frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
+
+        this.backTargetNode.visible = backTargetNodeVisibile;
+        this.frontTargetNode.visible = frontTargetNodeVisibile;
+
+        this.targetNode.children = [ this.backTargetNode, this.frontTargetNode ];
       } );
 
-    // We need to be disabled if adding this number would increase the sum past the maximum sum.
-    new DerivedProperty( [ sumProperty ], sum => sum + numberValue <= maxSum ).linkAttribute( this.targetNode, 'visible' );
+    const updateTargetVisibility = ( sum: number, oldSum: number ) => {
+      // counting up
+      if ( sum === oldSum + numberValue ) {
+        if ( sum === this.showFrontTargetNumber ) {
+          this.frontTargetNode.visible = false;
+        }
+        else if ( sum === maxSum ) {
+          this.backTargetNode.visible = false;
+        }
+      }
+    };
 
-    // Don't show the one of the two parts of the target node if adding two numbers would increase the sum past the
-    // maximum sum. TODO: Factor this out with duplicated link above?
-    new DerivedProperty( [ sumProperty ],
-      sum => sum + numberValue + numberValue <= maxSum ).linkAttribute( this.targetNode.children[ 0 ], 'visible' );
+    sumProperty.lazyLink( updateTargetVisibility );
 
     this.targetNode.addInputListener( {
       down: ( event: any ) => {
@@ -132,6 +154,16 @@ class CountingCreatorNode extends Node {
     this.addChild( this.targetNode );
   }
 
+  // TODO: Add support for returning numbers that had a higher value than one
+  checkTargetVisibility(): void {
+    if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
+      this.backTargetNode.visible = true;
+    }
+    else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.showBackTargetNumber ) {
+      this.frontTargetNode.visible = true;
+    }
+  }
+
   /**
    * Return the view coordinates of the target.
    */
@@ -142,7 +174,13 @@ class CountingCreatorNode extends Node {
     trail = trail.slice( 1, trail.length );
 
     // Transformed to view coordinates
-    return trail.localToGlobalPoint( this.targetNode.children[ 1 ].localBounds.center );
+    let origin = this.frontTargetNode.localBounds.center.plus( this.backTargetOffset );
+    if ( this.sumProperty.value <= this.showBackTargetNumber ) {
+      origin = this.frontTargetNode.localBounds.center;
+    }
+
+    // Transformed to view coordinates
+    return trail.localToGlobalPoint( origin );
   }
 
   private createBaseNumberNode( place: number,
