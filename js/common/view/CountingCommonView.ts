@@ -9,7 +9,7 @@
 import Property from '../../../../axon/js/Property.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import { Node, Plane, SceneryEvent } from '../../../../scenery/js/imports.js';
+import { Node, Plane, PressListenerEvent } from '../../../../scenery/js/imports.js';
 import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
@@ -31,7 +31,7 @@ class CountingCommonView extends ScreenView {
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   protected readonly resetAllButton: ResetAllButton;
   private readonly closestDragListener: ClosestDragListener;
-  private readonly addAndDragNumberCallback: OmitThisParameter<( event: SceneryEvent, paperNumber: PaperNumber ) => void>;
+  private readonly addAndDragNumberCallback: OmitThisParameter<( event: PressListenerEvent, paperNumber: PaperNumber ) => void>;
   private readonly paperNumberNodeMap: PaperNumberNodeMap;
 
   constructor( model: CountingCommonModel ) {
@@ -96,7 +96,7 @@ class CountingCommonView extends ScreenView {
    * @param {SceneryEvent} event - The Scenery event that triggered this.
    * @param {PaperNumber} paperNumber - The paper number to add and then drag
    */
-  public addAndDragNumber( event: SceneryEvent, paperNumber: PaperNumber ): void {
+  public addAndDragNumber( event: PressListenerEvent, paperNumber: PaperNumber ): void {
     // Add it and lookup the related node.
     this.model.addPaperNumber( paperNumber );
 

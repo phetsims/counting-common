@@ -10,7 +10,7 @@ import Emitter from '../../../../axon/js/Emitter.js';
 import Property from '../../../../axon/js/Property.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
-import { DragListener, Node, Rectangle, SceneryEvent } from '../../../../scenery/js/imports.js';
+import { DragListener, Node, PressListenerEvent, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import PaperNumber from '../model/PaperNumber.js';
@@ -275,7 +275,7 @@ class PaperNumberNode extends Node {
    *
    * @param event - Scenery event from the relevant input handler
    */
-  public startSyntheticDrag( event: SceneryEvent ): void {
+  public startSyntheticDrag( event: PressListenerEvent ): void {
     // Don't emit a move event, as we don't want the cue to disappear.
     this.preventMoveEmit = true;
     this.moveDragHandler.press( event );
@@ -288,7 +288,7 @@ class PaperNumberNode extends Node {
    *
    * @param event - Scenery event from the relevant input handler
    */
-  public startDrag( event: SceneryEvent ): void {
+  public startDrag( event: PressListenerEvent ): void {
     if ( this.pickable !== false ) {
       if ( this.globalToLocalPoint( event.pointer.point as Vector2 ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
         this.splitDragHandler.down( event );
