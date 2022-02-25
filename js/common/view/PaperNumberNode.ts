@@ -113,18 +113,18 @@ class PaperNumberNode extends Node {
     this.moveDragHandler = new DragListener( {
       targetNode: this,
       pressCursor: 'move', // Our target doesn't have the move cursor, so we need to override here
-      start: ( event: Event ) => {
+      start: ( event: PressListenerEvent ) => {
         this.interactionStartedEmitter.emit( this );
         if ( !this.preventMoveEmit ) {
           this.moveEmitter.emit( this );
         }
       },
 
-      drag: ( event: Event, listener: DragListener ) => {
+      drag: ( event: PressListenerEvent, listener: DragListener ) => {
         paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false );
       },
 
-      end: ( event: Event ) => {
+      end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
           tryToCombineNumbers( this.paperNumber );
           paperNumber.endDragEmitter.emit( paperNumber );
