@@ -21,7 +21,7 @@ import Bounds2 from '../../../../dot/js/Bounds2.js';
 
 // types
 export type PaperNumberNodeMap = {
-  [ key: number ]: PaperNumberNode
+  [ key: number ]: PaperNumberNode;
 };
 
 class CountingCommonView extends ScreenView {

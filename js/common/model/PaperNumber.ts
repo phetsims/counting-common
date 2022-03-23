@@ -24,7 +24,7 @@ import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 
 type PaperNumberOptions = {
-  groupingEnabledProperty?: IReadOnlyProperty<boolean>
+  groupingEnabledProperty?: IReadOnlyProperty<boolean>;
 }
 
 // Incremented for PaperNumber IDs

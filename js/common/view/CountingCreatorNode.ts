@@ -25,12 +25,12 @@ import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 
 // types
 type CountingCreatorNodeOptions = {
-  updateCurrentNumber: boolean,
-  countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>
-  groupingEnabledProperty: IReadOnlyProperty<boolean>,
-  groupedTargetScale: number,
-  ungroupedTargetScale: number,
-  backTargetOffset: Vector2
+  updateCurrentNumber: boolean;
+  countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
+  groupingEnabledProperty: IReadOnlyProperty<boolean>;
+  groupedTargetScale: number;
+  ungroupedTargetScale: number;
+  backTargetOffset: Vector2;
 };
 
 class CountingCreatorNode extends Node {
