@@ -22,21 +22,6 @@ class CountingCommonModel {
   }
 
   /**
-   * Steps the model forward by a unit of time.
-   *
-   * @param dt - in seconds
-   */
-  public step( dt: number ): void {
-    // Cap large dt values, which can occur when the tab containing
-    // the sim had been hidden and then re-shown
-    dt = Math.min( 0.1, dt );
-
-    for ( let i = 0; i < this.paperNumbers.length; i++ ) {
-      this.paperNumbers[ i ].step( dt );
-    }
-  }
-
-  /**
    * Given two paper numbers, combine them (set one's value to the sum of their previous values, and remove the
    * other).
    *

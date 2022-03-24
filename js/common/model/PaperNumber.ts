@@ -107,41 +107,6 @@ class PaperNumber {
   }
 
   /**
-   * Animates the number towards its destination.
-   *
-   * @param dt - in seconds
-   */
-  public step( dt: number ): void {
-    if ( !this.userControlledProperty.value ) {
-      // const currentPosition = this.positionProperty.value;
-      // assert && assert( currentPosition.isFinite() );
-      // assert && assert( this.destination.isFinite() );
-      //
-      // // perform any animation
-      // const distanceToDestination = currentPosition.distance( this.destination );
-      // if ( distanceToDestination > dt * CountingCommonConstants.ANIMATION_VELOCITY ) {
-      //
-      //   this.animationProgress = Math.min( 1, this.animationProgress + animationDt * animationSpeed );
-      //   const ratio = Easing.CUBIC_IN_OUT.value( this.animationProgress );
-      //   this.positionProperty.set(
-      //     new Vector2( this.animationStartPosition.blend( this.destination, ratio ).x, floorPosition ) );
-      //
-      //   // Move a step toward the destination.
-      //   const stepVector = this.destination.minus( currentPosition ).setMagnitude( CountingCommonConstants.ANIMATION_VELOCITY * dt );
-      //   assert && assert( stepVector.isFinite() );
-      //   this.positionProperty.value = currentPosition.plus( stepVector );
-      //
-      // }
-      // else if ( this.animating ) {
-      //   // Less than one time step away, so just go to the destination.
-      //   this.positionProperty.value = this.destination;
-      //   this.animating = false;
-      //   this.endAnimationEmitter.emit( this );
-      // }
-    }
-  }
-
-  /**
    * The number of digits in the number, including zeros, e.g. 1204 has 4 digits.
    */
   public get digitLength(): number {
