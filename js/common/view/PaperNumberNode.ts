@@ -50,8 +50,10 @@ class PaperNumberNode extends Node {
   private readonly userControlledListener: ( userControlled: any ) => void;
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
   private readonly scaleListener: ( scale: number ) => void;
+  private readonly handleOpacityListener: ( handleOpacity: number ) => void;
   private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
   private countingObjectTypeAndGroupTypeMultilink: Multilink<[ CountingObjectType, boolean ]> | null;
+  private handleNode: null | Node;
 
   /**
    * @param paperNumber
@@ -96,6 +98,8 @@ class PaperNumberNode extends Node {
       pickable: false
     } );
     this.addChild( this.numberImageContainer );
+
+    this.handleNode = null;
 
     // Hit target for the "split" behavior, where one number would be pulled off from the existing number.
     this.splitTarget = new Rectangle( 0, 0, 0, 0, {
@@ -175,6 +179,11 @@ class PaperNumberNode extends Node {
       this.setScaleMagnitude( scale );
     };
 
+    // Listener for when the handle opacity changes in the model
+    this.handleOpacityListener = handleOpacity => {
+      this.handleNode && this.handleNode.setOpacity( handleOpacity );
+    };
+
     // Listener for when our number changes
     this.updateNumberListener = this.updateNumber.bind( this );
 
@@ -226,9 +235,18 @@ class PaperNumberNode extends Node {
     const fullBounds = this.numberImageContainer.bounds.copy();
     // @ts-ignore
     const backgroundNode = biggestBaseNumberNode.backgroundNode;
+
+    // if there is no background node, then this paper number is an object without a background node, so its bounds
+    // without a handle are the full bounds. if there is a background, then the bounds of that exclude the handle
+    // already, so use that
     const boundsWithoutHandle = backgroundNode ? biggestBaseNumberNode.localToParentBounds( backgroundNode.bounds ) :
                                 fullBounds;
     this.paperNumber.localBounds = fullBounds;
+
+    // use boundsWithoutHandle for animating back to the creator node because including the handle in the bounds makes
+    // the paper numbers animate to the wrong offset (since the creator node is a card without a handle, so
+    // the returning object should match its shape).
+    this.paperNumber.returnAnimationBounds = boundsWithoutHandle;
 
     if ( groupingEnabled ) {
       this.splitTarget.visible = true;
@@ -238,11 +256,12 @@ class PaperNumberNode extends Node {
 
       // @ts-ignore
       this.numberImageContainer.children.forEach( ( baseNumberNode: BaseNumberNode ) => {
-        if ( baseNumberNode.handleStemNode && !firstHandleXPosition ) {
-          firstHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleStemNode.bounds ).centerX;
+        if ( baseNumberNode.handleNode && !firstHandleXPosition ) {
+          firstHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleNode.bounds ).centerX;
+          this.handleNode = baseNumberNode.handleNode;
         }
-        if ( baseNumberNode.handleStemNode ) {
-          lastHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleStemNode.bounds ).centerX;
+        if ( baseNumberNode.handleNode ) {
+          lastHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleNode.bounds ).centerX;
         }
       } );
       const padding = 18;
@@ -316,7 +335,9 @@ class PaperNumberNode extends Node {
    * Attaches listeners to the model. Should be called when added to the scene graph.
    */
   public attachListeners(): void {
-    // mirrored unlinks in detachListeners()
+
+    // mirrored unlinks in dispose()
+    this.paperNumber.handleOpacityProperty.link( this.handleOpacityListener );
     this.paperNumber.scaleProperty.link( this.scaleListener );
     this.paperNumber.userControlledProperty.link( this.userControlledListener );
     this.paperNumber.numberValueProperty.link( this.updateNumberListener );
@@ -335,6 +356,7 @@ class PaperNumberNode extends Node {
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
     this.paperNumber.userControlledProperty.unlink( this.userControlledListener );
     this.paperNumber.scaleProperty.unlink( this.scaleListener );
+    this.paperNumber.handleOpacityProperty.unlink( this.handleOpacityListener );
 
     // remove any listeners on the children before detaching them
     this.numberImageContainer.children.forEach( child => child.dispose() );

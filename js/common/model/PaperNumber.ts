@@ -26,6 +26,10 @@ import optionize from '../../../../phet-core/js/optionize.js';
 type PaperNumberOptions = {
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
 }
+type SetDestinationOptions = {
+  targetScale?: number;
+  targetHandleOpacity?: number;
+}
 
 // Incremented for PaperNumber IDs
 let nextPaperNumberId = 1;
@@ -46,10 +50,12 @@ class PaperNumber {
   public baseNumbers: BaseNumber[];
   public readonly endDragEmitter: Emitter<any>;
   public readonly endAnimationEmitter: Emitter<any>;
-  public localBounds: Bounds2;
   public readonly scaleProperty: NumberProperty;
+  public readonly handleOpacityProperty: NumberProperty;
   private animation: Animation | null;
   public readonly groupingEnabledProperty: IReadOnlyProperty<boolean>;
+  public localBounds: Bounds2;
+  public returnAnimationBounds: Bounds2;
 
   /**
    * @param numberValue - Numeric value, e.g. 123
@@ -79,6 +85,9 @@ class PaperNumber {
     // our scale, used for animations
     this.scaleProperty = new NumberProperty( 1 );
 
+    // the opacity of the handle, if one exists. used for animations
+    this.handleOpacityProperty = new NumberProperty( 1 );
+
     // whether grouping is enabled, which determines if this paper number is allowed to combine with others. groupable
     // objects also have a background, non-groupable objects do not.
     this.groupingEnabledProperty = options.groupingEnabledProperty;
@@ -104,6 +113,9 @@ class PaperNumber {
 
     // local bounds, also set later by the view
     this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
+
+    // bounds that should be used when animating. updated when the view is created
+    this.returnAnimationBounds = this.localBounds;
   }
 
   /**
@@ -152,10 +164,15 @@ class PaperNumber {
    * @param destination
    * @param animate - Whether to animate. If true, it will slide towards the destination. If false, it will immediately
    *                  set the position to be the same as the destination.
-   * @param [scale] - the scale to be once the destination is reached
+   * @param [providedOptions]
    */
-  public setDestination( destination: Vector2, animate: boolean, scale: number = 1 ): void {
+  public setDestination( destination: Vector2, animate: boolean, providedOptions?: SetDestinationOptions ): void {
     assert && assert( destination.isFinite() );
+
+    const options = optionize<SetDestinationOptions>( {
+      targetScale: 1,
+      targetHandleOpacity: 1
+      }, providedOptions );
 
     if ( animate ) {
       this.animating = true;
@@ -174,8 +191,12 @@ class PaperNumber {
           easing: Easing.QUADRATIC_IN_OUT
         }, {
           property: this.scaleProperty,
-          to: scale,
+          to: options.targetScale,
           from: this.scaleProperty.value
+        }, {
+          property: this.handleOpacityProperty,
+          to: options.targetHandleOpacity,
+          from: this.handleOpacityProperty.value
         } ]
       } );
 
@@ -188,7 +209,7 @@ class PaperNumber {
     }
     else {
       this.positionProperty.value = destination;
-      this.scaleProperty.value = scale;
+      this.scaleProperty.value = options.targetScale;
     }
   }
 

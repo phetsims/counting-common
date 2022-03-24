@@ -133,7 +133,7 @@ class BaseNumberNode extends Node {
 
   public static PAPER_NUMBER_DIMENSIONS: PaperNumberDimensions;
   public static IMAGE_OFFSETS: Vector2[];
-  public readonly handleStemNode: Path | undefined;
+  public readonly handleNode: Node | undefined;
   public readonly backgroundNode: Image | null = null;
 
   constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
@@ -187,13 +187,16 @@ class BaseNumberNode extends Node {
       // The handle that attaches to the paper
       const handleStemShape = new Shape().moveTo( 0, 0 ).lineTo( 0, handleOffsetY );
 
-      this.handleStemNode = new Path( handleStemShape, {
+      this.handleNode = new Node();
+      this.addChild( this.handleNode );
+
+       const handleStemNode = new Path( handleStemShape, {
         stroke: 'black',
         lineWidth: lineWidth
       } );
-      this.handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_OFFSET_X[ baseNumber.place ] : backgroundNode.centerX;
-      this.handleStemNode.bottom = backgroundNode.top + handleOverlapLength;
-      this.addChild( this.handleStemNode );
+      handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_OFFSET_X[ baseNumber.place ] : backgroundNode.centerX;
+      handleStemNode.bottom = backgroundNode.top + handleOverlapLength;
+      this.handleNode.addChild( handleStemNode );
 
       let handleCircle;
       const outerCircleRadius = 4.6;
@@ -213,9 +216,9 @@ class BaseNumberNode extends Node {
           fill: 'black'
         } );
       }
-      handleCircle.centerX = this.handleStemNode.centerX;
-      handleCircle.bottom = this.handleStemNode.top;
-      this.addChild( handleCircle );
+      handleCircle.centerX = handleStemNode.centerX;
+      handleCircle.bottom = handleStemNode.top;
+      this.handleNode.addChild( handleCircle );
     }
 
     // add the background paper on top of the handle
