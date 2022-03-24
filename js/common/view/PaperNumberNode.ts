@@ -25,8 +25,8 @@ import optionize from '../../../../phet-core/js/optionize.js';
 
 // types
 type PaperNumberNodeOptions = {
-  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>
-  baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>
+  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
+  baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>;
 }
 
 // constants
@@ -44,7 +44,7 @@ class PaperNumberNode extends Node {
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
   private readonly moveDragHandler: DragListener;
-  private readonly splitDragHandler: { down: ( event: any ) => void; };
+  private readonly splitDragHandler: { down: ( event: any ) => void };
   private readonly translationListener: ( position: any ) => void;
   private readonly updateNumberListener: () => void;
   private readonly userControlledListener: ( userControlled: any ) => void;

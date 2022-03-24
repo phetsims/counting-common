@@ -34,25 +34,25 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 
 // types
 type ImageMap = {
-  [ key: number ]: any // TODO-TS: Figure out the type for mipmaps
+  [ key: number ]: any; // TODO-TS: Figure out the type for mipmaps
 };
 type NumberMap = {
-  [ key: number ]: number
+  [ key: number ]: number;
 };
 type ZeroOffset = {
-  [ key: number ]: number[]
+  [ key: number ]: number[];
 }
 type PaperNumberDimensions = {
-  [ key: number ]: Dimension2
+  [ key: number ]: Dimension2;
 };
 export type BaseNumberNodeOptions = {
-  countingObjectType: CountingObjectType,
-  groupingEnabled: boolean,
-  includeHandles: boolean
-  handleOffsetY: number,
-  isLargestBaseNumber: boolean,
-  hasDescendant: boolean,
-  isPartOfStack: boolean
+  countingObjectType: CountingObjectType;
+  groupingEnabled: boolean;
+  includeHandles: boolean;
+  handleOffsetY: number;
+  isLargestBaseNumber: boolean;
+  hasDescendant: boolean;
+  isPartOfStack: boolean;
 };
 
 // place => mipmap info

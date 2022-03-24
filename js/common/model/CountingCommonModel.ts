@@ -101,7 +101,7 @@ class CountingCommonModel {
    * @param {function(leftPaperNumber:PaperNumber,rightPaperNumber:PaperNumber):{left:number,right:number}} getRepelOffsets
    */
   public repelAway( availableModelBounds: Bounds2, paperNumber1: PaperNumber, paperNumber2: PaperNumber,
-                    getRepelOffsets: ( leftPaperNumber: PaperNumber, rightPaperNumber: PaperNumber ) => { left: number; right: number; } ): void {
+                    getRepelOffsets: ( leftPaperNumber: PaperNumber, rightPaperNumber: PaperNumber ) => { left: number; right: number } ): void {
     // Determine which are 'left' and 'right'
     const isPaper1Left = paperNumber1.positionProperty.value.x < paperNumber2.positionProperty.value.x;
     const leftPaperNumber = isPaper1Left ? paperNumber1 : paperNumber2;
