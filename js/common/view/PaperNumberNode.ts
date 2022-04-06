@@ -350,7 +350,7 @@ class PaperNumberNode extends Node {
   /**
    * Removes listeners from the model. Should be called when removed from the scene graph.
    */
-  public dispose(): void {
+  public override dispose(): void {
     Property.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );

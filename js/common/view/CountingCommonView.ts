@@ -215,10 +215,7 @@ class CountingCommonView extends ScreenView {
     return 0;
   }
 
-  /**
-   * @override
-   */
-  public layout( bounds: Bounds2 ): void {
+  public override layout( bounds: Bounds2 ): void {
     super.layout( bounds );
 
     // Some views may need to make extra room for a status bar
