@@ -97,7 +97,7 @@ const PLACE_HANDLE_OFFSET_Y: NumberMap = { 0: 19.95, 1: 15.54, 2: 11.13, 3: 6.51
 
 // digit => horizontal offset for that digit (applied to all places, includes digit-specific information)
 const DIGIT_OFFSET_X: NumberMap = {
-  1: 19.53,
+  1: 16,
   2: -1.47,
   3: -1.47,
   4: -1.89,
