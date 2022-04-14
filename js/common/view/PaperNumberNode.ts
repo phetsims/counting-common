@@ -51,6 +51,7 @@ class PaperNumberNode extends Node {
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
   private readonly scaleListener: ( scale: number ) => void;
   private readonly handleOpacityListener: ( handleOpacity: number ) => void;
+  private readonly includeInSumListener: ( includedInSum: boolean ) => void;
   private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
   private countingObjectTypeAndGroupTypeMultilink: Multilink<[ CountingObjectType, boolean ]> | null;
   private handleNode: null | Node;
@@ -191,6 +192,14 @@ class PaperNumberNode extends Node {
     this.userControlledListener = userControlled => {
       if ( userControlled ) {
         this.moveToFront();
+      }
+    };
+
+    // Listener for when whether the paper number's value is included in the sum changes
+    this.includeInSumListener = includedInSum => {
+      if ( !includedInSum ) {
+        this.interruptSubtreeInput();
+        this.pickable = false;
       }
     };
 
@@ -342,6 +351,7 @@ class PaperNumberNode extends Node {
     this.paperNumber.userControlledProperty.link( this.userControlledListener );
     this.paperNumber.numberValueProperty.link( this.updateNumberListener );
     this.paperNumber.positionProperty.link( this.translationListener );
+    this.paperNumber.includeInSumProperty.link( this.includeInSumListener );
     this.countingObjectTypeAndGroupTypeMultilink = Property.lazyMultilink(
       [ this.countingObjectTypeProperty, this.paperNumber.groupingEnabledProperty ],
       this.countingObjectTypeAndGroupTypeListener );
@@ -352,6 +362,7 @@ class PaperNumberNode extends Node {
    */
   public override dispose(): void {
     Property.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
+    this.paperNumber.includeInSumProperty.unlink( this.includeInSumListener );
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
     this.paperNumber.userControlledProperty.unlink( this.userControlledListener );

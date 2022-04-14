@@ -52,6 +52,7 @@ class PaperNumber {
   public readonly endAnimationEmitter: Emitter<any>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
+  public readonly includeInSumProperty: BooleanProperty;
   private animation: Animation | null;
   public readonly groupingEnabledProperty: IReadOnlyProperty<boolean>;
   public localBounds: Bounds2;
@@ -91,6 +92,9 @@ class PaperNumber {
     // whether grouping is enabled, which determines if this paper number is allowed to combine with others. groupable
     // objects also have a background, non-groupable objects do not.
     this.groupingEnabledProperty = options.groupingEnabledProperty;
+
+    // whether the value of this paper number should be included in the sum of the model
+    this.includeInSumProperty = new BooleanProperty( true );
 
     // Should be set through accessor methods only.
     this.destination = initialPosition.copy();
