@@ -34,6 +34,7 @@ type CountingCreatorNodeOptions = {
 };
 
 class CountingCreatorNode extends Node {
+  private readonly creatorNumberValue: number;
   private screenView: CountingCommonView;
   private readonly targetNode: Node;
   private readonly sumProperty: NumberProperty;
@@ -59,14 +60,16 @@ class CountingCreatorNode extends Node {
 
     assert && assert( sumProperty.range, `Range is required: ${sumProperty.range}` );
 
-    const numberValue = Math.pow( 10, place );
+    this.creatorNumberValue = Math.pow( 10, place );
 
     this.screenView = screenView;
     this.sumProperty = sumProperty;
 
     const maxSum = sumProperty.range!.max;
-    this.showFrontTargetNumber = maxSum - numberValue;
-    this.showBackTargetNumber = this.showFrontTargetNumber - numberValue;
+
+    // TODO: The naming of these is not accurate
+    this.showFrontTargetNumber = maxSum - this.creatorNumberValue; // 9
+    this.showBackTargetNumber = this.showFrontTargetNumber - this.creatorNumberValue; // 8
 
     this.backTargetOffset = options.backTargetOffset;
 
@@ -107,7 +110,7 @@ class CountingCreatorNode extends Node {
 
     const updateTargetVisibility = ( sum: number, oldSum: number ) => {
       // counting up
-      if ( sum === oldSum + numberValue ) {
+      if ( sum === oldSum + this.creatorNumberValue ) {
         if ( sum === this.showFrontTargetNumber ) {
           this.frontTargetNode.visible = false;
         }
@@ -125,7 +128,7 @@ class CountingCreatorNode extends Node {
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
         const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
-        const paperNumber = new PaperNumber( numberValue, new Vector2( 0, 0 ), {
+        const paperNumber = new PaperNumber( this.creatorNumberValue, new Vector2( 0, 0 ), {
           groupingEnabledProperty: options.groupingEnabledProperty
         } );
 
@@ -154,13 +157,14 @@ class CountingCreatorNode extends Node {
     this.addChild( this.targetNode );
   }
 
-  // TODO: Add support for returning numbers that had a higher value than one
-  checkTargetVisibility(): void {
-    if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
-      this.backTargetNode.visible = true;
-    }
-    else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.showBackTargetNumber ) {
-      this.frontTargetNode.visible = true;
+  checkTargetVisibility( returnedNumberValue: number ): void {
+    for ( let i = 0; i < returnedNumberValue / this.creatorNumberValue; i++ ) {
+      if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
+        this.backTargetNode.visible = true;
+      }
+      else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.showBackTargetNumber ) {
+        this.frontTargetNode.visible = true;
+      }
     }
   }
 
