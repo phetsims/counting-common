@@ -12,8 +12,7 @@ import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.j
 import PaperNumber from '../../../../counting-common/js/common/model/PaperNumber.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import merge from '../../../../phet-core/js/merge.js';
-import { Node } from '../../../../scenery/js/imports.js';
+import { Node, NodeOptions } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
@@ -22,16 +21,25 @@ import CountingObjectType from '../model/CountingObjectType.js';
 import Property from '../../../../axon/js/Property.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 
 // types
-type CountingCreatorNodeOptions = {
-  updateCurrentNumber: boolean;
-  countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
-  groupingEnabledProperty: IReadOnlyProperty<boolean>;
-  groupedTargetScale: number;
-  ungroupedTargetScale: number;
-  backTargetOffset: Vector2;
+type SelfOptions = {
+  updateCurrentNumber?: boolean;
+  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
+  groupingEnabledProperty?: IReadOnlyProperty<boolean>;
+  groupedTargetScale?: number;
+  ungroupedTargetScale?: number;
+  backTargetOffset?: Vector2;
+
+  // pointer area dilation
+  touchAreaXDilation?: number;
+  touchAreaYDilation?: number;
+
+  // pointer area shift
+  touchAreaXShift?: number;
 };
+export type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
 class CountingCreatorNode extends Node {
   private readonly creatorNumberValue: number;
@@ -45,18 +53,22 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions: Partial<CountingCreatorNodeOptions> ) {
+  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions?: CountingCreatorNodeOptions ) {
 
-    const options = merge( {
+    const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>( {
       updateCurrentNumber: false,
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingEnabledProperty: new BooleanProperty( true ),
       groupedTargetScale: 0.65,
       ungroupedTargetScale: 1,
-      backTargetOffset: new Vector2( -9, -9 )
-    }, providedOptions ) as CountingCreatorNodeOptions;
+      backTargetOffset: new Vector2( -9, -9 ),
 
-    super();
+      touchAreaXDilation: 15,
+      touchAreaYDilation: 5,
+      touchAreaXShift: 0
+    }, providedOptions );
+
+    super( options );
 
     assert && assert( sumProperty.range, `Range is required: ${sumProperty.range}` );
 
@@ -91,7 +103,8 @@ class CountingCreatorNode extends Node {
       cursor: 'pointer',
       children: [ this.backTargetNode, this.frontTargetNode ]
     } );
-    this.targetNode.touchArea = this.targetNode.localBounds.dilatedX( 15 ).dilatedY( 5 );
+    this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
+      .shiftedX( options.touchAreaXShift );
 
     // TODO: Too much duplication?
     Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
@@ -106,6 +119,8 @@ class CountingCreatorNode extends Node {
         this.frontTargetNode.visible = frontTargetNodeVisibile;
 
         this.targetNode.children = [ this.backTargetNode, this.frontTargetNode ];
+        this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
+          .shiftedX( options.touchAreaXShift );
       } );
 
     const updateTargetVisibility = ( sum: number, oldSum: number ) => {
