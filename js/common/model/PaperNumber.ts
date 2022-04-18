@@ -224,7 +224,7 @@ class PaperNumber {
    * @param newDestination
    * @param [animate] - Indicates if the new constrained position should be directly set or animated
    */
-  public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate: boolean = false ): void {
+  public setConstrainedDestination( viewBounds: Bounds2, newDestination: Vector2, animate = false ): void {
     const originBounds = this.getOriginBounds( viewBounds );
     this.setDestination( originBounds.closestPointTo( newDestination ), animate );
   }
