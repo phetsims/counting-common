@@ -65,7 +65,7 @@ class PaperNumber {
    */
   constructor( numberValue: number, initialPosition: Vector2, providedOptions?: PaperNumberOptions ) {
 
-    const options = optionize<PaperNumberOptions, PaperNumberOptions>( {
+    const options = optionize<PaperNumberOptions, PaperNumberOptions>()( {
       groupingEnabledProperty: new BooleanProperty( true )
     }, providedOptions );
 
@@ -173,7 +173,7 @@ class PaperNumber {
   public setDestination( destination: Vector2, animate: boolean, providedOptions?: SetDestinationOptions ): void {
     assert && assert( destination.isFinite() );
 
-    const options = optionize<SetDestinationOptions>( {
+    const options = optionize<SetDestinationOptions>()( {
       targetScale: 1,
       targetHandleOpacity: 1
       }, providedOptions );

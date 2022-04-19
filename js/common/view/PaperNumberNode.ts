@@ -68,7 +68,7 @@ class PaperNumberNode extends Node {
 
     super();
 
-    const options = optionize<PaperNumberNodeOptions, PaperNumberNodeOptions>( {
+    const options = optionize<PaperNumberNodeOptions, PaperNumberNodeOptions>()( {
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
     }, providedOptions );

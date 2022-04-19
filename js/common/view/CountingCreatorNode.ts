@@ -55,7 +55,7 @@ class CountingCreatorNode extends Node {
   // TODO: Improve organization and docs in this file
   constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions?: CountingCreatorNodeOptions ) {
 
-    const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>( {
+    const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
       updateCurrentNumber: false,
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingEnabledProperty: new BooleanProperty( true ),
