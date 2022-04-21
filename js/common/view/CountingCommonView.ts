@@ -18,6 +18,7 @@ import PaperNumberNode from './PaperNumberNode.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import PaperNumber from '../model/PaperNumber.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 
 // types
 export type PaperNumberNodeMap = {
@@ -35,7 +36,9 @@ class CountingCommonView extends ScreenView {
   private readonly paperNumberNodeMap: PaperNumberNodeMap;
 
   constructor( model: CountingCommonModel ) {
-    super();
+    super( {
+      tandem: Tandem.OPT_OUT
+    } );
 
     this.model = model;
 
