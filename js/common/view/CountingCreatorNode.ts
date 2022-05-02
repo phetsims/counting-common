@@ -109,18 +109,19 @@ class CountingCreatorNode extends Node {
     // TODO: Too much duplication?
     Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
-        const backTargetNodeVisibile = this.backTargetNode.visible;
-        const frontTargetNodeVisibile = this.frontTargetNode.visible;
+        const backTargetNodeVisible = this.backTargetNode.visible;
+        const frontTargetNodeVisible = this.frontTargetNode.visible;
 
         this.backTargetNode = createSingleTargetNode( options.backTargetOffset );
         this.frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
 
-        this.backTargetNode.visible = backTargetNodeVisibile;
-        this.frontTargetNode.visible = frontTargetNodeVisibile;
+        this.backTargetNode.visible = backTargetNodeVisible;
+        this.frontTargetNode.visible = frontTargetNodeVisible;
 
         this.targetNode.children = [ this.backTargetNode, this.frontTargetNode ];
         this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
           .shiftedX( options.touchAreaXShift );
+        this.targetNode.inputEnabled = backTargetNodeVisible || frontTargetNodeVisible;
       } );
 
     const updateTargetVisibility = ( sum: number, oldSum: number ) => {
@@ -131,6 +132,7 @@ class CountingCreatorNode extends Node {
         }
         else if ( sum === maxSum ) {
           this.backTargetNode.visible = false;
+          this.targetNode.inputEnabled = false;
         }
       }
     };
@@ -176,6 +178,7 @@ class CountingCreatorNode extends Node {
     for ( let i = 0; i < returnedNumberValue / this.creatorNumberValue; i++ ) {
       if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
         this.backTargetNode.visible = true;
+        this.targetNode.inputEnabled = true;
       }
       else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.showBackTargetNumber ) {
         this.frontTargetNode.visible = true;
