@@ -9,7 +9,7 @@ import countingCommon from './countingCommon.js';
 
 type StringsType = {
   'counting-common': {
-    'title': string
+    'title': string;
   }
 };
 
