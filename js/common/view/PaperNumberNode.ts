@@ -18,7 +18,7 @@ import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import merge from '../../../../phet-core/js/merge.js';
-import Multilink from '../../../../axon/js/Multilink.js';
+import { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
@@ -53,7 +53,8 @@ class PaperNumberNode extends Node {
   private readonly handleOpacityListener: ( handleOpacity: number ) => void;
   private readonly includeInSumListener: ( includedInSum: boolean ) => void;
   private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
-  private countingObjectTypeAndGroupTypeMultilink: Multilink<[ CountingObjectType, boolean ]> | null;
+
+  private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
   /**
