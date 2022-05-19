@@ -109,8 +109,6 @@ class CountingCommonView extends ScreenView {
 
   /**
    * Creates and adds a PaperNumberNode.
-   *
-   * @returns - The created node
    */
   public onPaperNumberAdded( paperNumber: PaperNumber ): PaperNumberNode {
     const paperNumberNode = new PaperNumberNode( paperNumber, this.availableViewBoundsProperty,
