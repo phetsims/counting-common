@@ -26,7 +26,6 @@ import Emitter from '../../../../axon/js/Emitter.js';
 
 // types
 type SelfOptions = {
-  resetEmitter?: Emitter | null;
   updateCurrentNumber?: boolean;
   countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
@@ -41,7 +40,7 @@ type SelfOptions = {
   // pointer area shift
   touchAreaXShift?: number;
 };
-export type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
+type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
 class CountingCreatorNode extends Node {
   private readonly creatorNumberValue: number;
@@ -55,10 +54,10 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions?: CountingCreatorNodeOptions ) {
+  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: Emitter,
+               providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
-      resetEmitter: null,
       updateCurrentNumber: false,
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingEnabledProperty: new BooleanProperty( true ),
@@ -176,7 +175,7 @@ class CountingCreatorNode extends Node {
 
     this.addChild( this.targetNode );
 
-    options.resetEmitter && options.resetEmitter.addListener( () => {
+    resetEmitter.addListener( () => {
       this.backTargetNode.visible = true;
       this.frontTargetNode.visible = true;
       this.targetNode.inputEnabled = true;
