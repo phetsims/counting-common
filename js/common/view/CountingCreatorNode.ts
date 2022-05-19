@@ -22,9 +22,11 @@ import Property from '../../../../axon/js/Property.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import Emitter from '../../../../axon/js/Emitter.js';
 
 // types
 type SelfOptions = {
+  resetEmitter?: Emitter | null;
   updateCurrentNumber?: boolean;
   countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
@@ -56,6 +58,7 @@ class CountingCreatorNode extends Node {
   constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
+      resetEmitter: null,
       updateCurrentNumber: false,
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingEnabledProperty: new BooleanProperty( true ),
@@ -172,6 +175,12 @@ class CountingCreatorNode extends Node {
     } );
 
     this.addChild( this.targetNode );
+
+    options.resetEmitter && options.resetEmitter.addListener( () => {
+      this.backTargetNode.visible = true;
+      this.frontTargetNode.visible = true;
+      this.targetNode.inputEnabled = true;
+    } );
   }
 
   checkTargetVisibility( returnedNumberValue: number ): void {
