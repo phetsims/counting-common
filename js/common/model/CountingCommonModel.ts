@@ -12,13 +12,17 @@ import ScreenView from '../../../../joist/js/ScreenView.js';
 import countingCommon from '../../countingCommon.js';
 import PaperNumber from './PaperNumber.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Emitter from '../../../../axon/js/Emitter.js';
 
 class CountingCommonModel {
   public paperNumbers: ObservableArray<PaperNumber>;
+  public readonly resetEmitter: Emitter;
 
   constructor() {
     // Numbers in play that can be interacted with.
     this.paperNumbers = createObservableArray();
+
+    this.resetEmitter = new Emitter();
   }
 
   /**
@@ -125,6 +129,7 @@ class CountingCommonModel {
    */
   public reset(): void {
     this.removeAllPaperNumbers();
+    this.resetEmitter.emit();
   }
 }
 

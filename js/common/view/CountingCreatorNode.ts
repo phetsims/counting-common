@@ -22,6 +22,7 @@ import Property from '../../../../axon/js/Property.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import Emitter from '../../../../axon/js/Emitter.js';
 
 // types
 type SelfOptions = {
@@ -53,7 +54,8 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, providedOptions?: CountingCreatorNodeOptions ) {
+  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: Emitter,
+               providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>( {
       updateCurrentNumber: false,
@@ -172,6 +174,12 @@ class CountingCreatorNode extends Node {
     } );
 
     this.addChild( this.targetNode );
+
+    resetEmitter.addListener( () => {
+      this.backTargetNode.visible = true;
+      this.frontTargetNode.visible = true;
+      this.targetNode.inputEnabled = true;
+    } );
   }
 
   checkTargetVisibility( returnedNumberValue: number ): void {
