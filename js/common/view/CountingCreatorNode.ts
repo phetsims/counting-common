@@ -18,11 +18,11 @@ import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import Property from '../../../../axon/js/Property.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Emitter from '../../../../axon/js/Emitter.js';
+import Multilink from '../../../../axon/js/Multilink.js';
 
 // types
 type SelfOptions = {
@@ -109,7 +109,7 @@ class CountingCreatorNode extends Node {
       .shiftedX( options.touchAreaXShift );
 
     // TODO: Too much duplication?
-    Property.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
+    Multilink.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
         const backTargetNodeVisible = this.backTargetNode.visible;
         const frontTargetNodeVisible = this.frontTargetNode.visible;
