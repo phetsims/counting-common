@@ -18,7 +18,7 @@ import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import merge from '../../../../phet-core/js/merge.js';
-import { UnknownMultilink } from '../../../../axon/js/Multilink.js';
+import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
@@ -353,7 +353,7 @@ class PaperNumberNode extends Node {
     this.paperNumber.numberValueProperty.link( this.updateNumberListener );
     this.paperNumber.positionProperty.link( this.translationListener );
     this.paperNumber.includeInSumProperty.link( this.includeInSumListener );
-    this.countingObjectTypeAndGroupTypeMultilink = Property.lazyMultilink(
+    this.countingObjectTypeAndGroupTypeMultilink = Multilink.lazyMultilink(
       [ this.countingObjectTypeProperty, this.paperNumber.groupingEnabledProperty ],
       this.countingObjectTypeAndGroupTypeListener );
   }
@@ -362,7 +362,7 @@ class PaperNumberNode extends Node {
    * Removes listeners from the model. Should be called when removed from the scene graph.
    */
   public override dispose(): void {
-    Property.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
+    Multilink.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
     this.paperNumber.includeInSumProperty.unlink( this.includeInSumListener );
     this.paperNumber.positionProperty.unlink( this.translationListener );
     this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
