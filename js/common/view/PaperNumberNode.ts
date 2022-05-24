@@ -164,7 +164,9 @@ class PaperNumberNode extends Node {
         this.interactionStartedEmitter.emit( this );
         this.splitEmitter.emit( this );
 
-        const newPaperNumber = new PaperNumber( amountToRemove, paperNumber.positionProperty.value );
+        const newPaperNumber = new PaperNumber( amountToRemove, paperNumber.positionProperty.value, {
+          groupingEnabledProperty: paperNumber.groupingEnabledProperty
+        } );
         addAndDragNumber( event, newPaperNumber );
       }
     };
