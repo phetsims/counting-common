@@ -57,15 +57,9 @@ class PaperNumberNode extends Node {
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
-  /**
-   * @param paperNumber
-   * @param availableViewBoundsProperty
-   * @param addAndDragNumber - function( event, paperNumber ), adds and starts a drag for a number
-   * @param tryToCombineNumbers - function( paperNumber ), called to combine our paper number
-   * @param providedOptions
-   */
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
-               tryToCombineNumbers: Function, providedOptions?: Partial<PaperNumberNodeOptions> ) {
+               tryToCombineNumbers: Function, setSumPropertyDeferred: ( isDeferred: boolean ) => void,
+               providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
 
@@ -160,6 +154,8 @@ class PaperNumberNode extends Node {
           return;
         }
 
+        setSumPropertyDeferred( true );
+
         paperNumber.changeNumber( amountRemaining );
 
         this.interactionStartedEmitter.emit( this );
@@ -169,6 +165,8 @@ class PaperNumberNode extends Node {
           groupingEnabledProperty: paperNumber.groupingEnabledProperty
         } );
         addAndDragNumber( event, newPaperNumber );
+
+        setSumPropertyDeferred( false );
       }
     };
     this.splitTarget.addInputListener( this.splitDragHandler );

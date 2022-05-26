@@ -13,17 +13,25 @@ import countingCommon from '../../countingCommon.js';
 import PaperNumber from './PaperNumber.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Emitter from '../../../../axon/js/Emitter.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Range from '../../../../dot/js/Range.js';
 
 class CountingCommonModel {
 
   // Numbers in play that can be interacted with.
   public paperNumbers: ObservableArray<PaperNumber>;
 
+  // the sum of all paper numbers
+  public sumProperty: NumberProperty;
+
   // used to notify view sub-components that reset is being called
   public readonly resetEmitter: Emitter;
 
-  constructor() {
+  constructor( highestCount: number ) {
     this.paperNumbers = createObservableArray();
+    this.sumProperty = new NumberProperty( 0, {
+      range: new Range( 0, highestCount )
+    } );
     this.resetEmitter = new Emitter();
   }
 
@@ -56,8 +64,11 @@ class CountingCommonModel {
     }
 
     // Apply changes
+    this.sumProperty.setDeferred( true );
     this.removePaperNumber( numberToRemove );
     numberToChange.changeNumber( newValue );
+    this.sumProperty.setDeferred( false );
+
     numberToChange.setConstrainedDestination( availableModelBounds, numberToChange.positionProperty.value, false );
   }
 

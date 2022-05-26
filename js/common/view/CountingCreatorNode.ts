@@ -156,20 +156,6 @@ class CountingCreatorNode extends Node {
 
         // Create and start dragging the new paper number node
         screenView.addAndDragNumber( event, paperNumber );
-
-        // TODO: the need for this guard means that the play areas are not in sync, and should be eliminated when https://github.com/phetsims/number-play/issues/6 is fixed.
-        if ( options.updateCurrentNumber &&
-             // @ts-ignore TODO-TS: Remove when above issue is fixed
-             screenView.playArea.currentNumberProperty.value < screenView.playArea.currentNumberProperty.range.max ) {
-
-          // a user grabbed a new number, so update the sim's currentNumberProperty
-          // @ts-ignore
-          screenView.playArea.isControllingCurrentNumber = true;
-          // @ts-ignore
-          screenView.playArea.currentNumberProperty.value++;
-          // @ts-ignore
-          screenView.playArea.isControllingCurrentNumber = false;
-        }
       }
     } );
 

@@ -33,6 +33,7 @@ class CountingCommonView extends ScreenView {
   protected readonly resetAllButton: ResetAllButton;
   private readonly closestDragListener: ClosestDragListener;
   private readonly addAndDragNumberCallback: OmitThisParameter<( event: PressListenerEvent, paperNumber: PaperNumber ) => void>;
+  private readonly setSumPropertyDeferredCallback: ( isDeferred: boolean ) => void;
   private readonly paperNumberNodeMap: PaperNumberNodeMap;
 
   constructor( model: CountingCommonModel ) {
@@ -47,8 +48,8 @@ class CountingCommonView extends ScreenView {
     this.paperNumberLayerNode = new Node();
 
     this.tryToCombineNumbersCallback = this.tryToCombineNumbers.bind( this );
-
     this.addAndDragNumberCallback = this.addAndDragNumber.bind( this );
+    this.setSumPropertyDeferredCallback = this.setSumPropertyDeferred.bind( this );
 
     // @private {number} PaperNumber.id => {PaperNumberNode} - lookup map for efficiency
     this.paperNumberNodeMap = {};
@@ -112,7 +113,7 @@ class CountingCommonView extends ScreenView {
    */
   public onPaperNumberAdded( paperNumber: PaperNumber ): PaperNumberNode {
     const paperNumberNode = new PaperNumberNode( paperNumber, this.availableViewBoundsProperty,
-      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback );
+      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback, this.setSumPropertyDeferredCallback );
 
     this.paperNumberNodeMap[ paperNumberNode.paperNumber.id ] = paperNumberNode;
     this.paperNumberLayerNode.addChild( paperNumberNode );
@@ -121,6 +122,13 @@ class CountingCommonView extends ScreenView {
     this.closestDragListener.addDraggableItem( paperNumberNode );
 
     return paperNumberNode;
+  }
+
+  /**
+   * Sets the deferred state of the sumProperty in the model
+   */
+  private setSumPropertyDeferred( isDeferred: boolean ): void {
+    this.model.sumProperty.setDeferred( isDeferred );
   }
 
   /**

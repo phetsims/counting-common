@@ -158,6 +158,7 @@ class PaperNumber {
    * Changes the number that this paper number represents.
    */
   public changeNumber( numberValue: number ): void {
+    // TODO: assert that sumProperty is deferred
     this.baseNumbers = PaperNumber.getBaseNumbers( numberValue );
     this.numberValueProperty.value = numberValue;
   }
