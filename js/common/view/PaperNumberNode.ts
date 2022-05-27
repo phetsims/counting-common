@@ -57,8 +57,8 @@ class PaperNumberNode extends Node {
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
-  constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: Function,
-               tryToCombineNumbers: Function, setSumPropertyDeferred: ( isDeferred: boolean ) => void,
+  constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
+               tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, setSumPropertyDeferred: ( isDeferred: boolean ) => void,
                providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
