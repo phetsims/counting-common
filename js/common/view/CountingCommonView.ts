@@ -97,8 +97,8 @@ class CountingCommonView extends ScreenView {
   /**
    * Add a paper number to the model and immediately start dragging it with the provided event.
    *
-   * @param {SceneryEvent} event - The Scenery event that triggered this.
-   * @param {PaperNumber} paperNumber - The paper number to add and then drag
+   * @param event - The Scenery event that triggered this.
+   * @param paperNumber - The paper number to add and then drag
    */
   public addAndDragNumber( event: PressListenerEvent, paperNumber: PaperNumber ): void {
     // Add it and lookup the related node.

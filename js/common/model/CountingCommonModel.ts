@@ -112,10 +112,10 @@ class CountingCommonModel {
   }
 
   /**
-   * @param {Bounds2} availableModelBounds - Constrain the position to be inside these bounds
-   * @param {PaperNumber} paperNumber1
-   * @param {PaperNumber} paperNumber2
-   * @param {function(leftPaperNumber:PaperNumber,rightPaperNumber:PaperNumber):{left:number,right:number}} getRepelOffsets
+   * @param availableModelBounds - Constrain the position to be inside these bounds
+   * @param paperNumber1
+   * @param paperNumber2
+   * @param getRepelOffsets
    */
   public repelAway( availableModelBounds: Bounds2, paperNumber1: PaperNumber, paperNumber2: PaperNumber,
                     getRepelOffsets: ( leftPaperNumber: PaperNumber, rightPaperNumber: PaperNumber ) => { left: number; right: number } ): void {
