@@ -51,7 +51,7 @@ class CountingCommonView extends ScreenView {
     this.addAndDragNumberCallback = this.addAndDragNumber.bind( this );
     this.setSumPropertyDeferredCallback = this.setSumPropertyDeferred.bind( this );
 
-    // @private {number} PaperNumber.id => {PaperNumberNode} - lookup map for efficiency
+    // PaperNumber.id => {PaperNumberNode} - lookup map for efficiency
     this.paperNumberNodeMap = {};
 
     // The view coordinates where numbers can be dragged. Can update when the sim is resized.
