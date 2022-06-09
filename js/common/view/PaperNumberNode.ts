@@ -58,8 +58,7 @@ class PaperNumberNode extends Node {
   private handleNode: null | Node;
 
   constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
-               tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, setSumPropertyDeferred: ( isDeferred: boolean ) => void,
-               providedOptions?: Partial<PaperNumberNodeOptions> ) {
+               tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
 
@@ -154,8 +153,6 @@ class PaperNumberNode extends Node {
           return;
         }
 
-        setSumPropertyDeferred( true );
-
         paperNumber.changeNumber( amountRemaining );
 
         this.interactionStartedEmitter.emit( this );
@@ -165,8 +162,6 @@ class PaperNumberNode extends Node {
           groupingEnabledProperty: paperNumber.groupingEnabledProperty
         } );
         addAndDragNumber( event, newPaperNumber );
-
-        setSumPropertyDeferred( false );
       }
     };
     this.splitTarget.addInputListener( this.splitDragHandler );

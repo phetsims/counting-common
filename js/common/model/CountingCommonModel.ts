@@ -26,13 +26,17 @@ class CountingCommonModel {
 
   // used to notify view sub-components that reset is being called
   public readonly resetEmitter: Emitter;
+  public readonly name: string;
 
-  constructor( highestCount: number ) {
+  constructor( highestCount: number, name: string ) {
     this.paperNumbers = createObservableArray();
     this.sumProperty = new NumberProperty( 0, {
       range: new Range( 0, highestCount )
     } );
     this.resetEmitter = new Emitter();
+
+    // TODO: Remove when done logging
+    this.name = name;
   }
 
   /**
@@ -64,10 +68,8 @@ class CountingCommonModel {
     }
 
     // Apply changes
-    this.sumProperty.setDeferred( true );
     this.removePaperNumber( numberToRemove );
     numberToChange.changeNumber( newValue );
-    this.sumProperty.setDeferred( false );
 
     numberToChange.setConstrainedDestination( availableModelBounds, numberToChange.positionProperty.value, false );
   }
@@ -138,10 +140,23 @@ class CountingCommonModel {
   }
 
   /**
+   * Updates the total sum of the paper numbers.
+   */
+  public calculateTotal(): void {
+    let total = 0;
+    this.paperNumbers.filter( paperNumber => paperNumber.includeInSumProperty.value ).forEach( paperNumber => {
+      total += paperNumber.numberValueProperty.value;
+    } );
+    this.sumProperty.value = total;
+    console.log( 'calculating and setting total in ' + this.name + ': ' + total );
+  }
+
+  /**
    * Reset the model
    */
   public reset(): void {
     this.removeAllPaperNumbers();
+    this.calculateTotal();
     this.resetEmitter.emit();
   }
 }
