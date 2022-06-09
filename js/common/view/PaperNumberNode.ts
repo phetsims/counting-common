@@ -34,9 +34,9 @@ const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
-  public readonly moveEmitter: Emitter<any>;
-  public readonly splitEmitter: Emitter<any>;
-  public readonly interactionStartedEmitter: Emitter<any>;
+  public readonly moveEmitter: Emitter<[ PaperNumberNode ]>;
+  public readonly splitEmitter: Emitter<[ PaperNumberNode ]>;
+  public readonly interactionStartedEmitter: Emitter<[ PaperNumberNode ]>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   public readonly countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
@@ -44,10 +44,10 @@ class PaperNumberNode extends Node {
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
   private readonly moveDragHandler: DragListener;
-  private readonly splitDragHandler: { down: ( event: any ) => void };
-  private readonly translationListener: ( position: any ) => void;
+  private readonly splitDragHandler: { down: ( event: PressListenerEvent ) => void };
+  private readonly translationListener: ( position: Vector2 ) => void;
   private readonly updateNumberListener: () => void;
-  private readonly userControlledListener: ( userControlled: any ) => void;
+  private readonly userControlledListener: ( userControlled: boolean ) => void;
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
   private readonly scaleListener: ( scale: number ) => void;
   private readonly handleOpacityListener: ( handleOpacity: number ) => void;

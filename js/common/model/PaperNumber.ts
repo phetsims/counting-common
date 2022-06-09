@@ -48,8 +48,8 @@ class PaperNumber {
   private destination: Vector2;
   private animating: boolean;
   public baseNumbers: BaseNumber[];
-  public readonly endDragEmitter: Emitter<any>;
-  public readonly endAnimationEmitter: Emitter<any>;
+  public readonly endDragEmitter: Emitter<[ PaperNumber ]>;
+  public readonly endAnimationEmitter: Emitter<[ PaperNumber ]>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
   public readonly includeInSumProperty: BooleanProperty;
@@ -177,7 +177,7 @@ class PaperNumber {
     const options = optionize<SetDestinationOptions>()( {
       targetScale: 1,
       targetHandleOpacity: 1
-      }, providedOptions );
+    }, providedOptions );
 
     if ( animate ) {
       this.animating = true;

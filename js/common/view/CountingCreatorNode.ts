@@ -12,7 +12,7 @@ import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.j
 import PaperNumber from '../../../../counting-common/js/common/model/PaperNumber.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import { Node, NodeOptions } from '../../../../scenery/js/imports.js';
+import { Node, NodeOptions, PressListenerEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
@@ -142,7 +142,7 @@ class CountingCreatorNode extends Node {
     sumProperty.lazyLink( updateTargetVisibility );
 
     this.targetNode.addInputListener( {
-      down: ( event: any ) => {
+      down: ( event: PressListenerEvent ) => {
         if ( !event.canStartPress() ) { return; }
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.

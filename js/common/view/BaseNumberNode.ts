@@ -9,7 +9,7 @@
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import { Shape } from '../../../../kite/js/imports.js';
-import { Circle, Image, Node, Path } from '../../../../scenery/js/imports.js';
+import { Circle, Image, Mipmap, Node, Path } from '../../../../scenery/js/imports.js';
 import digit0_png from '../../../mipmaps/digit0_png.js';
 import digit1_png from '../../../mipmaps/digit1_png.js';
 import digit2_png from '../../../mipmaps/digit2_png.js';
@@ -34,7 +34,7 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 
 // types
 type ImageMap = {
-  [ key: number ]: any; // TODO-TS: Figure out the type for mipmaps
+  [ key: number ]: Mipmap;
 };
 type NumberMap = {
   [ key: number ]: number;
