@@ -11,13 +11,13 @@ import countingCommon from '../../countingCommon.js';
 import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
 
 class CountingObjectType extends EnumerationValue {
-  static DOG = new CountingObjectType();
-  static APPLE = new CountingObjectType();
-  static BUTTERFLY = new CountingObjectType();
-  static BALL = new CountingObjectType();
-  static PAPER_NUMBER = new CountingObjectType();
+  public static DOG = new CountingObjectType();
+  public static APPLE = new CountingObjectType();
+  public static BUTTERFLY = new CountingObjectType();
+  public static BALL = new CountingObjectType();
+  public static PAPER_NUMBER = new CountingObjectType();
 
-  static enumeration = new Enumeration( CountingObjectType );
+  public static enumeration = new Enumeration( CountingObjectType );
 }
 
 countingCommon.register( 'CountingObjectType', CountingObjectType );

@@ -63,7 +63,7 @@ class PaperNumber {
    * @param initialPosition
    * @param [providedOptions]
    */
-  constructor( numberValue: number, initialPosition: Vector2, providedOptions?: PaperNumberOptions ) {
+  public constructor( numberValue: number, initialPosition: Vector2, providedOptions?: PaperNumberOptions ) {
 
     const options = optionize<PaperNumberOptions, PaperNumberOptions>()( {
       groupingEnabledProperty: new BooleanProperty( true )

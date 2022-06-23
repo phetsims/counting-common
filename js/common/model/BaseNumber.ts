@@ -33,7 +33,7 @@ class BaseNumber {
    * @param digit - The digit (1 to 9, won't create for a 0).
    * @param place - The decimal exponent for the number digit * 10^place.
    */
-  constructor( digit: number, place: number ) {
+  public constructor( digit: number, place: number ) {
     // The numeric value, e.g. 200 if digit is 2 and place is 2
     this.numberValue = digit * Math.pow( 10, place );
 

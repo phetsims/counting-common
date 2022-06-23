@@ -35,7 +35,7 @@ class CountingCommonView extends ScreenView {
   private readonly addAndDragNumberCallback: OmitThisParameter<( event: PressListenerEvent, paperNumber: PaperNumber ) => void>;
   private readonly paperNumberNodeMap: PaperNumberNodeMap;
 
-  constructor( model: CountingCommonModel ) {
+  protected constructor( model: CountingCommonModel ) {
     super( {
       tandem: Tandem.OPT_OUT
     } );

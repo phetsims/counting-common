@@ -136,7 +136,7 @@ class BaseNumberNode extends Node {
   public readonly handleNode: Node | undefined;
   public readonly backgroundNode: Image | null = null;
 
-  constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
+  public constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
     super();
 
     const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {

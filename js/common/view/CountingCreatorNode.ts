@@ -54,7 +54,7 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: Emitter,
+  public constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: Emitter,
                providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
@@ -168,7 +168,7 @@ class CountingCreatorNode extends Node {
     } );
   }
 
-  checkTargetVisibility( returnedNumberValue: number ): void {
+  public checkTargetVisibility( returnedNumberValue: number ): void {
     for ( let i = 0; i < returnedNumberValue / this.creatorNumberValue; i++ ) {
       if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
         this.backTargetNode.visible = true;

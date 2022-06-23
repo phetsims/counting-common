@@ -28,7 +28,7 @@ class CountingCommonModel {
   public readonly resetEmitter: Emitter;
   public readonly name: string;
 
-  constructor( highestCount: number, name: string ) {
+  protected constructor( highestCount: number, name: string ) {
     this.paperNumbers = createObservableArray();
     this.sumProperty = new NumberProperty( 0, {
       range: new Range( 0, highestCount )
