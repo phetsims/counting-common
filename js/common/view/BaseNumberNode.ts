@@ -29,8 +29,8 @@ import BaseNumber from '../model/BaseNumber.js';
 import groupBackground1_png from '../../../mipmaps/groupBackground1_png.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import groupBackground10_png from '../../../mipmaps/groupBackground10_png.js';
-import merge from '../../../../phet-core/js/merge.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 
 // types
 type ImageMap = {
@@ -45,15 +45,16 @@ type ZeroOffset = {
 type PaperNumberDimensions = {
   [ key: number ]: Dimension2;
 };
-export type BaseNumberNodeOptions = {
-  countingObjectType: CountingObjectType;
-  groupingEnabled: boolean;
-  includeHandles: boolean;
-  handleOffsetY: number;
-  isLargestBaseNumber: boolean;
-  hasDescendant: boolean;
-  isPartOfStack: boolean;
+type SelfOptions = {
+  countingObjectType?: CountingObjectType;
+  groupingEnabled?: boolean;
+  includeHandles?: boolean;
+  handleOffsetY?: number;
+  isLargestBaseNumber?: boolean;
+  hasDescendant?: boolean;
+  isPartOfStack?: boolean;
 };
+export type BaseNumberNodeOptions = SelfOptions;
 
 // place => mipmap info
 const BACKGROUND_IMAGE_MAP = new Map();
@@ -136,10 +137,10 @@ class BaseNumberNode extends Node {
   public readonly handleNode: Node | undefined;
   public readonly backgroundNode: Image | null = null;
 
-  public constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: Partial<BaseNumberNodeOptions> ) {
+  public constructor( baseNumber: BaseNumber, opacity: number, providedOptions?: BaseNumberNodeOptions ) {
     super();
 
-    const options = merge<BaseNumberNodeOptions, Partial<BaseNumberNodeOptions> | undefined>( {
+    const options = optionize<BaseNumberNodeOptions, SelfOptions>()( {
       countingObjectType: CountingObjectType.PAPER_NUMBER,
       includeHandles: false,
       handleOffsetY: 0,
@@ -190,7 +191,7 @@ class BaseNumberNode extends Node {
       this.handleNode = new Node();
       this.addChild( this.handleNode );
 
-       const handleStemNode = new Path( handleStemShape, {
+      const handleStemNode = new Path( handleStemShape, {
         stroke: 'black',
         lineWidth: lineWidth
       } );
