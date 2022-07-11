@@ -41,7 +41,7 @@ type NumberMap = {
 };
 type ZeroOffset = {
   [ key: number ]: number[];
-}
+};
 type PaperNumberDimensions = {
   [ key: number ]: Dimension2;
 };

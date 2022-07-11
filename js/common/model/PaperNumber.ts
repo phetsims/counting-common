@@ -25,11 +25,11 @@ import optionize from '../../../../phet-core/js/optionize.js';
 
 type PaperNumberOptions = {
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
-}
+};
 type SetDestinationOptions = {
   targetScale?: number;
   targetHandleOpacity?: number;
-}
+};
 
 // Incremented for PaperNumber IDs
 let nextPaperNumberId = 1;

@@ -27,7 +27,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 type PaperNumberNodeOptions = {
   countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
   baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>;
-}
+};
 
 // constants
 const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
