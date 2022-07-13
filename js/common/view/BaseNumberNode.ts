@@ -33,18 +33,10 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 
 // types
-type ImageMap = {
-  [ key: number ]: Mipmap;
-};
-type NumberMap = {
-  [ key: number ]: number;
-};
-type ZeroOffset = {
-  [ key: number ]: number[];
-};
-type PaperNumberDimensions = {
-  [ key: number ]: Dimension2;
-};
+type ImageMap = Record<number, Mipmap>;
+type NumberMap = Record<number, number>;
+type ZeroOffset = Record<number, number[]>;
+type PaperNumberDimensions = Record<number, Dimension2>;
 type SelfOptions = {
   countingObjectType?: CountingObjectType;
   groupingEnabled?: boolean;

@@ -21,9 +21,7 @@ import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 
 // types
-export type PaperNumberNodeMap = {
-  [ key: number ]: PaperNumberNode;
-};
+export type PaperNumberNodeMap = Record<number, PaperNumberNode>;
 
 class CountingCommonView extends ScreenView {
   public model: CountingCommonModel;
