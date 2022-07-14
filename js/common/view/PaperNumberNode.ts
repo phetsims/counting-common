@@ -314,7 +314,7 @@ class PaperNumberNode extends Node {
    */
   public startDrag( event: PressListenerEvent ): void {
     if ( this.pickable !== false ) {
-      if ( this.globalToLocalPoint( event.pointer.point as Vector2 ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
+      if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
         this.splitDragHandler.down( event );
       }
       else {
