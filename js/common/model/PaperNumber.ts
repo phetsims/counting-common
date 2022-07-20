@@ -22,6 +22,7 @@ import Animation from '../../../../twixt/js/Animation.js';
 import Range from '../../../../dot/js/Range.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import IEmitter from '../../../../axon/js/IEmitter.js';
 
 type PaperNumberOptions = {
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
@@ -48,8 +49,8 @@ class PaperNumber {
   private destination: Vector2;
   private animating: boolean;
   public baseNumbers: BaseNumber[];
-  public readonly endDragEmitter: Emitter<[ PaperNumber ]>;
-  public readonly endAnimationEmitter: Emitter<[ PaperNumber ]>;
+  public readonly endDragEmitter: IEmitter<[ PaperNumber ]>;
+  public readonly endAnimationEmitter: IEmitter<[ PaperNumber ]>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
   public readonly includeInSumProperty: BooleanProperty;

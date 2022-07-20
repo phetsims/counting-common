@@ -21,8 +21,8 @@ import CountingObjectType from '../model/CountingObjectType.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
-import Emitter from '../../../../axon/js/Emitter.js';
 import Multilink from '../../../../axon/js/Multilink.js';
+import IEmitter from '../../../../axon/js/IEmitter.js';
 
 // types
 type SelfOptions = {
@@ -54,8 +54,8 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  public constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: Emitter,
-               providedOptions?: CountingCreatorNodeOptions ) {
+  public constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: IEmitter,
+                      providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
       updateCurrentNumber: false,

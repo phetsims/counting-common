@@ -22,6 +22,7 @@ import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import IEmitter from '../../../../axon/js/IEmitter.js';
 
 // types
 type PaperNumberNodeOptions = {
@@ -34,9 +35,9 @@ const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
-  public readonly moveEmitter: Emitter<[ PaperNumberNode ]>;
-  public readonly splitEmitter: Emitter<[ PaperNumberNode ]>;
-  public readonly interactionStartedEmitter: Emitter<[ PaperNumberNode ]>;
+  public readonly moveEmitter: IEmitter<[ PaperNumberNode ]>;
+  public readonly splitEmitter: IEmitter<[ PaperNumberNode ]>;
+  public readonly interactionStartedEmitter: IEmitter<[ PaperNumberNode ]>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   public readonly countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;

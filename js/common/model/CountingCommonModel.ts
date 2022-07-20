@@ -15,6 +15,7 @@ import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
+import IEmitter from '../../../../axon/js/IEmitter.js';
 
 class CountingCommonModel {
 
@@ -25,7 +26,7 @@ class CountingCommonModel {
   public sumProperty: NumberProperty;
 
   // used to notify view sub-components that reset is being called
-  public readonly resetEmitter: Emitter;
+  public readonly resetEmitter: IEmitter;
   public readonly name: string;
 
   protected constructor( highestCount: number, name: string ) {
