@@ -23,6 +23,7 @@ import Range from '../../../../dot/js/Range.js';
 import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import IEmitter from '../../../../axon/js/IEmitter.js';
+import IProperty from '../../../../axon/js/IProperty.js';
 
 type PaperNumberOptions = {
   groupingEnabledProperty?: IReadOnlyProperty<boolean>;
@@ -53,7 +54,7 @@ class PaperNumber {
   public readonly endAnimationEmitter: IEmitter<[ PaperNumber ]>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
-  public readonly includeInSumProperty: BooleanProperty;
+  public readonly includeInSumProperty: IProperty<boolean>;
   private animation: Animation | null;
   public readonly groupingEnabledProperty: IReadOnlyProperty<boolean>;
   public localBounds: Bounds2;
