@@ -148,8 +148,8 @@ class CountingCommonModel {
     this.paperNumbers.filter( paperNumber => paperNumber.includeInSumProperty.value ).forEach( paperNumber => {
       total += paperNumber.numberValueProperty.value;
     } );
-    this.sumProperty.value = total;
     console.log( 'calculating and setting total in ' + this.name + ': ' + total );
+    this.sumProperty.value = total;
   }
 
   /**
