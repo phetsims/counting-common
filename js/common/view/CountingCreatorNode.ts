@@ -146,7 +146,7 @@ class CountingCreatorNode extends Node {
         if ( !event.canStartPress() ) { return; }
 
         // @ts-ignore
-        console.log( `about to drag one out in in ${screenView.playArea.name}` );
+        // console.log( `about to drag one out in in ${screenView.playArea.name}` );
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
         const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
