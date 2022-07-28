@@ -58,6 +58,8 @@ class PaperNumberNode extends Node {
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
+  public readonly endDragEmitter: IEmitter<[ PaperNumberNode ]>;
+
   public constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
                tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
@@ -88,6 +90,9 @@ class PaperNumberNode extends Node {
     this.countingObjectTypeProperty = options.countingObjectTypeProperty;
 
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
+
+    // Fires when the user stops dragging a paper number node.
+    this.endDragEmitter = new Emitter( { parameters: [ { valueType: PaperNumberNode } ] } );
 
     // Container for the digit image nodes
     this.numberImageContainer = new Node( {
@@ -127,7 +132,7 @@ class PaperNumberNode extends Node {
       end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
           tryToCombineNumbers( this.paperNumber );
-          paperNumber.endDragEmitter.emit( paperNumber );
+          this.endDragEmitter.emit( this );
         }
       }
     } );

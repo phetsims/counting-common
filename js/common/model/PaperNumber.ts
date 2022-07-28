@@ -50,7 +50,6 @@ class PaperNumber {
   private destination: Vector2;
   private animating: boolean;
   public baseNumbers: BaseNumber[];
-  public readonly endDragEmitter: IEmitter<[ PaperNumber ]>;
   public readonly endAnimationEmitter: IEmitter<[ PaperNumber ]>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
@@ -110,9 +109,6 @@ class PaperNumber {
     // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
     // when summed will equal our number.
     this.baseNumbers = PaperNumber.getBaseNumbers( this.numberValueProperty.value );
-
-    // Fires when the user stops dragging a paper number.
-    this.endDragEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
 
     // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
