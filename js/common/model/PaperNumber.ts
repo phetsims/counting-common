@@ -132,7 +132,7 @@ class PaperNumber {
   /**
    * Getter for our animating state.
    */
-  public get isAnimating() {
+  public get isAnimating(): boolean {
     return this.animating;
   }
 
