@@ -20,13 +20,13 @@ import CountingObjectType from '../model/CountingObjectType.js';
 import merge from '../../../../phet-core/js/merge.js';
 import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
-import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import IEmitter from '../../../../axon/js/IEmitter.js';
 
 // types
 type PaperNumberNodeOptions = {
-  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
+  countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
   baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>;
 };
 
@@ -40,7 +40,7 @@ class PaperNumberNode extends Node {
   public readonly interactionStartedEmitter: IEmitter<[ PaperNumberNode ]>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
-  public readonly countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>;
+  public readonly countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;

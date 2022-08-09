@@ -18,7 +18,7 @@ import CountingCommonView from './CountingCommonView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Multilink from '../../../../axon/js/Multilink.js';
@@ -27,8 +27,8 @@ import IEmitter from '../../../../axon/js/IEmitter.js';
 // types
 type SelfOptions = {
   updateCurrentNumber?: boolean;
-  countingObjectTypeProperty?: IReadOnlyProperty<CountingObjectType>;
-  groupingEnabledProperty?: IReadOnlyProperty<boolean>;
+  countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
+  groupingEnabledProperty?: TReadOnlyProperty<boolean>;
   groupedTargetScale?: number;
   ungroupedTargetScale?: number;
   backTargetOffset?: Vector2;
@@ -203,8 +203,8 @@ class CountingCreatorNode extends Node {
   }
 
   private createBaseNumberNode( place: number,
-                                countingObjectTypeProperty: IReadOnlyProperty<CountingObjectType>,
-                                groupingEnabledProperty: IReadOnlyProperty<boolean>
+                                countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>,
+                                groupingEnabledProperty: TReadOnlyProperty<boolean>
   ): BaseNumberNode {
     return new BaseNumberNode( new BaseNumber( 1, place ), 1, {
       includeHandles: false,

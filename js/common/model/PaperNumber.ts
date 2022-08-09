@@ -20,13 +20,13 @@ import BaseNumber from './BaseNumber.js';
 import Easing from '../../../../twixt/js/Easing.js';
 import Animation from '../../../../twixt/js/Animation.js';
 import Range from '../../../../dot/js/Range.js';
-import IReadOnlyProperty from '../../../../axon/js/IReadOnlyProperty.js';
+import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import IEmitter from '../../../../axon/js/IEmitter.js';
 import IProperty from '../../../../axon/js/IProperty.js';
 
 type PaperNumberOptions = {
-  groupingEnabledProperty?: IReadOnlyProperty<boolean>;
+  groupingEnabledProperty?: TReadOnlyProperty<boolean>;
 };
 type SetDestinationOptions = {
   targetScale?: number;
@@ -55,7 +55,7 @@ class PaperNumber {
   public readonly handleOpacityProperty: NumberProperty;
   public readonly includeInSumProperty: IProperty<boolean>;
   private animation: Animation | null;
-  public readonly groupingEnabledProperty: IReadOnlyProperty<boolean>;
+  public readonly groupingEnabledProperty: TReadOnlyProperty<boolean>;
   public localBounds: Bounds2;
   public returnAnimationBounds: Bounds2;
 
