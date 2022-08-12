@@ -22,7 +22,7 @@ import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
-import IEmitter from '../../../../axon/js/IEmitter.js';
+import TEmitter from '../../../../axon/js/TEmitter.js';
 
 // types
 type PaperNumberNodeOptions = {
@@ -35,9 +35,9 @@ const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
 
 class PaperNumberNode extends Node {
   public readonly paperNumber: PaperNumber;
-  public readonly moveEmitter: IEmitter<[ PaperNumberNode ]>;
-  public readonly splitEmitter: IEmitter<[ PaperNumberNode ]>;
-  public readonly interactionStartedEmitter: IEmitter<[ PaperNumberNode ]>;
+  public readonly moveEmitter: TEmitter<[ PaperNumberNode ]>;
+  public readonly splitEmitter: TEmitter<[ PaperNumberNode ]>;
+  public readonly interactionStartedEmitter: TEmitter<[ PaperNumberNode ]>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   public readonly countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>;
@@ -58,7 +58,7 @@ class PaperNumberNode extends Node {
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
-  public readonly endDragEmitter: IEmitter<[ PaperNumberNode ]>;
+  public readonly endDragEmitter: TEmitter<[ PaperNumberNode ]>;
 
   public constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
                tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
