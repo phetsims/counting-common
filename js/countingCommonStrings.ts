@@ -5,11 +5,13 @@
  */
 /* eslint-disable */
 import getStringModule from '../../chipper/js/getStringModule.js';
+import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
 import countingCommon from './countingCommon.js';
 
 type StringsType = {
   'counting-common': {
     'title': string;
+    'titleStringProperty': TReadOnlyProperty<string>;
   }
 };
 
