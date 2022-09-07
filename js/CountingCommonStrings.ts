@@ -15,8 +15,8 @@ type StringsType = {
   }
 };
 
-const countingCommonStrings = getStringModule( 'COUNTING_COMMON' ) as StringsType;
+const CountingCommonStrings = getStringModule( 'COUNTING_COMMON' ) as StringsType;
 
-countingCommon.register( 'countingCommonStrings', countingCommonStrings );
+countingCommon.register( 'CountingCommonStrings', CountingCommonStrings );
 
-export default countingCommonStrings;
+export default CountingCommonStrings;
