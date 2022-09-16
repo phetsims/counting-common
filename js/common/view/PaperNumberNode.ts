@@ -7,7 +7,6 @@
  */
 
 import Emitter from '../../../../axon/js/Emitter.js';
-import Property from '../../../../axon/js/Property.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import { DragListener, Node, PressListenerEvent, Rectangle } from '../../../../scenery/js/imports.js';
@@ -39,7 +38,7 @@ class PaperNumberNode extends Node {
   public readonly splitEmitter: TEmitter<[ PaperNumberNode ]>;
   public readonly interactionStartedEmitter: TEmitter<[ PaperNumberNode ]>;
   private preventMoveEmit: boolean;
-  private readonly availableViewBoundsProperty: Property<Bounds2>;
+  private readonly availableViewBoundsProperty: TReadOnlyProperty<Bounds2>;
   public readonly countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>;
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
@@ -60,8 +59,8 @@ class PaperNumberNode extends Node {
 
   public readonly endDragEmitter: TEmitter<[ PaperNumberNode ]>;
 
-  public constructor( paperNumber: PaperNumber, availableViewBoundsProperty: Property<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
-               tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
+  public constructor( paperNumber: PaperNumber, availableViewBoundsProperty: TReadOnlyProperty<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
+                      tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
 
     super();
 
