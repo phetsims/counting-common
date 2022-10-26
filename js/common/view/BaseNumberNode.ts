@@ -36,7 +36,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 type ImageMap = Record<number, Mipmap>;
 type NumberMap = Record<number, number>;
 type ZeroOffset = Record<number, number[]>;
-type PaperNumberDimensions = Record<number, Dimension2>;
+type CountingObjectDimensions = Record<number, Dimension2>;
 type SelfOptions = {
   countingObjectType?: CountingObjectType;
   groupingEnabled?: boolean;
@@ -124,7 +124,7 @@ const IMAGE_SCALE = 0.21;
 
 class BaseNumberNode extends Node {
 
-  public static PAPER_NUMBER_DIMENSIONS: PaperNumberDimensions;
+  public static PAPER_NUMBER_DIMENSIONS: CountingObjectDimensions;
   public static IMAGE_OFFSETS: Vector2[];
   public readonly handleNode: Node | undefined;
   public readonly backgroundNode: Image | null = null;
@@ -149,7 +149,7 @@ class BaseNumberNode extends Node {
       groupingEnabled = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
     }
 
-    const isPaperNumber = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
+    const isCountingObject = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
 
     assert && !groupingEnabled && assert( options.countingObjectType !== CountingObjectType.PAPER_NUMBER,
       'Paper numbers are not allowed to turn off grouping.' );
@@ -173,7 +173,7 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 1.24;
-      const handleOverlapLength = isPaperNumber ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
+      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
 
@@ -221,7 +221,7 @@ class BaseNumberNode extends Node {
     }
 
     // add a number to the background if our type is paper number
-    if ( isPaperNumber ) {
+    if ( isCountingObject ) {
 
       // Position of the initial digit
       let x = PLACE_OFFSET_X[ baseNumber.place ] + DIGIT_OFFSET_X[ baseNumber.digit ];

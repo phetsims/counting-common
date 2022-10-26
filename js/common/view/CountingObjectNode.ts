@@ -1,7 +1,7 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
 /**
- * Visual view of paper numbers (PaperNumber), with stacked images based on the digits of the number.
+ * Visual view of paper numbers (CountingObject), with stacked images based on the digits of the number.
  *
  * @author Sharfudeen Ashraf
  */
@@ -12,7 +12,7 @@ import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
 import { DragListener, Node, PressListenerEvent, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
-import PaperNumber from '../model/PaperNumber.js';
+import CountingObject from '../model/CountingObject.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
@@ -24,7 +24,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
 
 // types
-type PaperNumberNodeOptions = {
+type CountingObjectNodeOptions = {
   countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
   baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>;
 };
@@ -32,11 +32,11 @@ type PaperNumberNodeOptions = {
 // constants
 const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
 
-class PaperNumberNode extends Node {
-  public readonly paperNumber: PaperNumber;
-  public readonly moveEmitter: TEmitter<[ PaperNumberNode ]>;
-  public readonly splitEmitter: TEmitter<[ PaperNumberNode ]>;
-  public readonly interactionStartedEmitter: TEmitter<[ PaperNumberNode ]>;
+class CountingObjectNode extends Node {
+  public readonly countingObject: CountingObject;
+  public readonly moveEmitter: TEmitter<[ CountingObjectNode ]>;
+  public readonly splitEmitter: TEmitter<[ CountingObjectNode ]>;
+  public readonly interactionStartedEmitter: TEmitter<[ CountingObjectNode ]>;
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: TReadOnlyProperty<Bounds2>;
   public readonly countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>;
@@ -57,28 +57,28 @@ class PaperNumberNode extends Node {
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
-  public readonly endDragEmitter: TEmitter<[ PaperNumberNode ]>;
+  public readonly endDragEmitter: TEmitter<[ CountingObjectNode ]>;
 
-  public constructor( paperNumber: PaperNumber, availableViewBoundsProperty: TReadOnlyProperty<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, paperNumber: PaperNumber ) => void,
-                      tryToCombineNumbers: ( paperNumber: PaperNumber ) => void, providedOptions?: Partial<PaperNumberNodeOptions> ) {
+  public constructor( countingObject: CountingObject, availableViewBoundsProperty: TReadOnlyProperty<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
+                      tryToCombineNumbers: ( countingObject: CountingObject ) => void, providedOptions?: Partial<CountingObjectNodeOptions> ) {
 
     super();
 
-    const options = optionize<PaperNumberNodeOptions, PaperNumberNodeOptions>()( {
+    const options = optionize<CountingObjectNodeOptions, CountingObjectNodeOptions>()( {
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
     }, providedOptions );
 
-    this.paperNumber = paperNumber;
+    this.countingObject = countingObject;
 
     // Triggered with self when this paper number node starts to get dragged
-    this.moveEmitter = new Emitter( { parameters: [ { valueType: PaperNumberNode } ] } );
+    this.moveEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
 
     // Triggered with self when this paper number node is split
-    this.splitEmitter = new Emitter( { parameters: [ { valueType: PaperNumberNode } ] } );
+    this.splitEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
 
     // Triggered when user interaction with this paper number begins.
-    this.interactionStartedEmitter = new Emitter( { parameters: [ { valueType: PaperNumberNode } ] } );
+    this.interactionStartedEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
 
     // When true, don't emit from the moveEmitter (synthetic drag)
     this.preventMoveEmit = false;
@@ -91,7 +91,7 @@ class PaperNumberNode extends Node {
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
 
     // Fires when the user stops dragging a paper number node.
-    this.endDragEmitter = new Emitter( { parameters: [ { valueType: PaperNumberNode } ] } );
+    this.endDragEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
 
     // Container for the digit image nodes
     this.numberImageContainer = new Node( {
@@ -125,18 +125,18 @@ class PaperNumberNode extends Node {
       },
 
       drag: ( event: PressListenerEvent, listener: DragListener ) => {
-        paperNumber.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false );
+        countingObject.setConstrainedDestination( availableViewBoundsProperty.value, listener.parentPoint, false );
       },
 
       end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
-          tryToCombineNumbers( this.paperNumber );
+          tryToCombineNumbers( this.countingObject );
           this.endDragEmitter.emit( this );
         }
       }
     } );
     this.moveDragHandler.isUserControlledProperty.link( controlled => {
-      paperNumber.userControlledProperty.value = controlled;
+      countingObject.userControlledProperty.value = controlled;
     } );
     this.moveTarget.addInputListener( this.moveDragHandler );
 
@@ -147,10 +147,10 @@ class PaperNumberNode extends Node {
         const viewPosition = this.globalToParentPoint( event.pointer.point );
 
         // Determine how much (if any) gets moved off
-        const pulledPlace = paperNumber.getBaseNumberAt( this.parentToLocalPoint( viewPosition ) ).place;
+        const pulledPlace = countingObject.getBaseNumberAt( this.parentToLocalPoint( viewPosition ) ).place;
 
-        const amountToRemove = ArithmeticRules.pullApartNumbers( paperNumber.numberValueProperty.value, pulledPlace );
-        const amountRemaining = paperNumber.numberValueProperty.value - amountToRemove;
+        const amountToRemove = ArithmeticRules.pullApartNumbers( countingObject.numberValueProperty.value, pulledPlace );
+        const amountRemaining = countingObject.numberValueProperty.value - amountToRemove;
 
         // it cannot be split - so start moving
         if ( !amountToRemove ) {
@@ -158,15 +158,15 @@ class PaperNumberNode extends Node {
           return;
         }
 
-        paperNumber.changeNumber( amountRemaining );
+        countingObject.changeNumber( amountRemaining );
 
         this.interactionStartedEmitter.emit( this );
         this.splitEmitter.emit( this );
 
-        const newPaperNumber = new PaperNumber( amountToRemove, paperNumber.positionProperty.value, {
-          groupingEnabledProperty: paperNumber.groupingEnabledProperty
+        const newCountingObject = new CountingObject( amountToRemove, countingObject.positionProperty.value, {
+          groupingEnabledProperty: countingObject.groupingEnabledProperty
         } );
-        addAndDragNumber( event, newPaperNumber );
+        addAndDragNumber( event, newCountingObject );
       }
     };
     this.splitTarget.addInputListener( this.splitDragHandler );
@@ -208,8 +208,8 @@ class PaperNumberNode extends Node {
     this.countingObjectTypeAndGroupTypeListener = ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => {
       this.updateNumber();
 
-      if ( !paperNumber.isAnimating ) {
-        paperNumber.setConstrainedDestination( this.availableViewBoundsProperty.value, paperNumber.positionProperty.value );
+      if ( !countingObject.isAnimating ) {
+        countingObject.setConstrainedDestination( this.availableViewBoundsProperty.value, countingObject.positionProperty.value );
       }
     };
 
@@ -220,10 +220,10 @@ class PaperNumberNode extends Node {
    * Rebuilds the image nodes that display the actual paper number, and resizes the mouse/touch targets.
    */
   public updateNumber(): void {
-    const groupingEnabled = this.paperNumber.groupingEnabledProperty.value;
+    const groupingEnabled = this.countingObject.groupingEnabledProperty.value;
 
     // Reversing allows easier opacity computation and has the nodes in order for setting children.
-    const reversedBaseNumbers = this.paperNumber.baseNumbers.slice().reverse();
+    const reversedBaseNumbers = this.countingObject.baseNumbers.slice().reverse();
 
     this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
       const hasDescendant = reversedBaseNumbers[ index + 1 ] !== undefined;
@@ -251,12 +251,12 @@ class PaperNumberNode extends Node {
     // already, so use that
     const boundsWithoutHandle = backgroundNode ? biggestBaseNumberNode.localToParentBounds( backgroundNode.bounds ) :
                                 fullBounds;
-    this.paperNumber.localBounds = fullBounds;
+    this.countingObject.localBounds = fullBounds;
 
     // use boundsWithoutHandle for animating back to the creator node because including the handle in the bounds makes
     // the paper numbers animate to the wrong offset (since the creator node is a card without a handle, so
     // the returning object should match its shape).
-    this.paperNumber.returnAnimationBounds = boundsWithoutHandle;
+    this.countingObject.returnAnimationBounds = boundsWithoutHandle;
 
     if ( groupingEnabled ) {
       this.splitTarget.visible = true;
@@ -319,7 +319,7 @@ class PaperNumberNode extends Node {
    */
   public startDrag( event: PressListenerEvent ): void {
     if ( this.pickable !== false ) {
-      if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.paperNumber.numberValueProperty.value > 1 ) {
+      if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.countingObject.numberValueProperty.value > 1 ) {
         this.splitDragHandler.down( event );
       }
       else {
@@ -332,11 +332,11 @@ class PaperNumberNode extends Node {
    * Implements the API for ClosestDragListener.
    */
   public computeDistance( globalPoint: Vector2 ): number {
-    if ( this.paperNumber.userControlledProperty.value ) {
+    if ( this.countingObject.userControlledProperty.value ) {
       return Number.POSITIVE_INFINITY;
     }
     else {
-      const globalBounds = this.localToGlobalBounds( this.paperNumber.localBounds );
+      const globalBounds = this.localToGlobalBounds( this.countingObject.localBounds );
       return Math.sqrt( globalBounds.minimumDistanceToPointSquared( globalPoint ) );
     }
   }
@@ -347,14 +347,14 @@ class PaperNumberNode extends Node {
   public attachListeners(): void {
 
     // mirrored unlinks in dispose()
-    this.paperNumber.handleOpacityProperty.link( this.handleOpacityListener );
-    this.paperNumber.scaleProperty.link( this.scaleListener );
-    this.paperNumber.userControlledProperty.link( this.userControlledListener );
-    this.paperNumber.numberValueProperty.link( this.updateNumberListener );
-    this.paperNumber.positionProperty.link( this.translationListener );
-    this.paperNumber.includeInSumProperty.link( this.includeInSumListener );
+    this.countingObject.handleOpacityProperty.link( this.handleOpacityListener );
+    this.countingObject.scaleProperty.link( this.scaleListener );
+    this.countingObject.userControlledProperty.link( this.userControlledListener );
+    this.countingObject.numberValueProperty.link( this.updateNumberListener );
+    this.countingObject.positionProperty.link( this.translationListener );
+    this.countingObject.includeInSumProperty.link( this.includeInSumListener );
     this.countingObjectTypeAndGroupTypeMultilink = Multilink.lazyMultilink(
-      [ this.countingObjectTypeProperty, this.paperNumber.groupingEnabledProperty ],
+      [ this.countingObjectTypeProperty, this.countingObject.groupingEnabledProperty ],
       this.countingObjectTypeAndGroupTypeListener );
   }
 
@@ -363,12 +363,12 @@ class PaperNumberNode extends Node {
    */
   public override dispose(): void {
     Multilink.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
-    this.paperNumber.includeInSumProperty.unlink( this.includeInSumListener );
-    this.paperNumber.positionProperty.unlink( this.translationListener );
-    this.paperNumber.numberValueProperty.unlink( this.updateNumberListener );
-    this.paperNumber.userControlledProperty.unlink( this.userControlledListener );
-    this.paperNumber.scaleProperty.unlink( this.scaleListener );
-    this.paperNumber.handleOpacityProperty.unlink( this.handleOpacityListener );
+    this.countingObject.includeInSumProperty.unlink( this.includeInSumListener );
+    this.countingObject.positionProperty.unlink( this.translationListener );
+    this.countingObject.numberValueProperty.unlink( this.updateNumberListener );
+    this.countingObject.userControlledProperty.unlink( this.userControlledListener );
+    this.countingObject.scaleProperty.unlink( this.scaleListener );
+    this.countingObject.handleOpacityProperty.unlink( this.handleOpacityListener );
 
     // remove any listeners on the children before detaching them
     this.numberImageContainer.children.forEach( child => child.dispose() );
@@ -378,8 +378,8 @@ class PaperNumberNode extends Node {
   /**
    * Find all nodes which are attachable to the dragged node. This method is called once the user ends the dragging.
    */
-  public findAttachableNodes( allPaperNumberNodes: PaperNumberNode[] ): PaperNumberNode[] {
-    const attachableNodeCandidates = allPaperNumberNodes.slice();
+  public findAttachableNodes( allCountingObjectNodes: CountingObjectNode[] ): CountingObjectNode[] {
+    const attachableNodeCandidates = allCountingObjectNodes.slice();
     arrayRemove( attachableNodeCandidates, this );
 
     // find all other paper number nodes that are overlapping the dropped node
@@ -396,6 +396,6 @@ class PaperNumberNode extends Node {
   }
 }
 
-countingCommon.register( 'PaperNumberNode', PaperNumberNode );
+countingCommon.register( 'CountingObjectNode', CountingObjectNode );
 
-export default PaperNumberNode;
+export default CountingObjectNode;

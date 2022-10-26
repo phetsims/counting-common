@@ -25,7 +25,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
 import TProperty from '../../../../axon/js/TProperty.js';
 
-type PaperNumberOptions = {
+type CountingObjectOptions = {
   groupingEnabledProperty?: TReadOnlyProperty<boolean>;
 };
 type SetDestinationOptions = {
@@ -33,8 +33,8 @@ type SetDestinationOptions = {
   targetHandleOpacity?: number;
 };
 
-// Incremented for PaperNumber IDs
-let nextPaperNumberId = 1;
+// Incremented for CountingObject IDs
+let nextCountingObjectId = 1;
 
 // constants
 const ANIMATION_SPEED = 300; // in screen coordinates per second
@@ -42,7 +42,7 @@ const MAX_ANIMATION_TIME = 1; // in seconds
 const MIN_ANIMATION_TIME = 0.2; // in seconds
 const ANIMATION_TIME_RANGE = new Range( MIN_ANIMATION_TIME, MAX_ANIMATION_TIME );
 
-class PaperNumber {
+class CountingObject {
   public readonly id: number;
   public readonly numberValueProperty: NumberProperty;
   public readonly positionProperty: Vector2Property;
@@ -50,7 +50,7 @@ class PaperNumber {
   private destination: Vector2;
   private animating: boolean;
   public baseNumbers: BaseNumber[];
-  public readonly endAnimationEmitter: TEmitter<[ PaperNumber ]>;
+  public readonly endAnimationEmitter: TEmitter<[ CountingObject ]>;
   public readonly scaleProperty: NumberProperty;
   public readonly handleOpacityProperty: NumberProperty;
   public readonly includeInSumProperty: TProperty<boolean>;
@@ -64,14 +64,14 @@ class PaperNumber {
    * @param initialPosition
    * @param [providedOptions]
    */
-  public constructor( numberValue: number, initialPosition: Vector2, providedOptions?: PaperNumberOptions ) {
+  public constructor( numberValue: number, initialPosition: Vector2, providedOptions?: CountingObjectOptions ) {
 
-    const options = optionize<PaperNumberOptions, PaperNumberOptions>()( {
+    const options = optionize<CountingObjectOptions, CountingObjectOptions>()( {
       groupingEnabledProperty: new BooleanProperty( true )
     }, providedOptions );
 
     // IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
-    this.id = nextPaperNumberId++;
+    this.id = nextCountingObjectId++;
 
     // The number that this model represents, e.g. 324
     this.numberValueProperty = new NumberProperty( numberValue );
@@ -108,10 +108,10 @@ class PaperNumber {
 
     // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
     // when summed will equal our number.
-    this.baseNumbers = PaperNumber.getBaseNumbers( this.numberValueProperty.value );
+    this.baseNumbers = CountingObject.getBaseNumbers( this.numberValueProperty.value );
 
     // Fires when the animation towards our destination ends (we hit our destination).
-    this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: PaperNumber } ] } );
+    this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
 
     // local bounds, also set later by the view
     this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
@@ -157,7 +157,7 @@ class PaperNumber {
    */
   public changeNumber( numberValue: number ): void {
     // TODO: assert that sumProperty is deferred
-    this.baseNumbers = PaperNumber.getBaseNumbers( numberValue );
+    this.baseNumbers = CountingObject.getBaseNumbers( numberValue );
     this.numberValueProperty.value = numberValue;
   }
 
@@ -296,6 +296,6 @@ class PaperNumber {
   }
 }
 
-countingCommon.register( 'PaperNumber', PaperNumber );
+countingCommon.register( 'CountingObject', CountingObject );
 
-export default PaperNumber;
+export default CountingObject;

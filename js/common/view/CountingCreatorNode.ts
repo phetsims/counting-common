@@ -9,7 +9,7 @@
  */
 
 import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.js';
-import PaperNumber from '../../../../counting-common/js/common/model/PaperNumber.js';
+import CountingObject from '../../../../counting-common/js/common/model/CountingObject.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import { Node, NodeOptions, PressListenerEvent } from '../../../../scenery/js/imports.js';
@@ -150,15 +150,15 @@ class CountingCreatorNode extends Node {
 
         // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
         const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
-        const paperNumber = new PaperNumber( this.creatorNumberValue, new Vector2( 0, 0 ), {
+        const countingObject = new CountingObject( this.creatorNumberValue, new Vector2( 0, 0 ), {
           groupingEnabledProperty: options.groupingEnabledProperty
         } );
 
         // Once we have the number's bounds, we set the position so that our pointer is in the middle of the drag target.
-        paperNumber.setDestination( viewPosition.minus( paperNumber.getDragTargetOffset() ), false );
+        countingObject.setDestination( viewPosition.minus( countingObject.getDragTargetOffset() ), false );
 
         // Create and start dragging the new paper number node
-        screenView.addAndDragNumber( event, paperNumber );
+        screenView.addAndDragNumber( event, countingObject );
       }
     } );
 

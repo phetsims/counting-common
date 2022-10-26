@@ -10,7 +10,7 @@ import createObservableArray, { ObservableArray } from '../../../../axon/js/crea
 import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import countingCommon from '../../countingCommon.js';
-import PaperNumber from './PaperNumber.js';
+import CountingObject from './CountingObject.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
@@ -20,7 +20,7 @@ import TEmitter from '../../../../axon/js/TEmitter.js';
 class CountingCommonModel {
 
   // Numbers in play that can be interacted with.
-  public paperNumbers: ObservableArray<PaperNumber>;
+  public countingObjects: ObservableArray<CountingObject>;
 
   // the sum of all paper numbers
   public sumProperty: NumberProperty;
@@ -30,7 +30,7 @@ class CountingCommonModel {
   public readonly name: string;
 
   protected constructor( highestCount: number, name: string ) {
-    this.paperNumbers = createObservableArray();
+    this.countingObjects = createObservableArray();
     this.sumProperty = new NumberProperty( 0, {
       range: new Range( 0, highestCount )
     } );
@@ -45,55 +45,55 @@ class CountingCommonModel {
    * other).
    *
    * @param availableModelBounds - Constrain the position to be inside these bounds
-   * @param draggedPaperNumber
+   * @param draggedCountingObject
    * @param dropTargetNumber
    */
-  public collapseNumberModels( availableModelBounds: Bounds2, draggedPaperNumber: PaperNumber, dropTargetNumber: PaperNumber ): void {
+  public collapseNumberModels( availableModelBounds: Bounds2, draggedCountingObject: CountingObject, dropTargetNumber: CountingObject ): void {
     const dropTargetNumberValue = dropTargetNumber.numberValueProperty.value;
-    const draggedNumberValue = draggedPaperNumber.numberValueProperty.value;
+    const draggedNumberValue = draggedCountingObject.numberValueProperty.value;
     const newValue = dropTargetNumberValue + draggedNumberValue;
 
     let numberToRemove;
     let numberToChange;
 
     // See https://github.com/phetsims/make-a-ten/issues/260
-    if ( draggedPaperNumber.digitLength === dropTargetNumber.digitLength ) {
-      numberToRemove = draggedPaperNumber;
+    if ( draggedCountingObject.digitLength === dropTargetNumber.digitLength ) {
+      numberToRemove = draggedCountingObject;
       numberToChange = dropTargetNumber;
     }
     else {
       // The larger number gets changed, the smaller one gets removed.
       const droppingOnLarger = dropTargetNumberValue > draggedNumberValue;
-      numberToRemove = droppingOnLarger ? draggedPaperNumber : dropTargetNumber;
-      numberToChange = droppingOnLarger ? dropTargetNumber : draggedPaperNumber;
+      numberToRemove = droppingOnLarger ? draggedCountingObject : dropTargetNumber;
+      numberToChange = droppingOnLarger ? dropTargetNumber : draggedCountingObject;
     }
 
     // Apply changes
-    this.removePaperNumber( numberToRemove );
+    this.removeCountingObject( numberToRemove );
     numberToChange.changeNumber( newValue );
 
     numberToChange.setConstrainedDestination( availableModelBounds, numberToChange.positionProperty.value, false );
   }
 
   /**
-   * Add a PaperNumber to the model
+   * Add a CountingObject to the model
    */
-  public addPaperNumber( paperNumber: PaperNumber ): void {
-    this.paperNumbers.push( paperNumber );
+  public addCountingObject( countingObject: CountingObject ): void {
+    this.countingObjects.push( countingObject );
   }
 
   /**
-   * Remove a PaperNumber from the model
+   * Remove a CountingObject from the model
    */
-  public removePaperNumber( paperNumber: PaperNumber ): void {
-    this.paperNumbers.remove( paperNumber );
+  public removeCountingObject( countingObject: CountingObject ): void {
+    this.countingObjects.remove( countingObject );
   }
 
   /**
-   * Remove all PaperNumbers from the model.
+   * Remove all CountingObjects from the model.
    */
-  public removeAllPaperNumbers(): void {
-    this.paperNumbers.clear();
+  public removeAllCountingObjects(): void {
+    this.countingObjects.clear();
   }
 
   /**
@@ -109,35 +109,35 @@ class CountingCommonModel {
       // evenly distribute across the screen
       const x = ScreenView.DEFAULT_LAYOUT_BOUNDS.width * ( 1 + i ) / ( numbers.length + 1 );
       const initialNumberPosition = new Vector2( x, ScreenView.DEFAULT_LAYOUT_BOUNDS.height / 2.5 );
-      const paperNumber = new PaperNumber( number, initialNumberPosition );
-      this.addPaperNumber( paperNumber );
+      const countingObject = new CountingObject( number, initialNumberPosition );
+      this.addCountingObject( countingObject );
     }
   }
 
   /**
    * @param availableModelBounds - Constrain the position to be inside these bounds
-   * @param paperNumber1
-   * @param paperNumber2
+   * @param countingObject1
+   * @param countingObject2
    * @param getRepelOffsets
    */
-  public repelAway( availableModelBounds: Bounds2, paperNumber1: PaperNumber, paperNumber2: PaperNumber,
-                    getRepelOffsets: ( leftPaperNumber: PaperNumber, rightPaperNumber: PaperNumber ) => { left: number; right: number } ): void {
+  public repelAway( availableModelBounds: Bounds2, countingObject1: CountingObject, countingObject2: CountingObject,
+                    getRepelOffsets: ( leftCountingObject: CountingObject, rightCountingObject: CountingObject ) => { left: number; right: number } ): void {
     // Determine which are 'left' and 'right'
-    const isPaper1Left = paperNumber1.positionProperty.value.x < paperNumber2.positionProperty.value.x;
-    const leftPaperNumber = isPaper1Left ? paperNumber1 : paperNumber2;
-    const rightPaperNumber = isPaper1Left ? paperNumber2 : paperNumber1;
+    const isPaper1Left = countingObject1.positionProperty.value.x < countingObject2.positionProperty.value.x;
+    const leftCountingObject = isPaper1Left ? countingObject1 : countingObject2;
+    const rightCountingObject = isPaper1Left ? countingObject2 : countingObject1;
 
     // Determine offsets
-    const repelOffsets = getRepelOffsets( leftPaperNumber, rightPaperNumber );
+    const repelOffsets = getRepelOffsets( leftCountingObject, rightCountingObject );
     const repelLeftOffset = repelOffsets.left;
     const repelRightOffset = repelOffsets.right;
-    const leftPosition = leftPaperNumber.positionProperty.value.plusXY( repelLeftOffset, 0 );
-    const rightPosition = rightPaperNumber.positionProperty.value.plusXY( repelRightOffset, 0 );
+    const leftPosition = leftCountingObject.positionProperty.value.plusXY( repelLeftOffset, 0 );
+    const rightPosition = rightCountingObject.positionProperty.value.plusXY( repelRightOffset, 0 );
 
     // Kick off the animation to the destination
     const animateToDestination = true;
-    leftPaperNumber.setConstrainedDestination( availableModelBounds, leftPosition, animateToDestination );
-    rightPaperNumber.setConstrainedDestination( availableModelBounds, rightPosition, animateToDestination );
+    leftCountingObject.setConstrainedDestination( availableModelBounds, leftPosition, animateToDestination );
+    rightCountingObject.setConstrainedDestination( availableModelBounds, rightPosition, animateToDestination );
   }
 
   /**
@@ -145,8 +145,8 @@ class CountingCommonModel {
    */
   public calculateTotal(): void {
     let total = 0;
-    this.paperNumbers.filter( paperNumber => paperNumber.includeInSumProperty.value ).forEach( paperNumber => {
-      total += paperNumber.numberValueProperty.value;
+    this.countingObjects.filter( countingObject => countingObject.includeInSumProperty.value ).forEach( countingObject => {
+      total += countingObject.numberValueProperty.value;
     } );
     // console.log( 'calculating and setting total in ' + this.name + ': ' + total );
     this.sumProperty.value = total;
@@ -156,7 +156,7 @@ class CountingCommonModel {
    * Reset the model
    */
   public reset(): void {
-    this.removeAllPaperNumbers();
+    this.removeAllCountingObjects();
     this.calculateTotal();
     this.resetEmitter.emit();
   }
