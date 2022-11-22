@@ -36,7 +36,6 @@ import optionize from '../../../../phet-core/js/optionize.js';
 type ImageMap = Record<number, Mipmap>;
 type NumberMap = Record<number, number>;
 type ZeroOffset = Record<number, number[]>;
-type CountingObjectDimensions = Record<number, Dimension2>;
 type SelfOptions = {
   countingObjectType?: CountingObjectType;
   groupingEnabled?: boolean;
@@ -124,8 +123,24 @@ const IMAGE_SCALE = 0.21;
 
 class BaseNumberNode extends Node {
 
-  public static PAPER_NUMBER_DIMENSIONS: CountingObjectDimensions;
-  public static IMAGE_OFFSETS: Vector2[];
+
+  /**
+   * Maps place (0-3) to a {Dimension2} with the width/height
+   */
+  public static readonly PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER ),
+    mipmap => new Dimension2( mipmap[ 0 ].width * IMAGE_SCALE, mipmap[ 0 ].height * IMAGE_SCALE ) );
+
+  /**
+   * Maps place (0-3) to a {Vector2} that is the offset of the upper-left corner of the BaseNumberNode relative to a
+   * 1-digit BaseNumberNode.
+   */
+  public static readonly IMAGE_OFFSETS = [
+    new Vector2( -21, 0 ),
+    new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) ),
+    new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) ),
+    new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) )
+  ];
+
   public readonly handleNode: Node | undefined;
   public readonly backgroundNode: Image | null = null;
 
@@ -305,23 +320,6 @@ class BaseNumberNode extends Node {
 
   }
 }
-
-/**
- * Maps place (0-3) to a {Dimension2} with the width/height
- */
-BaseNumberNode.PAPER_NUMBER_DIMENSIONS = _.mapValues( BACKGROUND_IMAGE_MAP.get( CountingObjectType.PAPER_NUMBER ),
-  mipmap => new Dimension2( mipmap[ 0 ].width * IMAGE_SCALE, mipmap[ 0 ].height * IMAGE_SCALE ) );
-
-/**
- * Maps place (0-3) to a {Vector2} that is the offset of the upper-left corner of the BaseNumberNode relative to a
- * 1-digit BaseNumberNode.
- */
-BaseNumberNode.IMAGE_OFFSETS = [
-  new Vector2( -21, 0 ),
-  new Vector2( -70, -( PLACE_OFFSET_Y[ 1 ] - PLACE_OFFSET_Y[ 0 ] ) ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 2 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 2 ] - PLACE_OFFSET_Y[ 0 ] ) ),
-  new Vector2( -70 - ( ZERO_OFFSET[ 3 ][ 0 ] - ZERO_OFFSET[ 1 ][ 0 ] ), -( PLACE_OFFSET_Y[ 3 ] - PLACE_OFFSET_Y[ 0 ] ) )
-];
 
 countingCommon.register( 'BaseNumberNode', BaseNumberNode );
 
