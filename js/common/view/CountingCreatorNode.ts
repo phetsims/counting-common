@@ -79,7 +79,7 @@ class CountingCreatorNode extends Node {
     this.screenView = screenView;
     this.sumProperty = sumProperty;
 
-    const maxSum = sumProperty.range!.max;
+    const maxSum = sumProperty.range.max;
 
     // TODO: The naming of these is not accurate
     this.showFrontTargetNumber = maxSum - this.creatorNumberValue; // 9
