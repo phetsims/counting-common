@@ -243,7 +243,7 @@ class CountingObjectNode extends Node {
     const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ];
 
     const fullBounds = this.numberImageContainer.bounds.copy();
-    // @ts-ignore
+    // @ts-expect-error
     const backgroundNode = biggestBaseNumberNode.backgroundNode;
 
     // if there is no background node, then this paper number is an object without a background node, so its bounds
@@ -264,7 +264,7 @@ class CountingObjectNode extends Node {
       let firstHandleXPosition: number;
       let lastHandleXPosition;
 
-      // @ts-ignore
+      // @ts-expect-error
       this.numberImageContainer.children.forEach( ( baseNumberNode: BaseNumberNode ) => {
         if ( baseNumberNode.handleNode && !firstHandleXPosition ) {
           firstHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleNode.bounds ).centerX;
@@ -276,11 +276,11 @@ class CountingObjectNode extends Node {
       } );
       const padding = 18;
 
-      // @ts-ignore TODO-TS: needs refactor
+      // @ts-expect-error TODO-TS: needs refactor
       const splitTargetBounds = firstHandleXPosition ? new Bounds2(
         firstHandleXPosition - padding,
         fullBounds.minY - padding / 2,
-        // @ts-ignore TODO-TS: needs refactor
+        // @ts-expect-error TODO-TS: needs refactor
         lastHandleXPosition + padding,
         boundsWithoutHandle.minY
       ) : new Bounds2( 0, 0, 0, 0 );
