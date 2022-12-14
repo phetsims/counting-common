@@ -167,9 +167,7 @@ class CountingCommonView extends ScreenView {
           ( leftCountingObject: CountingObject, rightCountingObject: CountingObject ) => {
 
             return {
-              // @ts-expect-error TODO-TS: Remove when CountingCommonConstants is converted to TS
               left: -CountingCommonConstants.MOVE_AWAY_DISTANCE[ leftCountingObject.digitLength ],
-              // @ts-expect-error TODO-TS: Remove when CountingCommonConstants is converted to TS
               right: CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightCountingObject.digitLength ]
             };
           } );

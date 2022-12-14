@@ -23,6 +23,8 @@ COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.APPLE, apple_png );
 COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.BUTTERFLY, butterfly_png );
 COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.BALL, ball_png );
 
+const MOVE_AWAY_DISTANCE: Record<number, number> = { 1: 50, 2: 100, 3: 150, 4: 160 };
+
 const CountingCommonConstants = {
   // Common colors
   CUE_FILL: 'rgb(63,63,183)',
@@ -42,7 +44,7 @@ const CountingCommonConstants = {
   /**
    * {Object} - A map from digit length => how far away a number should be separated when it repels from another.
    */
-  MOVE_AWAY_DISTANCE: { 1: 50, 2: 100, 3: 150, 4: 160 },
+  MOVE_AWAY_DISTANCE: MOVE_AWAY_DISTANCE,
 
   COUNTING_PLAY_AREA_MARGIN: 10,
   SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images TODO: need better plan for this

@@ -240,10 +240,9 @@ class CountingObjectNode extends Node {
         }, this.baseNumberNodeOptions ) );
     } );
 
-    const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ];
+    const biggestBaseNumberNode = this.numberImageContainer.children[ 0 ] as BaseNumberNode;
 
     const fullBounds = this.numberImageContainer.bounds.copy();
-    // @ts-expect-error
     const backgroundNode = biggestBaseNumberNode.backgroundNode;
 
     // if there is no background node, then this paper number is an object without a background node, so its bounds
@@ -261,14 +260,17 @@ class CountingObjectNode extends Node {
     if ( groupingEnabled ) {
       this.splitTarget.visible = true;
 
-      let firstHandleXPosition: number;
-      let lastHandleXPosition;
+      let baseNumberNodeHasHandle = false;
+      let firstHandleXPosition = 0;
+      let lastHandleXPosition = 0;
 
-      // @ts-expect-error
-      this.numberImageContainer.children.forEach( ( baseNumberNode: BaseNumberNode ) => {
+      this.numberImageContainer.children.forEach( node => {
+        const baseNumberNode = node as BaseNumberNode;
+
         if ( baseNumberNode.handleNode && !firstHandleXPosition ) {
           firstHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleNode.bounds ).centerX;
           this.handleNode = baseNumberNode.handleNode;
+          baseNumberNodeHasHandle = true;
         }
         if ( baseNumberNode.handleNode ) {
           lastHandleXPosition = baseNumberNode.localToParentBounds( baseNumberNode.handleNode.bounds ).centerX;
@@ -276,11 +278,9 @@ class CountingObjectNode extends Node {
       } );
       const padding = 18;
 
-      // @ts-expect-error TODO-TS: needs refactor
-      const splitTargetBounds = firstHandleXPosition ? new Bounds2(
+      const splitTargetBounds = baseNumberNodeHasHandle ? new Bounds2(
         firstHandleXPosition - padding,
         fullBounds.minY - padding / 2,
-        // @ts-expect-error TODO-TS: needs refactor
         lastHandleXPosition + padding,
         boundsWithoutHandle.minY
       ) : new Bounds2( 0, 0, 0, 0 );
