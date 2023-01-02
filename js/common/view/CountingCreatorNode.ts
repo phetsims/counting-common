@@ -72,8 +72,6 @@ class CountingCreatorNode extends Node {
 
     super( options );
 
-    assert && assert( sumProperty.range, `Range is required: ${sumProperty.range}` );
-
     this.creatorNumberValue = Math.pow( 10, place );
 
     this.screenView = screenView;
