@@ -23,7 +23,8 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 // types
 export type CountingObjectNodeMap = Record<number, CountingObjectNode>;
 
-class CountingCommonView extends ScreenView {
+class CountingCommonScreenView extends ScreenView {
+
   public model: CountingCommonModel;
   protected countingObjectLayerNode: Node;
   private readonly tryToCombineNumbersCallback: OmitThisParameter<( draggedCountingObject: CountingObject ) => void>;
@@ -229,6 +230,6 @@ class CountingCommonView extends ScreenView {
   }
 }
 
-countingCommon.register( 'CountingCommonView', CountingCommonView );
+countingCommon.register( 'CountingCommonScreenView', CountingCommonScreenView );
 
-export default CountingCommonView;
+export default CountingCommonScreenView;

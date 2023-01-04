@@ -14,7 +14,7 @@ import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumbe
 import Vector2 from '../../../../dot/js/Vector2.js';
 import { Node, NodeOptions, PressListenerEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
-import CountingCommonView from './CountingCommonView.js';
+import CountingCommonScreenView from './CountingCommonScreenView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
@@ -44,7 +44,7 @@ type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
 class CountingCreatorNode extends Node {
   private readonly creatorNumberValue: number;
-  private screenView: CountingCommonView;
+  private screenView: CountingCommonScreenView;
   private readonly targetNode: Node;
   private readonly sumProperty: NumberProperty;
   private readonly showFrontTargetNumber: number;
@@ -54,7 +54,7 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  public constructor( place: number, screenView: CountingCommonView, sumProperty: NumberProperty, resetEmitter: TEmitter,
+  public constructor( place: number, screenView: CountingCommonScreenView, sumProperty: NumberProperty, resetEmitter: TEmitter,
                       providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
