@@ -14,7 +14,6 @@ import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumbe
 import Vector2 from '../../../../dot/js/Vector2.js';
 import { Node, NodeOptions, PressListenerEvent } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
-import CountingCommonScreenView from './CountingCommonScreenView.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import CountingObjectType from '../model/CountingObjectType.js';
@@ -43,8 +42,9 @@ type SelfOptions = {
 type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
 class CountingCreatorNode extends Node {
+
   private readonly creatorNumberValue: number;
-  private screenView: CountingCommonScreenView;
+  private coordinateFrameNode: Node;
   private readonly targetNode: Node;
   private readonly sumProperty: NumberProperty;
   private readonly showFrontTargetNumber: number;
@@ -54,7 +54,19 @@ class CountingCreatorNode extends Node {
   private frontTargetNode: Node;
 
   // TODO: Improve organization and docs in this file
-  public constructor( place: number, screenView: CountingCommonScreenView, sumProperty: NumberProperty, resetEmitter: TEmitter,
+  /**
+   * @param place
+   * @param coordinateFrameNode - defines the view coordinate frame
+   * @param sumProperty
+   * @param resetEmitter
+   * @param addAndDragNumber - adds a CountingObject to the model and immediately starts dragging it with the provided event
+   * @param [providedOptions]
+   */
+  public constructor( place: number,
+                      coordinateFrameNode: Node,
+                      sumProperty: NumberProperty,
+                      resetEmitter: TEmitter,
+                      addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
                       providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
@@ -74,7 +86,7 @@ class CountingCreatorNode extends Node {
 
     this.creatorNumberValue = Math.pow( 10, place );
 
-    this.screenView = screenView;
+    this.coordinateFrameNode = coordinateFrameNode;
     this.sumProperty = sumProperty;
 
     const maxSum = sumProperty.range.max;
@@ -143,10 +155,8 @@ class CountingCreatorNode extends Node {
       down: ( event: PressListenerEvent ) => {
         if ( !event.canStartPress() ) { return; }
 
-        // console.log( `about to drag one out in in ${screenView.playArea.name}` );
-
-        // We want this relative to the screen view, so it is guaranteed to be the proper view coordinates.
-        const viewPosition = screenView.globalToLocalPoint( event.pointer.point );
+        // We want this relative to coordinateFrameNode, so it is guaranteed to be the proper view coordinates.
+        const viewPosition = coordinateFrameNode.globalToLocalPoint( event.pointer.point );
         const countingObject = new CountingObject( this.creatorNumberValue, new Vector2( 0, 0 ), {
           groupingEnabledProperty: options.groupingEnabledProperty
         } );
@@ -155,7 +165,7 @@ class CountingCreatorNode extends Node {
         countingObject.setDestination( viewPosition.minus( countingObject.getDragTargetOffset() ), false );
 
         // Create and start dragging the new paper number node
-        screenView.addAndDragNumber( event, countingObject );
+        addAndDragNumber( event, countingObject );
       }
     } );
 
@@ -185,8 +195,8 @@ class CountingCreatorNode extends Node {
    */
   public getOriginPosition(): Vector2 {
 
-    // Trail to screenView, not including the screenView
-    let trail = this.screenView.getUniqueLeafTrailTo( this.targetNode );
+    // Trail to coordinateFrameNode, not including the coordinateFrameNode
+    let trail = this.coordinateFrameNode.getUniqueLeafTrailTo( this.targetNode );
     trail = trail.slice( 1, trail.length );
 
     // Transformed to view coordinates
