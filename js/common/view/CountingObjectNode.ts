@@ -43,8 +43,8 @@ class CountingObjectNode extends Node {
   private readonly numberImageContainer: Node;
   private readonly splitTarget: Rectangle;
   private readonly moveTarget: Rectangle;
-  private readonly moveDragHandler: DragListener;
-  private readonly splitDragHandler: { down: ( event: PressListenerEvent ) => void };
+  private readonly moveDragListener: DragListener;
+  private readonly splitDragListener: { down: ( event: PressListenerEvent ) => void };
   private readonly translationListener: ( position: Vector2 ) => void;
   private readonly updateNumberListener: () => void;
   private readonly userControlledListener: ( userControlled: boolean ) => void;
@@ -114,7 +114,7 @@ class CountingObjectNode extends Node {
     this.addChild( this.moveTarget );
 
     // View-coordinate offset between our position and the pointer's position, used for keeping drags synced.
-    this.moveDragHandler = new DragListener( {
+    this.moveDragListener = new DragListener( {
       targetNode: this,
       pressCursor: 'move', // Our target doesn't have the move cursor, so we need to override here
       start: ( event: PressListenerEvent ) => {
@@ -135,12 +135,12 @@ class CountingObjectNode extends Node {
         }
       }
     } );
-    this.moveDragHandler.isUserControlledProperty.link( controlled => {
+    this.moveDragListener.isUserControlledProperty.link( controlled => {
       countingObject.userControlledProperty.value = controlled;
     } );
-    this.moveTarget.addInputListener( this.moveDragHandler );
+    this.moveTarget.addInputListener( this.moveDragListener );
 
-    this.splitDragHandler = {
+    this.splitDragListener = {
       down: event => {
         if ( !event.canStartPress() ) { return; }
 
@@ -169,7 +169,7 @@ class CountingObjectNode extends Node {
         addAndDragNumber( event, newCountingObject );
       }
     };
-    this.splitTarget.addInputListener( this.splitDragHandler );
+    this.splitTarget.addInputListener( this.splitDragListener );
 
     // Listener that hooks model position to view translation.
     this.translationListener = position => {
@@ -307,7 +307,7 @@ class CountingObjectNode extends Node {
   public startSyntheticDrag( event: PressListenerEvent ): void {
     // Don't emit a move event, as we don't want the cue to disappear.
     this.preventMoveEmit = true;
-    this.moveDragHandler.press( event );
+    this.moveDragListener.press( event );
     this.preventMoveEmit = false;
   }
 
@@ -320,10 +320,10 @@ class CountingObjectNode extends Node {
   public startDrag( event: PressListenerEvent ): void {
     if ( this.pickable !== false ) {
       if ( this.globalToLocalPoint( event.pointer.point ).y < this.splitTarget.bottom && this.countingObject.numberValueProperty.value > 1 ) {
-        this.splitDragHandler.down( event );
+        this.splitDragListener.down( event );
       }
       else {
-        this.moveDragHandler.press( event );
+        this.moveDragListener.press( event );
       }
     }
   }
