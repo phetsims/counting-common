@@ -92,8 +92,11 @@ class CountingObjectNode extends Node {
   // Fires when the user stops dragging a paper number node.
   public readonly endDragEmitter: TEmitter<[ CountingObjectNode ]>;
 
-  public constructor( countingObject: CountingObject, availableViewBoundsProperty: TReadOnlyProperty<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
-                      tryToCombineNumbers: ( countingObject: CountingObject ) => void, providedOptions?: Partial<CountingObjectNodeOptions> ) {
+  public constructor( countingObject: CountingObject,
+                      availableViewBoundsProperty: TReadOnlyProperty<Bounds2>,
+                      addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
+                      tryToCombineNumbers: ( countingObject: CountingObject ) => void,
+                      providedOptions?: Partial<CountingObjectNodeOptions> ) {
 
     super();
 
