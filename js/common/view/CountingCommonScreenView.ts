@@ -26,12 +26,21 @@ export type CountingObjectNodeMap = Record<number, CountingObjectNode>;
 class CountingCommonScreenView extends ScreenView {
 
   public model: CountingCommonModel;
+
+  // Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the proper place in layering
+  // (this common view doesn't do that).
   protected countingObjectLayerNode: Node;
   private readonly tryToCombineNumbersCallback: OmitThisParameter<( draggedCountingObject: CountingObject ) => void>;
+
+  // The view coordinates where numbers can be dragged. Can update when the sim is resized.
   private readonly availableViewBoundsProperty: Property<Bounds2>;
   protected readonly resetAllButton: ResetAllButton;
+
+  // Handle touches nearby to the numbers, and interpret those as the proper drag.
   private readonly closestDragListener: ClosestDragListener;
   private readonly addAndDragNumberCallback: OmitThisParameter<( event: PressListenerEvent, countingObject: CountingObject ) => void>;
+
+  // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
   private readonly countingObjectNodeMap: CountingObjectNodeMap;
 
   protected constructor( model: CountingCommonModel ) {
@@ -41,20 +50,12 @@ class CountingCommonScreenView extends ScreenView {
 
     this.model = model;
 
-    // Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the proper place in layering
-    // (this common view doesn't do that).
     this.countingObjectLayerNode = new Node();
-
     this.tryToCombineNumbersCallback = this.tryToCombineNumbers.bind( this );
     this.addAndDragNumberCallback = this.addAndDragNumber.bind( this );
-
-    // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
     this.countingObjectNodeMap = {};
-
-    // The view coordinates where numbers can be dragged. Can update when the sim is resized.
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
-    // Handle touches nearby to the numbers, and interpret those as the proper drag.
     this.closestDragListener = new ClosestDragListener( 30, 0 );
     const backgroundDragTarget = new Plane();
     backgroundDragTarget.addInputListener( this.closestDragListener );

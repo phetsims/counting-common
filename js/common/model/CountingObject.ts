@@ -43,20 +43,54 @@ const MIN_ANIMATION_TIME = 0.2; // in seconds
 const ANIMATION_TIME_RANGE = new Range( MIN_ANIMATION_TIME, MAX_ANIMATION_TIME );
 
 class CountingObject {
+
+  // IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
   public readonly id: number;
-  public readonly numberValueProperty: NumberProperty;
-  public readonly positionProperty: Vector2Property;
-  public readonly userControlledProperty: BooleanProperty;
+
+  // The number that this model represents, e.g. 324
+  public readonly numberValueProperty: TProperty<number>;
+
+  // Property that indicates where in model space the upper left corner of this shape is. In general, this should not
+  // be set directly outside of this type, and should be manipulated through the methods defined below.
+  public readonly positionProperty: TProperty<Vector2>;
+
+  // Flag that tracks whether the user is dragging this number around. Should be set externally, generally by the
+  // view node.
+  public readonly userControlledProperty: TProperty<boolean>;
+
+  // Should be set through accessor methods only.
   private destination: Vector2;
+
+  // Whether this element is animating from one position to another, do not set externally.
   private animating: boolean;
+
+  // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
+  // when summed will equal our number.
   public baseNumbers: BaseNumber[];
+
+  // Fires when the animation towards our destination ends (we hit our destination).
   public readonly endAnimationEmitter: TEmitter<[ CountingObject ]>;
-  public readonly scaleProperty: NumberProperty;
-  public readonly handleOpacityProperty: NumberProperty;
+
+  // our scale, used for animations
+  public readonly scaleProperty: TProperty<number>;
+
+  // the opacity of the handle, if one exists. used for animations
+  public readonly handleOpacityProperty: TProperty<number>;
+
+  // whether the value of this paper number should be included in the sum of the model
   public readonly includeInSumProperty: TProperty<boolean>;
+
+  // store any animations so we can check if one is still running
   private animation: Animation | null;
+
+  // whether grouping is enabled, which determines if this paper number is allowed to combine with others. groupable
+  // objects also have a background, non-groupable objects do not.
   public readonly groupingEnabledProperty: TReadOnlyProperty<boolean>;
+
+  // local bounds, also set later by the view
   public localBounds: Bounds2;
+
+  // bounds that should be used when animating. updated when the view is created
   public returnAnimationBounds: Bounds2;
 
   /**
@@ -70,53 +104,20 @@ class CountingObject {
       groupingEnabledProperty: new BooleanProperty( true )
     }, providedOptions );
 
-    // IDs required for map-like lookup, see https://github.com/phetsims/make-a-ten/issues/199
     this.id = nextCountingObjectId++;
-
-    // The number that this model represents, e.g. 324
     this.numberValueProperty = new NumberProperty( numberValue );
-
-    // Property that indicates where in model space the upper left corner of this shape is. In general, this should not
-    // be set directly outside of this type, and should be manipulated through the methods defined below.
     this.positionProperty = new Vector2Property( initialPosition.copy() );
-
-    // Flag that tracks whether the user is dragging this number around. Should be set externally, generally by the
-    // view node.
     this.userControlledProperty = new BooleanProperty( false );
-
-    // our scale, used for animations
     this.scaleProperty = new NumberProperty( 1 );
-
-    // the opacity of the handle, if one exists. used for animations
     this.handleOpacityProperty = new NumberProperty( 1 );
-
-    // whether grouping is enabled, which determines if this paper number is allowed to combine with others. groupable
-    // objects also have a background, non-groupable objects do not.
     this.groupingEnabledProperty = options.groupingEnabledProperty;
-
-    // whether the value of this paper number should be included in the sum of the model
     this.includeInSumProperty = new BooleanProperty( true );
-
-    // Should be set through accessor methods only.
     this.destination = initialPosition.copy();
-
-    // Whether this element is animating from one position to another, do not set externally.
     this.animating = false;
-
-    // store any animations so we can check if one is still running
     this.animation = null;
-
-    // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
-    // when summed will equal our number.
     this.baseNumbers = CountingObject.getBaseNumbers( this.numberValueProperty.value );
-
-    // Fires when the animation towards our destination ends (we hit our destination).
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
-
-    // local bounds, also set later by the view
     this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
-
-    // bounds that should be used when animating. updated when the view is created
     this.returnAnimationBounds = this.localBounds;
   }
 

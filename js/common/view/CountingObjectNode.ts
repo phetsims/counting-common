@@ -34,29 +34,62 @@ const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
 
 class CountingObjectNode extends Node {
   public readonly countingObject: CountingObject;
+
+  // Triggered with self when this paper number node starts to get dragged
   public readonly moveEmitter: TEmitter<[ CountingObjectNode ]>;
+
+  // Triggered with self when this paper number node is split
   public readonly splitEmitter: TEmitter<[ CountingObjectNode ]>;
+
+  // Triggered when user interaction with this paper number begins.
   public readonly interactionStartedEmitter: TEmitter<[ CountingObjectNode ]>;
+
+  // When true, don't emit from the moveEmitter (synthetic drag)
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: TReadOnlyProperty<Bounds2>;
+
+  // indicates what CountingObjectType this is
   public readonly countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>;
+
+  // Container for the digit image nodes
   private readonly numberImageContainer: Node;
+
+  // Hit target for the "split" behavior, where one number would be pulled off from the existing number.
   private readonly splitTarget: Rectangle;
+
+  // Hit target for the "move" behavior, which just drags the existing paper number.
   private readonly moveTarget: Rectangle;
+
+  // View-coordinate offset between our position and the pointer's position, used for keeping drags synced.
   private readonly moveDragListener: DragListener;
   private readonly splitDragListener: { down: ( event: PressListenerEvent ) => void };
+
+  // Listener that hooks model position to view translation.
   private readonly translationListener: ( position: Vector2 ) => void;
+
+  // Listener for when our number changes
   private readonly updateNumberListener: () => void;
+
+  // Listener reference that gets attached/detached. Handles moving the Node to the front.
   private readonly userControlledListener: ( userControlled: boolean ) => void;
   private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
+
+  // Listener for when our scale changes
   private readonly scaleListener: ( scale: number ) => void;
+
+  // Listener for when the handle opacity changes in the model
   private readonly handleOpacityListener: ( handleOpacity: number ) => void;
+
+  // Listener for when whether the paper number's value is included in the sum changes
   private readonly includeInSumListener: ( includedInSum: boolean ) => void;
+
+  // Listener for when our counting type or group type changes
   private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
 
   private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
+  // Fires when the user stops dragging a paper number node.
   public readonly endDragEmitter: TEmitter<[ CountingObjectNode ]>;
 
   public constructor( countingObject: CountingObject, availableViewBoundsProperty: TReadOnlyProperty<Bounds2>, addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
@@ -71,29 +104,17 @@ class CountingObjectNode extends Node {
 
     this.countingObject = countingObject;
 
-    // Triggered with self when this paper number node starts to get dragged
     this.moveEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
-
-    // Triggered with self when this paper number node is split
     this.splitEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
-
-    // Triggered when user interaction with this paper number begins.
     this.interactionStartedEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
-
-    // When true, don't emit from the moveEmitter (synthetic drag)
     this.preventMoveEmit = false;
 
     this.availableViewBoundsProperty = availableViewBoundsProperty;
 
-    // indicates what CountingObjectType this is
     this.countingObjectTypeProperty = options.countingObjectTypeProperty;
 
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
-
-    // Fires when the user stops dragging a paper number node.
     this.endDragEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
-
-    // Container for the digit image nodes
     this.numberImageContainer = new Node( {
       pickable: false
     } );
@@ -101,19 +122,16 @@ class CountingObjectNode extends Node {
 
     this.handleNode = null;
 
-    // Hit target for the "split" behavior, where one number would be pulled off from the existing number.
     this.splitTarget = new Rectangle( 0, 0, 0, 0, {
       cursor: 'pointer'
     } );
     this.addChild( this.splitTarget );
 
-    // Hit target for the "move" behavior, which just drags the existing paper number.
     this.moveTarget = new Rectangle( 0, 0, 100, 100, {
       cursor: 'move'
     } );
     this.addChild( this.moveTarget );
 
-    // View-coordinate offset between our position and the pointer's position, used for keeping drags synced.
     this.moveDragListener = new DragListener( {
       targetNode: this,
       pressCursor: 'move', // Our target doesn't have the move cursor, so we need to override here
@@ -171,32 +189,26 @@ class CountingObjectNode extends Node {
     };
     this.splitTarget.addInputListener( this.splitDragListener );
 
-    // Listener that hooks model position to view translation.
     this.translationListener = position => {
       this.translation = position;
     };
 
-    // Listener for when our scale changes
     this.scaleListener = scale => {
       this.setScaleMagnitude( scale );
     };
 
-    // Listener for when the handle opacity changes in the model
     this.handleOpacityListener = handleOpacity => {
       this.handleNode && this.handleNode.setOpacity( handleOpacity );
     };
 
-    // Listener for when our number changes
     this.updateNumberListener = this.updateNumber.bind( this );
 
-    // Listener reference that gets attached/detached. Handles moving the Node to the front.
     this.userControlledListener = userControlled => {
       if ( userControlled ) {
         this.moveToFront();
       }
     };
 
-    // Listener for when whether the paper number's value is included in the sum changes
     this.includeInSumListener = includedInSum => {
       if ( !includedInSum ) {
         this.interruptSubtreeInput();
@@ -204,7 +216,6 @@ class CountingObjectNode extends Node {
       }
     };
 
-    // Listener for when our counting type or group type changes
     this.countingObjectTypeAndGroupTypeListener = ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => {
       this.updateNumber();
 

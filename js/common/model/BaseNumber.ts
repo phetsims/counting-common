@@ -22,11 +22,25 @@ const DIGIT_BOUNDS = [ 0, 1, 2, 3 ].map( place => {
 } );
 
 class BaseNumber {
+
+  // The numeric value, e.g. 200 if digit is 2 and place is 2
   public readonly numberValue: number;
+
+  // Number of digits in our numeric value
   public digitLength: number;
+
+  // The place in the number (power of 10) that our digit would be multiplied by to sum, e.g. place 2 with a digit 3
+  // has a numberValue = 300, i.e. 3 * 10^2.
   public readonly place: number;
+
+  // The offset (relative to the number origin) for the placement of the upper-left corner of the image representing
+  // this place value.
   public offset: Vector2;
+
+  // The bounds (relative to the number origin) that this digit place will take up.
   public bounds: Bounds2;
+
+  // The leading digit of the number, e.g. 2 for 200.
   public digit: number;
 
   /**
@@ -34,24 +48,11 @@ class BaseNumber {
    * @param place - The decimal exponent for the number digit * 10^place.
    */
   public constructor( digit: number, place: number ) {
-    // The numeric value, e.g. 200 if digit is 2 and place is 2
     this.numberValue = digit * Math.pow( 10, place );
-
-    // Number of digits in our numeric value
     this.digitLength = CountingCommonUtils.digitsInNumber( this.numberValue );
-
-    // The place in the number (power of 10) that our digit would be multiplied by to sum, e.g. place 2 with a digit 3
-    // has a numberValue = 300, i.e. 3 * 10^2.
     this.place = place;
-
-    // The offset (relative to the number origin) for the placement of the upper-left corner of the image representing
-    // this place value.
     this.offset = BaseNumberNode.IMAGE_OFFSETS[ this.place ];
-
-    // The bounds (relative to the number origin) that this digit place will take up.
     this.bounds = DIGIT_BOUNDS[ this.place ];
-
-    // The leading digit of the number, e.g. 2 for 200.
     this.digit = digit;
   }
 }

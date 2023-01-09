@@ -46,7 +46,7 @@ class CountingCreatorNode extends Node {
   private readonly creatorNumberValue: number;
   private coordinateFrameNode: Node;
   private readonly targetNode: Node;
-  private readonly sumProperty: NumberProperty;
+  private readonly sumProperty: TReadOnlyProperty<number>;
   private readonly showFrontTargetNumber: number;
   private readonly showBackTargetNumber: number;
   private readonly backTargetOffset: Vector2;
