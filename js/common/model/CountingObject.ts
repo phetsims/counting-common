@@ -218,7 +218,7 @@ class CountingObject {
   }
 
   /**
-   * If our paper number is outside of the available view bounds, move it inside those bounds.
+   * If our paper number is outside the available view bounds, move it inside those bounds.
    *
    * @param viewBounds
    * @param newDestination
