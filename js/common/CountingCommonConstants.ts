@@ -49,7 +49,8 @@ const CountingCommonConstants = {
   COUNTING_PLAY_AREA_MARGIN: 10,
   SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images TODO: need better plan for this
   COUNTING_OBJECT_TYPE_TO_IMAGE: COUNTING_OBJECT_TYPE_TO_IMAGE,
-  PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ) // in screen coordinates
+  PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ), // in screen coordinates
+  BREAK_APART_Y_OFFSET: 6 // y-offset for individual CountingObjects, used when breaking apart a group
 };
 
 countingCommon.register( 'CountingCommonConstants', CountingCommonConstants );

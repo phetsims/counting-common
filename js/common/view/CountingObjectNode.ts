@@ -44,6 +44,10 @@ class CountingObjectNode extends Node {
   // Triggered when user interaction with this paper number begins.
   public readonly interactionStartedEmitter: TEmitter<[ CountingObjectNode ]>;
 
+  // Triggers when the position of the CountingObject associated with this Node is adjusted to fit the play area bounds.
+  // This is a workaround for https://github.com/phetsims/number-play/issues/172.
+  public readonly positionConstrainedEmitter: TEmitter<[CountingObject]>;
+
   // When true, don't emit from the moveEmitter (synthetic drag)
   private preventMoveEmit: boolean;
   private readonly availableViewBoundsProperty: TReadOnlyProperty<Bounds2>;
@@ -110,6 +114,7 @@ class CountingObjectNode extends Node {
     this.moveEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
     this.splitEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
     this.interactionStartedEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
+    this.positionConstrainedEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
     this.preventMoveEmit = false;
 
     this.availableViewBoundsProperty = availableViewBoundsProperty;
@@ -223,7 +228,13 @@ class CountingObjectNode extends Node {
       this.updateNumber();
 
       if ( !countingObject.isAnimating ) {
-        countingObject.setConstrainedDestination( this.availableViewBoundsProperty.value, countingObject.positionProperty.value );
+        const destination = countingObject.positionProperty.value;
+        countingObject.setConstrainedDestination( this.availableViewBoundsProperty.value, destination );
+
+        // If countingObject's actual position differs from the destination that we specified, notify listeners.
+        if ( !countingObject.positionProperty.value.equals( destination ) ) {
+          this.positionConstrainedEmitter.emit( countingObject );
+        }
       }
     };
 
