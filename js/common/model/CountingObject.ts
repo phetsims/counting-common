@@ -295,6 +295,16 @@ class CountingObject {
 
     return result;
   }
+
+  public dispose(): void {
+    this.numberValueProperty.dispose();
+    this.positionProperty.dispose();
+    this.userControlledProperty.dispose();
+    this.scaleProperty.dispose();
+    this.handleOpacityProperty.dispose();
+    this.includeInSumProperty.dispose();
+  }
+
 }
 
 countingCommon.register( 'CountingObject', CountingObject );
