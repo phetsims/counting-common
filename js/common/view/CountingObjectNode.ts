@@ -22,11 +22,12 @@ import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
+import PickOptional from '../../../../phet-core/js/types/PickOptional.js';
 
 // types
 type CountingObjectNodeOptions = {
   countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
-  baseNumberNodeOptions?: Partial<BaseNumberNodeOptions>;
+  baseNumberNodeOptions?: PickOptional<BaseNumberNodeOptions, 'handleOffsetY'>;
 };
 
 // constants
@@ -106,7 +107,7 @@ class CountingObjectNode extends Node {
 
     const options = optionize<CountingObjectNodeOptions, CountingObjectNodeOptions>()( {
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
-      baseNumberNodeOptions: {} // TODO: Only handleYOffset should be exposed here, not all of the options
+      baseNumberNodeOptions: {}
     }, providedOptions );
 
     this.countingObject = countingObject;
