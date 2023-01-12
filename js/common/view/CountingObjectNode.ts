@@ -16,11 +16,10 @@ import CountingObject from '../model/CountingObject.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import merge from '../../../../phet-core/js/merge.js';
 import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
-import optionize from '../../../../phet-core/js/optionize.js';
+import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
 import PickOptional from '../../../../phet-core/js/types/PickOptional.js';
 
@@ -77,7 +76,7 @@ class CountingObjectNode extends Node {
 
   // Listener reference that gets attached/detached. Handles moving the Node to the front.
   private readonly userControlledListener: ( userControlled: boolean ) => void;
-  private readonly baseNumberNodeOptions: Partial<BaseNumberNodeOptions>;
+  private readonly baseNumberNodeOptions: PickOptional<BaseNumberNodeOptions, 'handleOffsetY'>;
 
   // Listener for when our scale changes
   private readonly scaleListener: ( scale: number ) => void;
@@ -256,7 +255,7 @@ class CountingObjectNode extends Node {
 
       return new BaseNumberNode(
         baseNumber,
-        0.95 * Math.pow( 0.97, index ), merge( {
+        0.95 * Math.pow( 0.97, index ), combineOptions<BaseNumberNodeOptions>( {
           countingObjectType: this.countingObjectTypeProperty.value,
           includeHandles: true,
           groupingEnabled: groupingEnabled,
