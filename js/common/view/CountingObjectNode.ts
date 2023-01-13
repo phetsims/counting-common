@@ -21,13 +21,13 @@ import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
-import PickOptional from '../../../../phet-core/js/types/PickOptional.js';
 
 // types
-type CountingObjectNodeOptions = {
+type SelfOptions = {
   countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
-  baseNumberNodeOptions?: PickOptional<BaseNumberNodeOptions, 'handleOffsetY'>;
+  baseNumberNodeOptions?: Pick<BaseNumberNodeOptions, 'handleOffsetY'>;
 };
+type CountingObjectNodeOptions = SelfOptions;
 
 // constants
 const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
@@ -46,7 +46,7 @@ class CountingObjectNode extends Node {
 
   // Triggers when the position of the CountingObject associated with this Node is adjusted to fit the play area bounds.
   // This is a workaround for https://github.com/phetsims/number-play/issues/172.
-  public readonly positionConstrainedEmitter: TEmitter<[CountingObject]>;
+  public readonly positionConstrainedEmitter: TEmitter<[ CountingObject ]>;
 
   // When true, don't emit from the moveEmitter (synthetic drag)
   private preventMoveEmit: boolean;
@@ -76,7 +76,7 @@ class CountingObjectNode extends Node {
 
   // Listener reference that gets attached/detached. Handles moving the Node to the front.
   private readonly userControlledListener: ( userControlled: boolean ) => void;
-  private readonly baseNumberNodeOptions: PickOptional<BaseNumberNodeOptions, 'handleOffsetY'>;
+  private readonly baseNumberNodeOptions: Pick<BaseNumberNodeOptions, 'handleOffsetY'>;
 
   // Listener for when our scale changes
   private readonly scaleListener: ( scale: number ) => void;
@@ -100,11 +100,11 @@ class CountingObjectNode extends Node {
                       availableViewBoundsProperty: TReadOnlyProperty<Bounds2>,
                       addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
                       tryToCombineNumbers: ( countingObject: CountingObject ) => void,
-                      providedOptions?: Partial<CountingObjectNodeOptions> ) {
+                      providedOptions?: CountingObjectNodeOptions ) {
 
     super();
 
-    const options = optionize<CountingObjectNodeOptions, CountingObjectNodeOptions>()( {
+    const options = optionize<CountingObjectNodeOptions, SelfOptions>()( {
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       baseNumberNodeOptions: {}
     }, providedOptions );
