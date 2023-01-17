@@ -59,14 +59,14 @@ class CountingCreatorNode extends Node {
    * @param coordinateFrameNode - defines the view coordinate frame
    * @param sumProperty
    * @param resetEmitter
-   * @param addAndDragNumber - adds a CountingObject to the model and immediately starts dragging it with the provided event
+   * @param addAndDragCountingObject - adds a CountingObject to the model and immediately starts dragging it with the provided event
    * @param [providedOptions]
    */
   public constructor( place: number,
                       coordinateFrameNode: Node,
                       sumProperty: NumberProperty,
                       resetEmitter: TEmitter,
-                      addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
+                      addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
                       providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
@@ -165,7 +165,7 @@ class CountingCreatorNode extends Node {
         countingObject.setDestination( viewPosition.minus( countingObject.getDragTargetOffset() ), false );
 
         // Create and start dragging the new paper number node
-        addAndDragNumber( event, countingObject );
+        addAndDragCountingObject( event, countingObject );
       }
     } );
 

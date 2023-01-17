@@ -98,8 +98,8 @@ class CountingObjectNode extends Node {
 
   public constructor( countingObject: CountingObject,
                       availableViewBoundsProperty: TReadOnlyProperty<Bounds2>,
-                      addAndDragNumber: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
-                      tryToCombineNumbers: ( countingObject: CountingObject ) => void,
+                      addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
+                      tryToCombineCountingObjects: ( countingObject: CountingObject ) => void,
                       providedOptions?: CountingObjectNodeOptions ) {
 
     super();
@@ -156,7 +156,7 @@ class CountingObjectNode extends Node {
 
       end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
-          tryToCombineNumbers( this.countingObject );
+          tryToCombineCountingObjects( this.countingObject );
           this.endDragEmitter.emit( this );
         }
       }
@@ -192,7 +192,7 @@ class CountingObjectNode extends Node {
         const newCountingObject = new CountingObject( amountToRemove, countingObject.positionProperty.value, {
           groupingEnabledProperty: countingObject.groupingEnabledProperty
         } );
-        addAndDragNumber( event, newCountingObject );
+        addAndDragCountingObject( event, newCountingObject );
       }
     };
     this.splitTarget.addInputListener( this.splitDragListener );

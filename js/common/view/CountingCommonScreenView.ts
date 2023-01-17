@@ -30,7 +30,7 @@ class CountingCommonScreenView extends ScreenView {
   // Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the proper place in layering
   // (this common view doesn't do that).
   protected countingObjectLayerNode: Node;
-  private readonly tryToCombineNumbersCallback: OmitThisParameter<( draggedCountingObject: CountingObject ) => void>;
+  private readonly tryToCombineCountingObjectsCallback: OmitThisParameter<( draggedCountingObject: CountingObject ) => void>;
 
   // The view coordinates where numbers can be dragged. Can update when the sim is resized.
   private readonly availableViewBoundsProperty: Property<Bounds2>;
@@ -38,7 +38,7 @@ class CountingCommonScreenView extends ScreenView {
 
   // Handle touches nearby to the numbers, and interpret those as the proper drag.
   private readonly closestDragListener: ClosestDragListener;
-  private readonly addAndDragNumberCallback: OmitThisParameter<( event: PressListenerEvent, countingObject: CountingObject ) => void>;
+  private readonly addAndDragCountingObjectCallback: OmitThisParameter<( event: PressListenerEvent, countingObject: CountingObject ) => void>;
 
   // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
   private readonly countingObjectNodeMap: CountingObjectNodeMap;
@@ -51,8 +51,8 @@ class CountingCommonScreenView extends ScreenView {
     this.model = model;
 
     this.countingObjectLayerNode = new Node();
-    this.tryToCombineNumbersCallback = this.tryToCombineNumbers.bind( this );
-    this.addAndDragNumberCallback = this.addAndDragNumber.bind( this );
+    this.tryToCombineCountingObjectsCallback = this.tryToCombineCountingObjects.bind( this );
+    this.addAndDragCountingObjectCallback = this.addAndDragCountingObject.bind( this );
     this.countingObjectNodeMap = {};
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
@@ -98,7 +98,7 @@ class CountingCommonScreenView extends ScreenView {
    * @param event - The Scenery event that triggered this.
    * @param countingObject - The paper number to add and then drag
    */
-  public addAndDragNumber( event: PressListenerEvent, countingObject: CountingObject ): void {
+  public addAndDragCountingObject( event: PressListenerEvent, countingObject: CountingObject ): void {
     // Add it and lookup the related node.
     this.model.addCountingObject( countingObject );
 
@@ -111,7 +111,7 @@ class CountingCommonScreenView extends ScreenView {
    */
   public onCountingObjectAdded( countingObject: CountingObject ): CountingObjectNode {
     const countingObjectNode = new CountingObjectNode( countingObject, this.availableViewBoundsProperty,
-      this.addAndDragNumberCallback, this.tryToCombineNumbersCallback );
+      this.addAndDragCountingObjectCallback, this.tryToCombineCountingObjectsCallback );
 
     this.countingObjectNodeMap[ countingObjectNode.countingObject.id ] = countingObjectNode;
     this.countingObjectLayerNode.addChild( countingObjectNode );
@@ -145,7 +145,7 @@ class CountingCommonScreenView extends ScreenView {
   /**
    * When the user drops a paper number they were dragging, see if it can combine with any other nearby paper numbers.
    */
-  public tryToCombineNumbers( draggedCountingObject: CountingObject ): void {
+  public tryToCombineCountingObjects( draggedCountingObject: CountingObject ): void {
     const draggedNode = this.findCountingObjectNode( draggedCountingObject );
     const draggedNumberValue = draggedCountingObject.numberValueProperty.value;
     const allCountingObjectNodes = this.countingObjectLayerNode.children;
