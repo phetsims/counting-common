@@ -47,7 +47,8 @@ const CountingCommonConstants = {
   MOVE_AWAY_DISTANCE: MOVE_AWAY_DISTANCE,
 
   COUNTING_PLAY_AREA_MARGIN: 10,
-  SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images TODO: need better plan for this
+  // TODO: need better plan for this, see https://github.com/phetsims/counting-common/issues/12
+  SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images
   COUNTING_OBJECT_TYPE_TO_IMAGE: COUNTING_OBJECT_TYPE_TO_IMAGE,
   PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ), // in screen coordinates
   BREAK_APART_Y_OFFSET: 6 // y-offset for individual CountingObjects, used when breaking apart a group

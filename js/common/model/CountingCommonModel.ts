@@ -36,7 +36,7 @@ class CountingCommonModel {
     } );
     this.resetEmitter = new Emitter();
 
-    // TODO: Remove when done logging
+    // TODO: Remove when done logging, see https://github.com/phetsims/counting-common/issues/12
     this.name = name;
   }
 

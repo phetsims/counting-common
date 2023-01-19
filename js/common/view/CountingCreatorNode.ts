@@ -53,7 +53,7 @@ class CountingCreatorNode extends Node {
   private backTargetNode: Node;
   private frontTargetNode: Node;
 
-  // TODO: Improve organization and docs in this file
+  // TODO: Improve organization and docs in this file, see https://github.com/phetsims/counting-common/issues/12
   /**
    * @param place
    * @param coordinateFrameNode - defines the view coordinate frame
@@ -91,7 +91,7 @@ class CountingCreatorNode extends Node {
 
     const maxSum = sumProperty.range.max;
 
-    // TODO: The naming of these is not accurate
+    // TODO: The naming of these is not accurate, see https://github.com/phetsims/counting-common/issues/12
     this.showFrontTargetNumber = maxSum - this.creatorNumberValue; // 9
     this.showBackTargetNumber = this.showFrontTargetNumber - this.creatorNumberValue; // 8
 
@@ -118,7 +118,7 @@ class CountingCreatorNode extends Node {
     this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
       .shiftedX( options.touchAreaXShift );
 
-    // TODO: Too much duplication?
+    // TODO: Too much duplication? see https://github.com/phetsims/counting-common/issues/12
     Multilink.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
         const backTargetNodeVisible = this.backTargetNode.visible;

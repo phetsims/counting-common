@@ -157,7 +157,7 @@ class CountingObject {
    * Changes the number that this paper number represents.
    */
   public changeNumber( numberValue: number ): void {
-    // TODO: assert that sumProperty is deferred
+    // TODO: assert that sumProperty is deferred, see https://github.com/phetsims/counting-common/issues/12
     this.baseNumbers = CountingObject.getBaseNumbers( numberValue );
     this.numberValueProperty.value = numberValue;
   }

@@ -115,8 +115,8 @@ const ZERO_OFFSET: ZeroOffset = {
 // extra length to make sure there is no gap between the paper number background and the stem)
 const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
-// distance that the handle stem should overlap with a counting object card. TODO: should be 0 but not quite working, get
-// cleaner-edged images from AM
+// distance that the handle stem should overlap with a counting object card.
+// TODO: should be 0 but not quite working, get cleaner-edged images from AM, see https://github.com/phetsims/counting-common/issues/12
 const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.4;
 
 const IMAGE_SCALE = 0.21;
@@ -153,7 +153,7 @@ class BaseNumberNode extends Node {
       handleOffsetY: 0,
       groupingEnabled: true,
 
-      // TODO: docs?
+      // TODO: docs? see https://github.com/phetsims/counting-common/issues/12
       isLargestBaseNumber: true,
       hasDescendant: false,
       isPartOfStack: false
@@ -178,7 +178,7 @@ class BaseNumberNode extends Node {
       scale: IMAGE_SCALE
     } );
 
-    // TODO: needs better logic and or docs in this section, see https://github.com/phetsims/counting-common/issues/1
+    // TODO: needs better logic and or docs in this section, see https://github.com/phetsims/counting-common/issues/12
     // aside from checking the option includeHandles, don't include a handle if this base number is a standalone 1, or
     // if removing the largest base number in this paper number would separate itself from its descendants (as opposed
     // to just removing one part of the largest base number). for example, with the paper number 1200, the 1 should not
@@ -269,7 +269,7 @@ class BaseNumberNode extends Node {
       const ONE = 1;
       const value = baseNumber.numberValue;
 
-      // TODO: temporary way to organize objects, needs work
+      // TODO: temporary way to organize objects, needs work, see https://github.com/phetsims/counting-common/issues/12
       const numberOfRows = value === ONE && !options.isPartOfStack ? 1 : 5;
       const numberOfColumns = value === ONE && !options.isPartOfStack ? 1 : 2;
       const objectScale = value === ONE && !options.isPartOfStack ? 1 : 0.3;
