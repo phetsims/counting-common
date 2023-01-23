@@ -31,6 +31,8 @@ type CountingObjectOptions = {
 type SetDestinationOptions = {
   targetScale?: number;
   targetHandleOpacity?: number;
+  useStandardAnimationSpeed?: boolean;
+  animationDuration?: number;
 };
 
 // Incremented for CountingObject IDs
@@ -175,7 +177,9 @@ class CountingObject {
 
     const options = optionize<SetDestinationOptions>()( {
       targetScale: 1,
-      targetHandleOpacity: 1
+      targetHandleOpacity: 1,
+      useStandardAnimationSpeed: true,
+      animationDuration: 0.5
     }, providedOptions );
 
     if ( animate ) {
@@ -183,9 +187,10 @@ class CountingObject {
 
       this.animation && this.animation.stop();
       const distance = this.positionProperty.value.distance( destination );
+      const standardSpeedAnimationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
 
       // calculate the time needed to get to the destination
-      const animationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
+      const animationDuration = options.useStandardAnimationSpeed ? standardSpeedAnimationDuration : options.animationDuration;
 
       this.animation = new Animation( {
         duration: animationDuration,
