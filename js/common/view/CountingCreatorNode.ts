@@ -38,6 +38,9 @@ type SelfOptions = {
 
   // pointer area shift
   touchAreaXShift?: number;
+
+  // a background that we position ourselves in reference to
+  creatorNodeBackground?: Node;
 };
 type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
@@ -79,7 +82,8 @@ class CountingCreatorNode extends Node {
 
       touchAreaXDilation: 15,
       touchAreaYDilation: 5,
-      touchAreaXShift: 0
+      touchAreaXShift: 0,
+      creatorNodeBackground: new Node()
     }, providedOptions );
 
     super( options );
@@ -108,18 +112,16 @@ class CountingCreatorNode extends Node {
       return targetNode;
     };
 
-    this.backTargetNode = createSingleTargetNode( options.backTargetOffset );
-    this.frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
+    this.backTargetNode = new Node();
+    this.frontTargetNode = new Node();
 
     this.targetNode = new Node( {
       cursor: 'pointer',
       children: [ this.backTargetNode, this.frontTargetNode ]
     } );
-    this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
-      .shiftedX( options.touchAreaXShift );
+    this.addChild( this.targetNode );
 
-    // TODO: Too much duplication? see https://github.com/phetsims/counting-common/issues/12
-    Multilink.lazyMultilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
+    Multilink.multilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
         const backTargetNodeVisible = this.backTargetNode.visible;
         const frontTargetNodeVisible = this.frontTargetNode.visible;
@@ -134,6 +136,9 @@ class CountingCreatorNode extends Node {
         this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
           .shiftedX( options.touchAreaXShift );
         this.targetNode.inputEnabled = backTargetNodeVisible || frontTargetNodeVisible;
+
+        // recenter ourselves after we change the bounds of the front and back targets
+        this.center = options.creatorNodeBackground.selfBounds.center;
       } );
 
     const updateTargetVisibility = ( sum: number, oldSum: number ) => {
@@ -168,8 +173,6 @@ class CountingCreatorNode extends Node {
         addAndDragCountingObject( event, countingObject );
       }
     } );
-
-    this.addChild( this.targetNode );
 
     resetEmitter.addListener( () => {
       this.backTargetNode.visible = true;
