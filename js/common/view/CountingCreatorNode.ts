@@ -38,9 +38,6 @@ type SelfOptions = {
 
   // pointer area shift
   touchAreaXShift?: number;
-
-  // a background that we position ourselves in reference to
-  creatorNodeBackground?: Node;
 };
 type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
@@ -82,8 +79,7 @@ class CountingCreatorNode extends Node {
 
       touchAreaXDilation: 15,
       touchAreaYDilation: 5,
-      touchAreaXShift: 0,
-      creatorNodeBackground: new Node()
+      touchAreaXShift: 0
     }, providedOptions );
 
     super( options );
@@ -138,7 +134,9 @@ class CountingCreatorNode extends Node {
         this.targetNode.inputEnabled = backTargetNodeVisible || frontTargetNodeVisible;
 
         // recenter ourselves after we change the bounds of the front and back targets
-        this.center = options.creatorNodeBackground.selfBounds.center;
+        if ( options.center ) {
+          this.center = options.center;
+        }
       } );
 
     const updateTargetVisibility = ( sum: number, oldSum: number ) => {
