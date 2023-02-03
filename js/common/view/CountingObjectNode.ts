@@ -312,6 +312,9 @@ class CountingObjectNode extends Node {
 
       this.moveTarget.mouseArea = this.moveTarget.touchArea = this.moveTarget.rectBounds = boundsWithoutHandle;
       this.splitTarget.mouseArea = this.splitTarget.touchArea = this.splitTarget.rectBounds = splitTargetBounds;
+
+      // When a countingObject is grouped it's z-order should always be on top of any other countingObjects.
+      this.moveToFront();
     }
     else {
       this.splitTarget.visible = false;
