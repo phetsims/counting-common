@@ -95,6 +95,9 @@ class CountingObject {
   // bounds that should be used when animating. updated when the view is created
   public returnAnimationBounds: Bounds2;
 
+  // tracks whether a SceneryEvent is coming from a split or not
+  public fromSplit: boolean;
+
   /**
    * @param numberValue - Numeric value, e.g. 123
    * @param initialPosition
@@ -121,6 +124,7 @@ class CountingObject {
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
     this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
     this.returnAnimationBounds = this.localBounds;
+    this.fromSplit = false;
   }
 
   /**

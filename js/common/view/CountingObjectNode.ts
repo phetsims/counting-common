@@ -192,6 +192,9 @@ class CountingObjectNode extends Node {
         const newCountingObject = new CountingObject( amountToRemove, countingObject.positionProperty.value, {
           groupingEnabledProperty: countingObject.groupingEnabledProperty
         } );
+
+        // We want any drag events in the new CountingObject to know they are coming from a split.
+        newCountingObject.fromSplit = true;
         addAndDragCountingObject( event, newCountingObject );
       }
     };
@@ -333,6 +336,13 @@ class CountingObjectNode extends Node {
    * @param event - Scenery event from the relevant input handler
    */
   public startSyntheticDrag( event: PressListenerEvent ): void {
+
+    // The split countingObjectNode y value needs to move to pointer to offset combined countingObjectNode handle.
+    // This only occurs on a 1 value countingObject, as any other value would continue to have a handle.
+    this.y = this.countingObject.fromSplit && this.countingObject.numberValueProperty.value === 1 ?
+             this.globalToParentPoint( event.pointer.point ).y : this.y;
+    this.countingObject.fromSplit = false;
+
     // Don't emit a move event, as we don't want the cue to disappear.
     this.preventMoveEmit = true;
     this.moveDragListener.press( event );
