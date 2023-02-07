@@ -189,9 +189,13 @@ class CountingObjectNode extends Node {
         this.interactionStartedEmitter.emit( this );
         this.splitEmitter.emit( this );
 
-        const newCountingObject = new CountingObject( amountToRemove, countingObject.positionProperty.value, {
-          groupingEnabledProperty: countingObject.groupingEnabledProperty
-        } );
+        // Create such that the user is dragging from the top of the newCountingObject, which causes the
+        // newCountingObject to "jump" up and show some separation from the original countingObject beneath.
+        const newCountingObject = new CountingObject(
+          amountToRemove,
+          new Vector2( countingObject.positionProperty.value.x, viewPosition.y ), {
+            groupingEnabledProperty: countingObject.groupingEnabledProperty
+          } );
         addAndDragCountingObject( event, newCountingObject );
       }
     };
