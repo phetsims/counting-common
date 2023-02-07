@@ -189,7 +189,7 @@ class CountingObjectNode extends Node {
         this.interactionStartedEmitter.emit( this );
         this.splitEmitter.emit( this );
 
-        // Create such that the user is dragging from the top of the newCountingObject, which causes the
+        // Create the newCountingObject such that the user is dragging it from the top, which causes the
         // newCountingObject to "jump" up and show some separation from the original countingObject beneath.
         const newCountingObject = new CountingObject(
           amountToRemove,
