@@ -16,8 +16,9 @@ import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
+import TModel from '../../../../joist/js/TModel.js';
 
-class CountingCommonModel {
+class CountingCommonModel implements TModel {
 
   // Numbers in play that can be interacted with.
   public countingObjects: ObservableArray<CountingObject>;
