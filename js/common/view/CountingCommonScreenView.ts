@@ -154,8 +154,8 @@ class CountingCommonScreenView extends ScreenView {
     // Check them in reverse order (the one on the top should get more priority)
     droppedNodes.reverse();
 
-    for ( let i = 0; i < droppedNodes.length; i++ ) { // eslint-disable-line no-unreachable-loop
-      const droppedNode = droppedNodes[ i ];
+    if ( droppedNodes.length ) {
+      const droppedNode = droppedNodes[ 0 ];
       const droppedCountingObject = droppedNode.countingObject;
       const droppedNumberValue = droppedCountingObject.numberValueProperty.value;
 
