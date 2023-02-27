@@ -1,7 +1,7 @@
 // Copyright 2021-2023, University of Colorado Boulder
 
 /**
- * Common ScreenView for CommonModel.
+ * Common ScreenView for SolarSystemCommonModel.
  *
  * @author Sharfudeen Ashraf
  */
