@@ -44,13 +44,9 @@ class CountingCommonModel implements TModel {
   /**
    * Given two paper numbers, combine them (set one's value to the sum of their previous values, and remove the
    * other).
-   *
-   * @param availableModelBounds - Constrain the position to be inside these bounds
-   * @param draggedCountingObject
-   * @param dropTargetNumber
    */
-  public collapseNumberModels( availableModelBounds: Bounds2, draggedCountingObject: CountingObject, dropTargetNumber: CountingObject ): void {
-    const dropTargetNumberValue = dropTargetNumber.numberValueProperty.value;
+  public collapseNumberModels( availableModelBounds: Bounds2, draggedCountingObject: CountingObject, droppedCountingObject: CountingObject ): void {
+    const dropTargetNumberValue = droppedCountingObject.numberValueProperty.value;
     const draggedNumberValue = draggedCountingObject.numberValueProperty.value;
     const newValue = dropTargetNumberValue + draggedNumberValue;
 
@@ -58,15 +54,15 @@ class CountingCommonModel implements TModel {
     let numberToChange;
 
     // See https://github.com/phetsims/make-a-ten/issues/260
-    if ( draggedCountingObject.digitLength === dropTargetNumber.digitLength ) {
+    if ( draggedCountingObject.digitLength === droppedCountingObject.digitLength ) {
       numberToRemove = draggedCountingObject;
-      numberToChange = dropTargetNumber;
+      numberToChange = droppedCountingObject;
     }
     else {
       // The larger number gets changed, the smaller one gets removed.
       const droppingOnLarger = dropTargetNumberValue > draggedNumberValue;
-      numberToRemove = droppingOnLarger ? draggedCountingObject : dropTargetNumber;
-      numberToChange = droppingOnLarger ? dropTargetNumber : draggedCountingObject;
+      numberToRemove = droppingOnLarger ? draggedCountingObject : droppedCountingObject;
+      numberToChange = droppingOnLarger ? droppedCountingObject : draggedCountingObject;
     }
 
     // Apply changes
@@ -74,6 +70,7 @@ class CountingCommonModel implements TModel {
     numberToChange.changeNumber( newValue );
 
     numberToChange.setConstrainedDestination( availableModelBounds, numberToChange.positionProperty.value, false );
+    numberToChange.moveToFrontEmitter.emit();
   }
 
   /**

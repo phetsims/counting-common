@@ -95,6 +95,9 @@ class CountingObject {
   // bounds that should be used when animating. updated when the view is created
   public returnAnimationBounds: Bounds2;
 
+  // Emitter that can notify the view for this CountingObject that it should move to the front of its Node layer.
+  public readonly moveToFrontEmitter: TEmitter;
+
   /**
    * @param numberValue - Numeric value, e.g. 123
    * @param initialPosition
@@ -121,6 +124,7 @@ class CountingObject {
     this.endAnimationEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
     this.localBounds = this.baseNumbers[ this.baseNumbers.length - 1 ].bounds;
     this.returnAnimationBounds = this.localBounds;
+    this.moveToFrontEmitter = new Emitter();
   }
 
   /**
@@ -308,6 +312,7 @@ class CountingObject {
     this.scaleProperty.dispose();
     this.handleOpacityProperty.dispose();
     this.includeInSumProperty.dispose();
+    this.moveToFrontEmitter.dispose();
   }
 
 }
