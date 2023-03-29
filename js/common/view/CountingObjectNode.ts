@@ -16,7 +16,6 @@ import CountingObject from '../model/CountingObject.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import Multilink, { UnknownMultilink } from '../../../../axon/js/Multilink.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
@@ -43,10 +42,6 @@ class CountingObjectNode extends Node {
 
   // Triggered when user interaction with this paper number begins.
   public readonly interactionStartedEmitter: TEmitter<[ CountingObjectNode ]>;
-
-  // Triggers when the position of the CountingObject associated with this Node is adjusted to fit the play area bounds.
-  // This is a workaround for https://github.com/phetsims/number-play/issues/172.
-  public readonly positionConstrainedEmitter: TEmitter<[ CountingObject ]>;
 
   // When true, don't emit from the moveEmitter (synthetic drag)
   private preventMoveEmit: boolean;
@@ -87,10 +82,6 @@ class CountingObjectNode extends Node {
   // Listener for when whether the paper number's value is included in the sum changes
   private readonly includeInSumListener: ( includedInSum: boolean ) => void;
 
-  // Listener for when our counting type or group type changes
-  private readonly countingObjectTypeAndGroupTypeListener: ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => void;
-
-  private countingObjectTypeAndGroupTypeMultilink: UnknownMultilink | null;
   private handleNode: null | Node;
 
   // Fires when the user stops dragging a paper number node.
@@ -114,7 +105,6 @@ class CountingObjectNode extends Node {
     this.moveEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
     this.splitEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
     this.interactionStartedEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
-    this.positionConstrainedEmitter = new Emitter( { parameters: [ { valueType: CountingObject } ] } );
     this.preventMoveEmit = false;
 
     this.availableViewBoundsProperty = availableViewBoundsProperty;
@@ -227,22 +217,6 @@ class CountingObjectNode extends Node {
         this.pickable = false;
       }
     };
-
-    this.countingObjectTypeAndGroupTypeListener = ( countingObjectType: CountingObjectType, groupingEnabled: boolean ) => {
-      this.updateNumber();
-
-      if ( !countingObject.isAnimating ) {
-        const destination = countingObject.positionProperty.value;
-        countingObject.setConstrainedDestination( this.availableViewBoundsProperty.value, destination );
-
-        // If countingObject's actual position differs from the destination that we specified, notify listeners.
-        if ( !countingObject.positionProperty.value.equals( destination ) ) {
-          this.positionConstrainedEmitter.emit( countingObject );
-        }
-      }
-    };
-
-    this.countingObjectTypeAndGroupTypeMultilink = null;
 
     // Move this CountingObjectNode to the front of its Node layer when the model emits.
     countingObject.moveToFrontEmitter.addListener( () => {
@@ -389,16 +363,12 @@ class CountingObjectNode extends Node {
     this.countingObject.numberValueProperty.link( this.updateNumberListener );
     this.countingObject.positionProperty.link( this.translationListener );
     this.countingObject.includeInSumProperty.link( this.includeInSumListener );
-    this.countingObjectTypeAndGroupTypeMultilink = Multilink.lazyMultilink(
-      [ this.countingObjectTypeProperty, this.countingObject.groupingEnabledProperty ],
-      this.countingObjectTypeAndGroupTypeListener );
   }
 
   /**
    * Removes listeners from the model. Should be called when removed from the scene graph.
    */
   public override dispose(): void {
-    Multilink.unmultilink( this.countingObjectTypeAndGroupTypeMultilink! );
     this.countingObject.includeInSumProperty.unlink( this.includeInSumListener );
     this.countingObject.positionProperty.unlink( this.translationListener );
     this.countingObject.numberValueProperty.unlink( this.updateNumberListener );
