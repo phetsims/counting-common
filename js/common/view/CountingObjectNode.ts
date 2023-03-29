@@ -284,6 +284,8 @@ class CountingObjectNode extends Node {
     // already, so use that
     const boundsWithoutHandle = backgroundNode ? biggestBaseNumberNode.localToParentBounds( backgroundNode.bounds ) :
                                 fullBounds;
+
+    // This includes the splitting handle by design
     this.countingObject.localBounds = fullBounds;
 
     // use boundsWithoutHandle for animating back to the creator node because including the handle in the bounds makes
