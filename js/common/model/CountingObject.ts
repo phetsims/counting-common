@@ -5,6 +5,7 @@
  * for each non-zero digit.
  *
  * @author Sharfudeen Ashraf
+ * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
@@ -19,7 +20,6 @@ import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumber from './BaseNumber.js';
 import Easing from '../../../../twixt/js/Easing.js';
 import Animation from '../../../../twixt/js/Animation.js';
-import Range from '../../../../dot/js/Range.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
@@ -37,12 +37,6 @@ type SetDestinationOptions = {
 
 // Incremented for CountingObject IDs
 let nextCountingObjectId = 1;
-
-// constants
-const ANIMATION_SPEED = 300; // in screen coordinates per second
-const MAX_ANIMATION_TIME = 1; // in seconds
-const MIN_ANIMATION_TIME = 0.2; // in seconds
-const ANIMATION_TIME_RANGE = new Range( MIN_ANIMATION_TIME, MAX_ANIMATION_TIME );
 
 class CountingObject {
 
@@ -191,7 +185,8 @@ class CountingObject {
 
       this.animation && this.animation.stop();
       const distance = this.positionProperty.value.distance( destination );
-      const standardSpeedAnimationDuration = ANIMATION_TIME_RANGE.constrainValue( distance / ANIMATION_SPEED );
+      const standardSpeedAnimationDuration =
+        CountingCommonConstants.ANIMATION_TIME_RANGE.constrainValue( distance / CountingCommonConstants.ANIMATION_SPEED );
 
       // calculate the time needed to get to the destination
       const animationDuration = options.useStandardAnimationSpeed ? standardSpeedAnimationDuration : options.animationDuration;

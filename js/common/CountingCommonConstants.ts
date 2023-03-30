@@ -15,6 +15,7 @@ import dog_png from '../../images/dog_png.js';
 import CountingObjectType from './model/CountingObjectType.js';
 import butterfly_png from '../../images/butterfly_png.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
+import Range from '../../../dot/js/Range.js';
 
 // convenience map that links counting object types to their corresponding images
 const COUNTING_OBJECT_TYPE_TO_IMAGE = new Map();
@@ -36,10 +37,8 @@ const CountingCommonConstants = {
    */
   SPLIT_BOUNDARY_HEIGHT_PROPORTION: 0.78,
 
-  /**
-   * {number} - View coordinates per second for animation
-   */
-  ANIMATION_VELOCITY: 400,
+  ANIMATION_SPEED: 300, // in screen coordinates per second
+  ANIMATION_TIME_RANGE: new Range( 0.2, 1 ), // in seconds
 
   /**
    * {Object} - A map from digit length => how far away a number should be separated when it repels from another.
