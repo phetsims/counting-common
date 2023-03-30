@@ -197,8 +197,7 @@ class CountingCreatorNode extends Node {
   public getOriginPosition(): Vector2 {
 
     // Trail to coordinateFrameNode, not including the coordinateFrameNode
-    let trail = this.coordinateFrameNode.getUniqueLeafTrailTo( this.targetNode );
-    trail = trail.slice( 1, trail.length );
+    let trail = this.coordinateFrameNode.getUniqueLeafTrailTo( this.targetNode ).slice( 1 );
 
     // Transformed to view coordinates
     let origin = this.frontTargetNode.localBounds.center.plus( this.backTargetOffset );
