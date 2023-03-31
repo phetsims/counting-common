@@ -30,7 +30,6 @@ class CountingCommonScreenView extends ScreenView {
   // Where all of the paper numbers are. NOTE: Subtypes need to add this as a child with the proper place in layering
   // (this common view doesn't do that).
   protected countingObjectLayerNode: Node;
-  private readonly tryToCombineCountingObjectsCallback: OmitThisParameter<( draggedCountingObject: CountingObject ) => void>;
 
   // The view coordinates where numbers can be dragged. Can update when the sim is resized.
   private readonly availableViewBoundsProperty: Property<Bounds2>;
@@ -38,7 +37,6 @@ class CountingCommonScreenView extends ScreenView {
 
   // Handle touches nearby to the numbers, and interpret those as the proper drag.
   private readonly closestDragListener: ClosestDragListener;
-  private readonly addAndDragCountingObjectCallback: OmitThisParameter<( event: PressListenerEvent, countingObject: CountingObject ) => void>;
 
   // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
   private readonly countingObjectNodeMap: CountingObjectNodeMap;
@@ -51,8 +49,6 @@ class CountingCommonScreenView extends ScreenView {
     this.model = model;
 
     this.countingObjectLayerNode = new Node();
-    this.tryToCombineCountingObjectsCallback = this.tryToCombineCountingObjects.bind( this );
-    this.addAndDragCountingObjectCallback = this.addAndDragCountingObject.bind( this );
     this.countingObjectNodeMap = {};
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
@@ -111,7 +107,7 @@ class CountingCommonScreenView extends ScreenView {
    */
   public onCountingObjectAdded( countingObject: CountingObject ): CountingObjectNode {
     const countingObjectNode = new CountingObjectNode( countingObject, this.availableViewBoundsProperty,
-      this.addAndDragCountingObjectCallback, this.tryToCombineCountingObjectsCallback );
+      this.addAndDragCountingObject.bind( this ), this.tryToCombineCountingObjects.bind( this ) );
 
     this.countingObjectNodeMap[ countingObjectNode.countingObject.id ] = countingObjectNode;
     this.countingObjectLayerNode.addChild( countingObjectNode );
