@@ -1,8 +1,8 @@
 // Copyright 2021-2023, University of Colorado Boulder
 
 /**
- * Node that can display a 1, 10, 100, or counting object which can be clicked/dragged to create draggable paper numbers or
- * counting objects. Factored out from ExplorePanel.js in make-a-ten, see https://github.com/phetsims/number-play/issues/19
+ * Node that can display a 1, 10, 100, or other style of single countingObject which can be clicked/dragged to create
+ * countingObjects. Factored out from ExplorePanel.js in make-a-ten, see https://github.com/phetsims/number-play/issues/19
  *
  * @author Chris Klusendorf (PhET Interactive Simulations)
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
@@ -23,45 +23,67 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
 
-// types
 type SelfOptions = {
-  updateCurrentNumber?: boolean;
+
+  // the type of our countingObject being displayed
   countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
+
+  // whether grouping is enabled for the displayed countingObject
   groupingEnabledProperty?: TReadOnlyProperty<boolean>;
+
+  // the scale of the targetNode when grouping is turned on
   groupedTargetScale?: number;
+
+  // the scale of the targetNode when grouping is turned off
   ungroupedTargetScale?: number;
+
+  // the offset of the backTargetNode compared to the frontTargetNode
   backTargetOffset?: Vector2;
 
-  // pointer area dilation
+  // touch area adjustments
   touchAreaXDilation?: number;
   touchAreaYDilation?: number;
-
-  // pointer area shift
   touchAreaXShift?: number;
 };
 type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
 class CountingCreatorNode extends Node {
 
+  // The value that a countingObject has when created from this CountingCreatorNode.
   private readonly creatorNumberValue: number;
+
+  // The Node in which the created countingObjects are positioned in.
   private coordinateFrameNode: Node;
+
+  // The Node that can receive input for creating a countingObject.
   private readonly targetNode: Node;
+
+  // The sum of the countingObjects in the countingArea.
   private readonly sumProperty: TReadOnlyProperty<number>;
-  private readonly showFrontTargetNumber: number;
-  private readonly showBackTargetNumber: number;
+
+  // When the sum is growing, when the sum has reached (equals) this number, we turn off the frontTarget visibility.
+  // When the sum is decreasing, when we have reached this number, we turn on the backTarget visibility.
+  // Example: For a maxSum of 10 and a creatorNumberValue of 1, this number is 9.
+  private readonly frontTargetVisibilitySum: number;
+
+  // When the sum is growing, when the sum has reached (equals) this number, we turn off the backTarget visibility.
+  // When the sum is decreasing, when we have reached this number, we turn on the frontTarget visibility.
+  // Example: For a maxSum of 10 and a creatorNumberValue of 1, this number is 8.
+  private readonly backTargetVisibilitySum: number;
+
+  // The offset of the backTargetNode compared to the frontTargetNode.
   private readonly backTargetOffset: Vector2;
+
+  // Of the two-stack that makes up the targetNode, this is the countingObjectNode in the back.
   private backTargetNode: Node;
+
+  // Of the two-stack that makes up the targetNode, this is the countingObjectNode in the front.
   private frontTargetNode: Node;
 
-  // TODO: Improve organization and docs in this file, see https://github.com/phetsims/counting-common/issues/12
-  /**
-   * @param place
-   * @param coordinateFrameNode - defines the view coordinate frame
-   * @param sumProperty
-   * @param resetEmitter
-   * @param addAndDragCountingObject - adds a CountingObject to the model and immediately starts dragging it with the provided event
-   * @param [providedOptions]
-   */
+  // The highest possible sum of the countingArea. This CountingCreatorNode cannot create countingObjects with a sum
+  // greater than this number.
+  private readonly maxSum: number;
+
   public constructor( place: number,
                       coordinateFrameNode: Node,
                       sumProperty: NumberProperty,
@@ -70,7 +92,6 @@ class CountingCreatorNode extends Node {
                       providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
-      updateCurrentNumber: false,
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
       groupingEnabledProperty: new BooleanProperty( true ),
       groupedTargetScale: 0.65,
@@ -87,16 +108,28 @@ class CountingCreatorNode extends Node {
     this.creatorNumberValue = Math.pow( 10, place );
 
     this.coordinateFrameNode = coordinateFrameNode;
+
     this.sumProperty = sumProperty;
 
-    const maxSum = sumProperty.range.max;
+    this.maxSum = sumProperty.range.max;
 
-    // TODO: The naming of these is not accurate, see https://github.com/phetsims/counting-common/issues/12
-    this.showFrontTargetNumber = maxSum - this.creatorNumberValue; // 9
-    this.showBackTargetNumber = this.showFrontTargetNumber - this.creatorNumberValue; // 8
+    this.frontTargetVisibilitySum = this.maxSum - this.creatorNumberValue;
+    this.backTargetVisibilitySum = this.frontTargetVisibilitySum - this.creatorNumberValue;
 
     this.backTargetOffset = options.backTargetOffset;
 
+    this.backTargetNode = new Node();
+    this.frontTargetNode = new Node();
+
+    this.targetNode = new Node( {
+      cursor: 'pointer',
+      children: [ this.backTargetNode, this.frontTargetNode ]
+    } );
+    this.addChild( this.targetNode );
+
+    /**
+     * Creates a target that represents the frontTargetNode or backTargetNode.
+     */
     const createSingleTargetNode = ( offset: Vector2 ): Node => {
       const targetNode = new Node();
 
@@ -108,52 +141,39 @@ class CountingCreatorNode extends Node {
       return targetNode;
     };
 
-    this.backTargetNode = new Node();
-    this.frontTargetNode = new Node();
-
-    this.targetNode = new Node( {
-      cursor: 'pointer',
-      children: [ this.backTargetNode, this.frontTargetNode ]
-    } );
-    this.addChild( this.targetNode );
-
+    // When the countingObjectType or groupingEnabled state changes, redraw the front and back targets to match their
+    // new state.
     Multilink.multilink( [ options.countingObjectTypeProperty, options.groupingEnabledProperty ],
       ( countingObjectType, groupingEnabled ) => {
+
+        // Record what the visibility of the target nodes was before re-creating them.
         const backTargetNodeVisible = this.backTargetNode.visible;
         const frontTargetNodeVisible = this.frontTargetNode.visible;
 
+        // Create the new target nodes.
         this.backTargetNode = createSingleTargetNode( options.backTargetOffset );
-        this.frontTargetNode = createSingleTargetNode( new Vector2( 0, 0 ) );
+        this.frontTargetNode = createSingleTargetNode( Vector2.ZERO );
 
+        // Set the new target nodes to their correct visibility states.
         this.backTargetNode.visible = backTargetNodeVisible;
         this.frontTargetNode.visible = frontTargetNodeVisible;
 
+        // Swap in the new target nodes and dilate the touch area accordingly.
         this.targetNode.children = [ this.backTargetNode, this.frontTargetNode ];
         this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
           .shiftedX( options.touchAreaXShift );
         this.targetNode.inputEnabled = backTargetNodeVisible || frontTargetNodeVisible;
 
-        // recenter ourselves after we change the bounds of the front and back targets
+        // Recenter ourselves after we change the bounds of the front and back targets
         if ( options.center ) {
           this.center = options.center;
         }
       } );
 
-    const updateTargetVisibility = ( sum: number, oldSum: number ) => {
-      // counting up
-      if ( sum === oldSum + this.creatorNumberValue ) {
-        if ( sum === this.showFrontTargetNumber ) {
-          this.frontTargetNode.visible = false;
-        }
-        else if ( sum === maxSum ) {
-          this.backTargetNode.visible = false;
-          this.targetNode.inputEnabled = false;
-        }
-      }
-    };
+    // See if targets should be made invisible when the sum increases.
+    sumProperty.lazyLink( this.validateVisibilityForTargetsForIncreasingSum.bind( this ) );
 
-    sumProperty.lazyLink( updateTargetVisibility );
-
+    // Add an input listener on the targetNode for creating countingObjects.
     this.targetNode.addInputListener( {
       down: ( event: PressListenerEvent ) => {
         if ( !event.canStartPress() ) { return; }
@@ -172,6 +192,7 @@ class CountingCreatorNode extends Node {
       }
     } );
 
+    // Reset the targets visibility and inputEnabled when the sim is reset..
     resetEmitter.addListener( () => {
       this.backTargetNode.visible = true;
       this.frontTargetNode.visible = true;
@@ -179,40 +200,61 @@ class CountingCreatorNode extends Node {
     } );
   }
 
-  public checkTargetVisibility( returnedNumberValue: number ): void {
+  /**
+   * Check if either target should be made invisible, only for cases where the sum is increasing. Decreasing sum is
+   * handled separately because of animations of the countingObjects.
+   */
+  private validateVisibilityForTargetsForIncreasingSum( sum: number, oldSum: number ): void {
+    if ( sum === oldSum + this.creatorNumberValue ) {
+      if ( sum === this.frontTargetVisibilitySum ) {
+        this.frontTargetNode.visible = false;
+      }
+      else if ( sum === this.maxSum ) {
+        this.backTargetNode.visible = false;
+        this.targetNode.inputEnabled = false;
+      }
+    }
+  }
+
+  /**
+   * Checks if either the backTargetNode or frontTargetNode should be made visible again, based on the state of their
+   * current visibility and the sum.
+   */
+  public validateVisibilityForTargetsForDecreasingSum( returnedNumberValue: number ): void {
     for ( let i = 0; i < returnedNumberValue / this.creatorNumberValue; i++ ) {
-      if ( !this.backTargetNode.visible && this.sumProperty.value <= this.showFrontTargetNumber ) {
+      if ( !this.backTargetNode.visible && this.sumProperty.value <= this.frontTargetVisibilitySum ) {
         this.backTargetNode.visible = true;
         this.targetNode.inputEnabled = true;
       }
-      else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.showBackTargetNumber ) {
+      else if ( !this.frontTargetNode.visible && this.sumProperty.value <= this.backTargetVisibilitySum ) {
         this.frontTargetNode.visible = true;
       }
     }
   }
 
   /**
-   * Return the view coordinates of the target.
+   * Returns the view coordinates of the target.
    */
   public getOriginPosition(): Vector2 {
 
-    // Trail to coordinateFrameNode, not including the coordinateFrameNode
+    // Trail to coordinateFrameNode, not including the coordinateFrameNode.
     const trail = this.coordinateFrameNode.getUniqueLeafTrailTo( this.targetNode ).slice( 1 );
 
-    // Transformed to view coordinates
-    let origin = this.frontTargetNode.localBounds.center.plus( this.backTargetOffset );
-    if ( this.sumProperty.value <= this.showBackTargetNumber ) {
-      origin = this.frontTargetNode.localBounds.center;
-    }
+    const origin = this.sumProperty.value <= this.backTargetVisibilitySum ?
+                   this.frontTargetNode.localBounds.center :
+                   this.frontTargetNode.localBounds.center.plus( this.backTargetOffset );
 
-    // Transformed to view coordinates
+    // Transformed to view coordinates.
     return trail.localToGlobalPoint( origin );
   }
 
+  /**
+   * Returns a BaseNumberNode to be used as the target icon.
+   */
   private createBaseNumberNode( place: number,
                                 countingObjectTypeProperty: TReadOnlyProperty<CountingObjectType>,
-                                groupingEnabledProperty: TReadOnlyProperty<boolean>
-  ): BaseNumberNode {
+                                groupingEnabledProperty: TReadOnlyProperty<boolean> ): BaseNumberNode {
+
     return new BaseNumberNode( new BaseNumber( 1, place ), 1, {
       includeHandles: false,
       countingObjectType: countingObjectTypeProperty.value,
