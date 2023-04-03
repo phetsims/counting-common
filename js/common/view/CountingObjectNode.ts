@@ -90,7 +90,7 @@ class CountingObjectNode extends Node {
   public constructor( countingObject: CountingObject,
                       availableViewBoundsProperty: TReadOnlyProperty<Bounds2>,
                       addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
-                      tryToCombineCountingObjects: ( countingObject: CountingObject ) => void,
+                      handleDroppedCountingObject: ( countingObject: CountingObject ) => void,
                       providedOptions?: CountingObjectNodeOptions ) {
 
     super();
@@ -146,7 +146,7 @@ class CountingObjectNode extends Node {
 
       end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
-          tryToCombineCountingObjects( this.countingObject );
+          handleDroppedCountingObject( this.countingObject );
           this.endDragEmitter.emit( this );
         }
       }
