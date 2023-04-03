@@ -37,7 +37,7 @@ class CountingCommonModel implements TModel {
     } );
     this.resetEmitter = new Emitter();
 
-    // TODO: Remove when done logging, see https://github.com/phetsims/counting-common/issues/12
+    // TODO: Remove when done logging, see https://github.com/phetsims/number-suite-common/issues/67
     this.name = name;
   }
 
