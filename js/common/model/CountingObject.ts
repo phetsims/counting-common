@@ -242,7 +242,7 @@ class CountingObject {
       viewBounds.top - this.localBounds.top,
       viewBounds.right - this.localBounds.right,
       viewBounds.bottom - this.localBounds.bottom
-    ).eroded( CountingCommonConstants.COUNTING_PLAY_AREA_MARGIN );
+    ).eroded( CountingCommonConstants.COUNTING_AREA_MARGIN );
   }
 
   /**

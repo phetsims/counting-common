@@ -117,7 +117,7 @@ const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
 // distance that the handle stem should overlap with a counting object card.
 // TODO: should be 0 but not quite working, get cleaner-edged images from AM, see https://github.com/phetsims/counting-common/issues/12
-const PLAY_OBJECT_HANDLE_OVERLAP_Y = 0.4;
+const COUNTING_OBJECT_HANDLE_OVERLAP_Y = 0.4;
 
 const IMAGE_SCALE = 0.21;
 
@@ -188,7 +188,7 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 1.24;
-      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : PLAY_OBJECT_HANDLE_OVERLAP_Y;
+      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : COUNTING_OBJECT_HANDLE_OVERLAP_Y;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
 
@@ -275,8 +275,8 @@ class BaseNumberNode extends Node {
       const objectScale = value === ONE && !options.isPartOfStack ? 1 : 0.3;
       const numberOfSets = value === 20 ? 2 : 1;
 
-      const fullObjectWidth = CountingCommonConstants.PLAY_OBJECT_SIZE.width;
-      const fullObjectHeight = CountingCommonConstants.PLAY_OBJECT_SIZE.height;
+      const fullObjectWidth = CountingCommonConstants.COUNTING_OBJECT_SIZE.width;
+      const fullObjectHeight = CountingCommonConstants.COUNTING_OBJECT_SIZE.height;
       const renderedObjectWidth = fullObjectWidth * objectScale;
       const renderedObjectHeight = fullObjectHeight * objectScale;
       const singleCardBounds = CountingCommonConstants.SINGLE_COUNTING_OBJECT_BOUNDS;

@@ -45,11 +45,11 @@ const CountingCommonConstants = {
    */
   MOVE_AWAY_DISTANCE: MOVE_AWAY_DISTANCE,
 
-  COUNTING_PLAY_AREA_MARGIN: 10,
+  COUNTING_AREA_MARGIN: 10,
   // TODO: need better plan for this, see https://github.com/phetsims/number-suite-common/issues/65
   SINGLE_COUNTING_OBJECT_BOUNDS: new Bounds2( -21, 0, 33.6, 87.78 ), // from rendered images
   COUNTING_OBJECT_TYPE_TO_IMAGE: COUNTING_OBJECT_TYPE_TO_IMAGE,
-  PLAY_OBJECT_SIZE: new Dimension2( 44, 44 ), // in screen coordinates
+  COUNTING_OBJECT_SIZE: new Dimension2( 44, 44 ), // in screen coordinates
   BREAK_APART_Y_OFFSET: 6 // y-offset for individual CountingObjects, used when breaking apart a group
 };
 
