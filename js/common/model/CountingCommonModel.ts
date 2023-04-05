@@ -28,17 +28,13 @@ class CountingCommonModel implements TModel {
 
   // used to notify view sub-components that reset is being called
   public readonly resetEmitter: TEmitter;
-  public readonly name: string;
 
-  protected constructor( highestCount: number, name: string ) {
+  protected constructor( highestCount: number ) {
     this.countingObjects = createObservableArray();
     this.sumProperty = new NumberProperty( 0, {
       range: new Range( 0, highestCount )
     } );
     this.resetEmitter = new Emitter();
-
-    // TODO: Remove when done logging, see https://github.com/phetsims/number-suite-common/issues/67
-    this.name = name;
   }
 
   /**
@@ -146,7 +142,6 @@ class CountingCommonModel implements TModel {
     this.countingObjects.filter( countingObject => countingObject.includeInSumProperty.value ).forEach( countingObject => {
       total += countingObject.numberValueProperty.value;
     } );
-    // console.log( 'calculating and setting total in ' + this.name + ': ' + total );
     this.sumProperty.value = total;
   }
 
