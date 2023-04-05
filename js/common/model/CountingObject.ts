@@ -54,8 +54,8 @@ class CountingObject {
   // view node.
   public readonly userControlledProperty: TProperty<boolean>;
 
-  // Should be set through accessor methods only.
-  private destination: Vector2;
+  // If we are animating, this is the animation destination. null if not animating.
+  private _destination: Vector2 | null;
 
   // Whether this element is animating from one position to another, do not set externally.
   private animating: boolean;
@@ -111,7 +111,7 @@ class CountingObject {
     this.handleOpacityProperty = new NumberProperty( 1 );
     this.groupingEnabledProperty = options.groupingEnabledProperty;
     this.includeInSumProperty = new BooleanProperty( true );
-    this.destination = initialPosition.copy();
+    this._destination = null;
     this.animating = false;
     this.animation = null;
     this.baseNumbers = CountingObject.getBaseNumbers( this.numberValueProperty.value );
@@ -135,6 +135,14 @@ class CountingObject {
    */
   public get isAnimating(): boolean {
     return this.animating;
+  }
+
+  /**
+   * Getter for our animation destination, null if not animating.
+   */
+  public get destination(): Vector2 | null {
+    assert && assert( !!this._destination === this.animating, 'we only have a destination if we are animating' );
+    return this._destination;
   }
 
   /**
@@ -182,6 +190,7 @@ class CountingObject {
 
     if ( animate ) {
       this.animating = true;
+      this._destination = destination;
 
       this.animation && this.animation.stop();
       const distance = this.positionProperty.value.distance( destination );
@@ -211,6 +220,7 @@ class CountingObject {
       this.animation.start();
       this.animation.finishEmitter.addListener( () => {
         this.animating = false;
+        this._destination = null;
         this.endAnimationEmitter.emit( this );
         this.animation = null;
       } );
