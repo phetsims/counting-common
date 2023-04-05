@@ -4,12 +4,13 @@
  * Creates image views for base numbers.
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import { Shape } from '../../../../kite/js/imports.js';
-import { Circle, Image, Mipmap, Node, Path } from '../../../../scenery/js/imports.js';
+import { Circle, Color, Image, Mipmap, Node, Path } from '../../../../scenery/js/imports.js';
 import digit0_png from '../../../mipmaps/digit0_png.js';
 import digit1_png from '../../../mipmaps/digit1_png.js';
 import digit2_png from '../../../mipmaps/digit2_png.js';
@@ -32,17 +33,31 @@ import groupBackground10_png from '../../../mipmaps/groupBackground10_png.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 
-// types
 type ImageMap = Record<number, Mipmap>;
 type NumberMap = Record<number, number>;
 type ZeroOffset = Record<number, number[]>;
 type SelfOptions = {
+
+  // The countingObjectType of the CountingObjectNode this BaseNumberNode is a part of.
   countingObjectType?: CountingObjectType;
+
+  // Whether grouping is enabled for the CountingObject that this BaseNumberNode is a part of.
   groupingEnabled?: boolean;
+
+  // Whether handles are allowed on this BaseNumberNode.
   includeHandles?: boolean;
+
+  // Supports changing the length of the handles. Positive numbers increase length, negative number decrease length.
   handleOffsetY?: number;
+
+  // Whether this BaseNumberNode represents the largest BaseNumber in the CountingObjectNode.
   isLargestBaseNumber?: boolean;
+
+  // Whether this BaseNumberNode has other BaseNumberNodes on top of it (true) or is the smallest BaseNumberNode in the
+  // CountingObjectNode (false).
   hasDescendant?: boolean;
+
+  // Whether this BaseNumberNode shares the CountingObjectNode it makes up with other BaseNumberNodes.
   isPartOfStack?: boolean;
 };
 export type BaseNumberNodeOptions = SelfOptions;
@@ -115,6 +130,12 @@ const ZERO_OFFSET: ZeroOffset = {
 // extra length to make sure there is no gap between the paper number background and the stem)
 const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
+const HANDLE_LINE_WIDTH = 1.24;
+const HANDLE_OUTER_CIRCLE_RADIUS = 4.6;
+const HANDLE_INNER_CIRCLE_RADIUS = 2.1;
+const HANDLE_COLOR_BLACK = Color.BLACK;
+const HANDLE_COLOR_WHITE = Color.WHITE;
+
 const IMAGE_SCALE = 0.21;
 
 class BaseNumberNode extends Node {
@@ -148,8 +169,6 @@ class BaseNumberNode extends Node {
       includeHandles: false,
       handleOffsetY: 0,
       groupingEnabled: true,
-
-      // TODO: docs? see https://github.com/phetsims/counting-common/issues/12
       isLargestBaseNumber: true,
       hasDescendant: false,
       isPartOfStack: false
@@ -160,7 +179,8 @@ class BaseNumberNode extends Node {
       groupingEnabled = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
     }
 
-    const isCountingObject = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
+    // Paper numbers are countingObjects that have digits on a paper-like background instead of objects on a card.
+    const isPaperNumber = options.countingObjectType === CountingObjectType.PAPER_NUMBER;
 
     assert && !groupingEnabled && assert( options.countingObjectType !== CountingObjectType.PAPER_NUMBER,
       'Paper numbers are not allowed to turn off grouping.' );
@@ -168,23 +188,25 @@ class BaseNumberNode extends Node {
     // Translate everything by our offset
     this.translation = baseNumber.offset;
 
-    // The paper behind the numbers
+    // The off-white rectangle with a gray border, can have messy edges like ripped paper or clean edges like a card.
     const backgroundNode = new Image( BACKGROUND_IMAGE_MAP.get( options.countingObjectType )[ baseNumber.place ], {
       imageOpacity: opacity,
       scale: IMAGE_SCALE
     } );
 
-    // TODO: needs better logic and or docs in this section, see https://github.com/phetsims/counting-common/issues/12
-    // aside from checking the option includeHandles, don't include a handle if this base number is a standalone 1, or
-    // if removing the largest base number in this paper number would separate itself from its descendants (as opposed
-    // to just removing one part of the largest base number). for example, with the paper number 1200, the 1 should not
-    // get a handle because grabbing it would pull 1000 away from 200, and this can be accomplished by pulling the 200
-    // off instead. in the case of 2200, the first 2 should get a handle because grabbing it would pull off one 1000.
-    if ( options.includeHandles && !( baseNumber.numberValue === 1 && !options.isPartOfStack )
-         && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
+    const isStandaloneOne = baseNumber.numberValue === 1 && !options.isPartOfStack;
 
-      const lineWidth = 1.24;
-      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : 0;
+    // In this case, the largest BaseNumber doesn't get a handle. For example, with the paper number 1200, the 1 should
+    // not get a handle because grabbing it would pull 1000 away from 200, and this can be accomplished by pulling the
+    // 200 off instead. In the case of 2200, the first 2 should get a handle because grabbing it would pull off one 1000.
+    const isOneAndLargestWithDescendants = options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant;
+
+    // Handle-drawing logic, drawing unless:
+    //  * this base number is a standalone 1
+    //  * removing the largest base number in this paper number would separate itself from its descendants
+    if ( options.includeHandles && !isStandaloneOne && !isOneAndLargestWithDescendants ) {
+
+      const handleOverlapLength = isPaperNumber ? PAPER_NUMBER_HANDLE_OVERLAP_Y : 0;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
 
@@ -195,29 +217,28 @@ class BaseNumberNode extends Node {
       this.addChild( this.handleNode );
 
       const handleStemNode = new Path( handleStemShape, {
-        stroke: 'black',
-        lineWidth: lineWidth
+        stroke: HANDLE_COLOR_BLACK,
+        lineWidth: HANDLE_LINE_WIDTH
       } );
       handleStemNode.centerX = options.hasDescendant ? PLACE_HANDLE_OFFSET_X[ baseNumber.place ] : backgroundNode.centerX;
       handleStemNode.bottom = backgroundNode.top + handleOverlapLength;
       this.handleNode.addChild( handleStemNode );
 
       let handleCircle;
-      const outerCircleRadius = 4.6;
 
       if ( options.isLargestBaseNumber ) {
-        handleCircle = new Circle( outerCircleRadius, {
-          fill: 'white',
-          stroke: 'black',
-          lineWidth: lineWidth
+        handleCircle = new Circle( HANDLE_OUTER_CIRCLE_RADIUS, {
+          fill: HANDLE_COLOR_WHITE,
+          stroke: HANDLE_COLOR_BLACK,
+          lineWidth: HANDLE_LINE_WIDTH
         } );
-        handleCircle.addChild( new Circle( 2.1, {
-          fill: 'black'
+        handleCircle.addChild( new Circle( HANDLE_INNER_CIRCLE_RADIUS, {
+          fill: HANDLE_COLOR_BLACK
         } ) );
       }
       else {
-        handleCircle = new Circle( outerCircleRadius, {
-          fill: 'black'
+        handleCircle = new Circle( HANDLE_OUTER_CIRCLE_RADIUS, {
+          fill: HANDLE_COLOR_BLACK
         } );
       }
       handleCircle.centerX = handleStemNode.centerX;
@@ -231,8 +252,8 @@ class BaseNumberNode extends Node {
       this.backgroundNode = backgroundNode;
     }
 
-    // add a number to the background if our type is paper number
-    if ( isCountingObject ) {
+    // Add a value representation depending on our CountingObjectType.
+    if ( isPaperNumber ) {
 
       // Position of the initial digit
       let x = PLACE_OFFSET_X[ baseNumber.place ] + DIGIT_OFFSET_X[ baseNumber.digit ];
@@ -261,14 +282,14 @@ class BaseNumberNode extends Node {
       }
     }
     else {
+      // If not a paper number, add images of our CountingObjectType.
 
-      const ONE = 1;
       const value = baseNumber.numberValue;
 
       // TODO: temporary way to organize objects, needs work, see https://github.com/phetsims/counting-common/issues/12
-      const numberOfRows = value === ONE && !options.isPartOfStack ? 1 : 5;
-      const numberOfColumns = value === ONE && !options.isPartOfStack ? 1 : 2;
-      const objectScale = value === ONE && !options.isPartOfStack ? 1 : 0.3;
+      const numberOfRows = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 5;
+      const numberOfColumns = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 2;
+      const objectScale = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 0.3;
       const numberOfSets = value === 20 ? 2 : 1;
 
       const fullObjectWidth = CountingCommonConstants.COUNTING_OBJECT_SIZE.width;
@@ -313,7 +334,6 @@ class BaseNumberNode extends Node {
         }
       }
     }
-
   }
 }
 

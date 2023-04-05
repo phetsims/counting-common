@@ -37,7 +37,7 @@ class BaseNumber {
   // this place value.
   public offset: Vector2;
 
-  // The bounds (relative to the number origin) that this digit place will take up.
+  // The bounds that this digit place will take up relative to the digit origin, see BaseNumberNode.PAPER_NUMBER_DIMENSIONS.
   public bounds: Bounds2;
 
   // The leading digit of the number, e.g. 2 for 200.

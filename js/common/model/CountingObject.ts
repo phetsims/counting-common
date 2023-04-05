@@ -61,7 +61,7 @@ class CountingObject {
   private animating: boolean;
 
   // Represents the non-zero place values in this number. 1034 will have three place values, 4, 30 and 1000, which
-  // when summed will equal our number.
+  // when summed will equal our number. Smallest place values are first in the array.
   public baseNumbers: BaseNumber[];
 
   // Fires when the animation towards our destination ends (we hit our destination).

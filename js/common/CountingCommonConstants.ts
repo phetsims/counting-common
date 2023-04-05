@@ -27,6 +27,8 @@ COUNTING_OBJECT_TYPE_TO_IMAGE.set( CountingObjectType.BALL, ball_png );
 const MOVE_AWAY_DISTANCE: Record<number, number> = { 1: 50, 2: 100, 3: 150, 4: 160 };
 
 const CountingCommonConstants = {
+  ONE: 1,
+
   // Common colors
   CUE_FILL: 'rgb(63,63,183)',
 

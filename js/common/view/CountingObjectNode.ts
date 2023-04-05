@@ -230,10 +230,12 @@ class CountingObjectNode extends Node {
   public updateNumber(): void {
     const groupingEnabled = this.countingObject.groupingEnabledProperty.value;
 
-    // Reversing allows easier opacity computation and has the nodes in order for setting children.
+    // Reversing (largest place first) allows easier opacity computation and has the nodes in order for setting children.
     const reversedBaseNumbers = this.countingObject.baseNumbers.slice().reverse();
 
     this.numberImageContainer.children = _.map( reversedBaseNumbers, ( baseNumber, index ) => {
+
+      // A descendant is another BaseNumberNode with a smaller place.
       const hasDescendant = reversedBaseNumbers[ index + 1 ] !== undefined;
 
       return new BaseNumberNode(
