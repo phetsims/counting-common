@@ -305,6 +305,8 @@ class BaseNumberNode extends Node {
       const width = singleCardBounds.width;
       const height = singleCardBounds.height;
 
+      // This manual calculation is based on the unscaled width of one image, if you'd prefer it to be calculated (like
+      // yMargin is), please speak to @chrisklus
       const xMargin = ( width - fullObjectWidth ) * 0.5;
       const yMargin = ( height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
       const yExtraMarginTop = backgroundNode.height - yMargin * ( numberOfRows + 1 ) - renderedObjectHeight * numberOfRows;
@@ -333,6 +335,9 @@ class BaseNumberNode extends Node {
               } );
               this.addChild( objectImage );
               objectImages.push( objectImage );
+            }
+            else {
+              console.log( 'oh my boichick' );
             }
           }
         }
