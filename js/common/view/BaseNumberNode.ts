@@ -344,7 +344,7 @@ class BaseNumberNode extends Node {
               objectImages.push( objectImage );
             }
             else {
-              console.log( 'oh my boichick' );
+              break;
             }
           }
         }
