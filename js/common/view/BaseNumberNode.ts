@@ -290,11 +290,11 @@ class BaseNumberNode extends Node {
 
       const value = baseNumber.numberValue;
 
-      // TODO: temporary way to organize objects, needs work, see https://github.com/phetsims/counting-common/issues/12
       const numberOfRows = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 5;
       const numberOfColumns = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 2;
       const objectScale = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 0.3;
-      const numberOfSets = value === 20 ? 2 : 1;
+
+      const numberOfSets = value === CountingCommonConstants.MAX_IMAGES_PER_COUNTING_OBJECT ? 2 : 1;
 
       const fullObjectWidth = CountingCommonConstants.COUNTING_OBJECT_SIZE.width;
       const fullObjectHeight = CountingCommonConstants.COUNTING_OBJECT_SIZE.height;
@@ -302,8 +302,11 @@ class BaseNumberNode extends Node {
       const renderedObjectHeight = fullObjectHeight * objectScale;
       const singleCardBounds = CountingCommonConstants.SINGLE_COUNTING_OBJECT_BOUNDS;
 
-      const xMargin = ( singleCardBounds.width - fullObjectWidth ) * 0.5;
-      const yMargin = ( singleCardBounds.height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
+      const width = singleCardBounds.width;
+      const height = singleCardBounds.height;
+
+      const xMargin = ( width - fullObjectWidth ) * 0.5;
+      const yMargin = ( height - numberOfRows * renderedObjectHeight ) / ( numberOfRows + 1 );
       const yExtraMarginTop = backgroundNode.height - yMargin * ( numberOfRows + 1 ) - renderedObjectHeight * numberOfRows;
 
       // add and position the object images
@@ -312,14 +315,11 @@ class BaseNumberNode extends Node {
         for ( let i = 0; i < numberOfRows; i++ ) {
           for ( let j = 0; j < numberOfColumns; j++ ) {
 
-            const width = singleCardBounds.width;
-            const height = singleCardBounds.height;
-
             const columnWidth = ( width - ( ( numberOfColumns + 1 ) * xMargin ) ) / numberOfColumns;
             const centerX = ( ( j + 1 ) * xMargin ) + ( j * columnWidth ) + ( columnWidth / 2 ) +
-                            // used to draw a second set for a double card exactly where the objects are when stacked
-                            // from a single card on a double
-                            z * ( backgroundNode.width - singleCardBounds.width + 0.1 );
+                            // This is used to draw a second set for a double card exactly where the objects are when
+                            // stacked from a single card on a double
+                            z * ( backgroundNode.width - width + 0.1 );
 
             const rowHeight = ( height - ( ( numberOfRows + 1 ) * yMargin ) ) / numberOfRows;
             const centerY = ( ( i + 1 ) * yMargin ) + ( i * rowHeight ) + ( rowHeight / 2 ) + yExtraMarginTop;

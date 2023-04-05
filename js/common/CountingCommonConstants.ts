@@ -29,6 +29,9 @@ const MOVE_AWAY_DISTANCE: Record<number, number> = { 1: 50, 2: 100, 3: 150, 4: 1
 const CountingCommonConstants = {
   ONE: 1,
 
+  // Non-paper-number countingObjects can only fit 20 on a single CountingObject layout.
+  MAX_IMAGES_PER_COUNTING_OBJECT: 20,
+
   // Common colors
   CUE_FILL: 'rgb(63,63,183)',
 
@@ -53,6 +56,9 @@ const CountingCommonConstants = {
   COUNTING_OBJECT_SIZE: new Dimension2( 44, 44 ), // in screen coordinates
   BREAK_APART_Y_OFFSET: 6 // y-offset for individual CountingObjects, used when breaking apart a group
 };
+
+assert && assert( CountingCommonConstants.MAX_IMAGES_PER_COUNTING_OBJECT % 10 === 0,
+  'Max is pretty hard coded to be a multiple of 10' );
 
 countingCommon.register( 'CountingCommonConstants', CountingCommonConstants );
 
