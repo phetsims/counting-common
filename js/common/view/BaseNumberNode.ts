@@ -115,10 +115,6 @@ const ZERO_OFFSET: ZeroOffset = {
 // extra length to make sure there is no gap between the paper number background and the stem)
 const PAPER_NUMBER_HANDLE_OVERLAP_Y = 2;
 
-// distance that the handle stem should overlap with a counting object card.
-// TODO: should be 0 but not quite working, get cleaner-edged images from AM, see https://github.com/phetsims/counting-common/issues/12
-const COUNTING_OBJECT_HANDLE_OVERLAP_Y = 0.4;
-
 const IMAGE_SCALE = 0.21;
 
 class BaseNumberNode extends Node {
@@ -188,7 +184,7 @@ class BaseNumberNode extends Node {
          && !( options.isLargestBaseNumber && baseNumber.digit === 1 && options.hasDescendant ) ) {
 
       const lineWidth = 1.24;
-      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : COUNTING_OBJECT_HANDLE_OVERLAP_Y;
+      const handleOverlapLength = isCountingObject ? PAPER_NUMBER_HANDLE_OVERLAP_Y : 0;
       const handleOverlapCompensation = PAPER_NUMBER_HANDLE_OVERLAP_Y - handleOverlapLength;
       const handleOffsetY = PLACE_HANDLE_OFFSET_Y[ baseNumber.place ] + options.handleOffsetY - handleOverlapCompensation;
 
