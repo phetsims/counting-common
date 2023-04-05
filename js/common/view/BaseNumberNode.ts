@@ -290,9 +290,16 @@ class BaseNumberNode extends Node {
 
       const value = baseNumber.numberValue;
 
-      const numberOfRows = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 5;
-      const numberOfColumns = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 2;
-      const objectScale = ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) ? 1 : 0.3;
+      let numberOfRows = 5;
+      let numberOfColumns = 2;
+      let objectScale = 0.3;
+
+      // If there is just a single, unstacked One
+      if ( value === CountingCommonConstants.ONE && !options.isPartOfStack ) {
+        numberOfRows = 1;
+        numberOfColumns = 1;
+        objectScale = 1;
+      }
 
       const numberOfSets = value === CountingCommonConstants.MAX_IMAGES_PER_COUNTING_OBJECT ? 2 : 1;
 
