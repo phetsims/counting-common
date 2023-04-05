@@ -157,7 +157,6 @@ class CountingCommonScreenView extends ScreenView {
 
       if ( ArithmeticRules.canAddNumbers( draggedNumberValue, droppedNumberValue ) ) {
         this.model.collapseNumberModels( this.availableViewBoundsProperty.value, draggedCountingObject, droppedCountingObject );
-        return; // A bit weird, but no need to relayer or try combining with others?
       }
       else {
         // repel numbers - show rejection
@@ -169,23 +168,6 @@ class CountingCommonScreenView extends ScreenView {
               right: CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightCountingObject.digitLength ]
             };
           } );
-        return; // A bit weird, but if repelled, no need to check for overlapping bits?
-      }
-    }
-
-    // TODO: https://github.com/phetsims/counting-common/issues/12 this should not be needed anymore because dropped
-    //  paper numbers can no longer be overlapping without combining from work done in https://github.com/phetsims/number-play/issues/36
-    // if the dragged number is  larger than the node below it (dropped node), reorder
-    // them in a way to bring small number on the top. see issue #39
-    for ( let i = 0; i < allCountingObjectNodes.length; i++ ) {
-      if ( allCountingObjectNodes[ i ] === draggedNode ) {
-        continue;
-      }
-
-      if ( allCountingObjectNodes[ i ].bounds.intersectsBounds( draggedNode.bounds ) ) {
-        if ( draggedNode.bounds.width > allCountingObjectNodes[ i ].bounds.width ) {
-          allCountingObjectNodes[ i ].moveToFront();
-        }
       }
     }
   }
