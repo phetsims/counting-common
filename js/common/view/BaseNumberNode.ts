@@ -174,6 +174,10 @@ class BaseNumberNode extends Node {
       isPartOfStack: false
     }, providedOptions );
 
+    if ( options.isLargestBaseNumber ) {
+      assert && assert( baseNumber.digit !== 0, 'largest base number cannot be 0' );
+    }
+
     let groupingEnabled = options.groupingEnabled;
     if ( providedOptions === undefined || providedOptions?.groupingEnabled === undefined ) {
       groupingEnabled = options.countingObjectType === CountingObjectType.PAPER_NUMBER;

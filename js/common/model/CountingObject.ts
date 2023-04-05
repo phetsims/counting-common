@@ -17,7 +17,7 @@ import Vector2Property from '../../../../dot/js/Vector2Property.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
-import BaseNumber from './BaseNumber.js';
+import BaseNumber, { SingleDigit } from './BaseNumber.js';
 import Easing from '../../../../twixt/js/Easing.js';
 import Animation from '../../../../twixt/js/Animation.js';
 import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
@@ -296,10 +296,10 @@ class CountingObject {
     // Divide by 10 each loop, using the remainder and place index to create the place numbers.
     let remainder = number;
     let place = 0;
-    while ( remainder ) {
+    while ( remainder !== 0 ) {
       const digit = remainder % 10;
-      if ( digit ) {
-        result.push( new BaseNumber( digit, place ) );
+      if ( digit !== 0 ) {
+        result.push( new BaseNumber( digit as SingleDigit, place ) );
       }
 
       remainder = ( remainder - digit ) / 10;

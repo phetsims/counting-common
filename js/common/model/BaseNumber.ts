@@ -21,6 +21,8 @@ const DIGIT_BOUNDS = [ 0, 1, 2, 3 ].map( place => {
   return dimension.toBounds( offset.x, offset.y );
 } );
 
+export type SingleDigit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
 class BaseNumber {
 
   // The numeric value, e.g. 200 if digit is 2 and place is 2
@@ -47,7 +49,9 @@ class BaseNumber {
    * @param digit - The digit (1 to 9, won't create for a 0).
    * @param place - The decimal exponent for the number digit * 10^place.
    */
-  public constructor( digit: number, place: number ) {
+  public constructor( digit: SingleDigit, place: number ) {
+    assert && assert( digit % 10 === digit, 'must be a single digit number' );
+
     this.numberValue = digit * Math.pow( 10, place );
     this.digitLength = CountingCommonUtils.digitsInNumber( this.numberValue );
     this.place = place;
