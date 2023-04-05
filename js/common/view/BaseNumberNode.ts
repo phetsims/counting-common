@@ -301,6 +301,8 @@ class BaseNumberNode extends Node {
         objectScale = 1;
       }
 
+      // Each value is broken up into groups of 10, called a set. If greater than 10, the remainder will probably
+      // be handled by a descendant card, except when exactly a multiple of 10 which won't have descendant cards.
       const numberOfSets = value === CountingCommonConstants.MAX_IMAGES_PER_COUNTING_OBJECT ? 2 : 1;
 
       const fullObjectWidth = CountingCommonConstants.COUNTING_OBJECT_SIZE.width;
