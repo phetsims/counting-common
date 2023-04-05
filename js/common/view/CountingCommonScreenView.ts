@@ -174,7 +174,7 @@ class CountingCommonScreenView extends ScreenView {
     }
 
     // TODO: https://github.com/phetsims/counting-common/issues/12 this should not be needed anymore because dropped
-    // paper numbers can no longer be overlapping without combining from work done in https://github.com/phetsims/number-play/issues/36
+    //  paper numbers can no longer be overlapping without combining from work done in https://github.com/phetsims/number-play/issues/36
     // if the dragged number is  larger than the node below it (dropped node), reorder
     // them in a way to bring small number on the top. see issue #39
     for ( let i = 0; i < allCountingObjectNodes.length; i++ ) {
