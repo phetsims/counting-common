@@ -40,10 +40,10 @@ type SelfOptions = {
   // the offset of the backTargetNode compared to the frontTargetNode
   backTargetOffset?: Vector2;
 
-  // touch area adjustments
-  touchAreaXDilation?: number;
-  touchAreaYDilation?: number;
-  touchAreaXShift?: number;
+  // Set for touch and mouse areas
+  pointerAreaXDilation?: number;
+  pointerAreaYDilation?: number;
+  pointerAreaXShift?: number;
 };
 type CountingCreatorNodeOptions = SelfOptions & NodeOptions;
 
@@ -98,9 +98,9 @@ class CountingCreatorNode extends Node {
       ungroupedTargetScale: 1,
       backTargetOffset: new Vector2( -9, -9 ),
 
-      touchAreaXDilation: 15,
-      touchAreaYDilation: 5,
-      touchAreaXShift: 0
+      pointerAreaXDilation: 15,
+      pointerAreaYDilation: 5,
+      pointerAreaXShift: 0
     }, providedOptions );
 
     super( options );
@@ -160,8 +160,13 @@ class CountingCreatorNode extends Node {
 
         // Swap in the new target nodes and dilate the touch area accordingly.
         this.targetNode.children = [ this.backTargetNode, this.frontTargetNode ];
-        this.targetNode.touchArea = this.targetNode.localBounds.dilatedXY( options.touchAreaXDilation, options.touchAreaYDilation )
-          .shiftedX( options.touchAreaXShift );
+
+        const pointerArea = this.targetNode.localBounds
+          .dilatedXY( options.pointerAreaXDilation, options.pointerAreaYDilation )
+          .shiftedX( options.pointerAreaXShift );
+        this.targetNode.touchArea = pointerArea;
+        this.targetNode.mouseArea = pointerArea;
+
         this.targetNode.inputEnabled = backTargetNodeVisible || frontTargetNodeVisible;
 
         // Recenter ourselves after we change the bounds of the front and back targets
