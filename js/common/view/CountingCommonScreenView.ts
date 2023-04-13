@@ -10,7 +10,7 @@ import Property from '../../../../axon/js/Property.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import { Node, Plane, PressListenerEvent } from '../../../../scenery/js/imports.js';
-import ClosestDragListener from '../../../../sun/js/ClosestDragListener.js';
+import ClosestDragForwardingListener from '../../../../sun/js/ClosestDragForwardingListener.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
@@ -36,7 +36,7 @@ class CountingCommonScreenView extends ScreenView {
   protected readonly resetAllButton: ResetAllButton;
 
   // Handle touches nearby to the numbers, and interpret those as the proper drag.
-  private readonly closestDragListener: ClosestDragListener;
+  private readonly closestDragForwardingListener: ClosestDragForwardingListener;
 
   // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
   private readonly countingObjectNodeMap: CountingObjectNodeMap;
@@ -52,9 +52,9 @@ class CountingCommonScreenView extends ScreenView {
     this.countingObjectNodeMap = {};
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
-    this.closestDragListener = new ClosestDragListener( 30, 0 );
+    this.closestDragForwardingListener = new ClosestDragForwardingListener( 30, 0 );
     const backgroundDragTarget = new Plane();
-    backgroundDragTarget.addInputListener( this.closestDragListener );
+    backgroundDragTarget.addInputListener( this.closestDragForwardingListener );
     this.addChild( backgroundDragTarget );
 
     // Persistent, no need to unlink
@@ -113,7 +113,7 @@ class CountingCommonScreenView extends ScreenView {
     this.countingObjectLayerNode.addChild( countingObjectNode );
     countingObjectNode.attachListeners();
 
-    this.closestDragListener.addDraggableItem( countingObjectNode );
+    this.closestDragForwardingListener.addDraggableItem( countingObjectNode );
 
     return countingObjectNode;
   }
@@ -125,7 +125,7 @@ class CountingCommonScreenView extends ScreenView {
     const countingObjectNode = this.findCountingObjectNode( countingObject );
 
     delete this.countingObjectNodeMap[ countingObjectNode.countingObject.id ];
-    this.closestDragListener.removeDraggableItem( countingObjectNode );
+    this.closestDragForwardingListener.removeDraggableItem( countingObjectNode );
     countingObjectNode.dispose();
   }
 

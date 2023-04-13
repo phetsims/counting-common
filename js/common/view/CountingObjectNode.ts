@@ -324,7 +324,7 @@ class CountingObjectNode extends Node {
   }
 
   /**
-   * Implements the API for ClosestDragListener. Only pass through events if this paper number is still pickable, see
+   * Implements the API for ClosestDragForwardingListener. Only pass through events if this paper number is still pickable, see
    * https://github.com/phetsims/number-play/issues/39
    *
    * @param event - Scenery event from the relevant input handler
@@ -341,7 +341,7 @@ class CountingObjectNode extends Node {
   }
 
   /**
-   * Implements the API for ClosestDragListener.
+   * Implements the API for ClosestDragForwardingListener.
    */
   public computeDistance( globalPoint: Vector2 ): number {
     if ( this.countingObject.userControlledProperty.value ) {
