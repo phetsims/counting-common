@@ -21,7 +21,7 @@ import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Multilink from '../../../../axon/js/Multilink.js';
-import TEmitter from '../../../../axon/js/TEmitter.js';
+import { TReadOnlyEmitter } from '../../../../axon/js/TEmitter.js';
 
 type SelfOptions = {
 
@@ -87,7 +87,7 @@ class CountingCreatorNode extends Node {
   public constructor( place: number,
                       coordinateFrameNode: Node,
                       sumProperty: NumberProperty,
-                      resetEmitter: TEmitter,
+                      resetEmitter: TReadOnlyEmitter,
                       addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
                       providedOptions?: CountingCreatorNodeOptions ) {
 
