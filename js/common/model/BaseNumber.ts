@@ -10,6 +10,8 @@
 
 import countingCommon from '../../countingCommon.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
+
+// eslint-disable-next-line no-view-imported-from-model
 import BaseNumberNode from '../view/BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
