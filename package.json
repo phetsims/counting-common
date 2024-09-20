@@ -22,7 +22,7 @@
         ],
         "parserOptions": {
           "project": [
-            "../counting-common/tsconfig.json"
+            "../chipper/tsconfig/eslint-all/tsconfig.json"
           ]
         }
       }
