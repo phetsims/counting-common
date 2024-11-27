@@ -8,13 +8,13 @@
  * @author Sharfudeen Ashraf
  */
 
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 
 // eslint-disable-next-line phet/no-view-imported-from-model
 import BaseNumberNode from '../view/BaseNumberNode.js';
-import Vector2 from '../../../../dot/js/Vector2.js';
-import Bounds2 from '../../../../dot/js/Bounds2.js';
 
 // Precompute bounds for each digit
 const DIGIT_BOUNDS = [ 0, 1, 2, 3 ].map( place => {

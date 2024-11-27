@@ -7,16 +7,16 @@
  */
 
 import createObservableArray, { ObservableArray } from '../../../../axon/js/createObservableArray.js';
-import Vector2 from '../../../../dot/js/Vector2.js';
-import ScreenView from '../../../../joist/js/ScreenView.js';
-import countingCommon from '../../countingCommon.js';
-import CountingObject from './CountingObject.js';
-import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
-import Range from '../../../../dot/js/Range.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Range from '../../../../dot/js/Range.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import ScreenView from '../../../../joist/js/ScreenView.js';
 import TModel from '../../../../joist/js/TModel.js';
+import countingCommon from '../../countingCommon.js';
+import CountingObject from './CountingObject.js';
 
 class CountingCommonModel implements TModel {
 

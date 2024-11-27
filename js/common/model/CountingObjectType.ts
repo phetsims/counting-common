@@ -7,8 +7,8 @@
  */
 
 import Enumeration from '../../../../phet-core/js/Enumeration.js';
-import countingCommon from '../../countingCommon.js';
 import EnumerationValue from '../../../../phet-core/js/EnumerationValue.js';
+import countingCommon from '../../countingCommon.js';
 
 class CountingObjectType extends EnumerationValue {
   public static readonly DOG = new CountingObjectType();

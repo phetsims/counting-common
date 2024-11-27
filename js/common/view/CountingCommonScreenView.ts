@@ -7,18 +7,18 @@
  */
 
 import Property from '../../../../axon/js/Property.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import { Node, Plane, PressListenerEvent } from '../../../../scenery/js/imports.js';
 import ClosestDragForwardingListener from '../../../../sun/js/ClosestDragForwardingListener.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
-import CountingObjectNode from './CountingObjectNode.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import CountingObject from '../model/CountingObject.js';
-import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Tandem from '../../../../tandem/js/Tandem.js';
+import CountingObjectNode from './CountingObjectNode.js';
 
 // types
 export type CountingObjectNodeMap = Record<number, CountingObjectNode>;

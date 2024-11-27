@@ -7,15 +7,15 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import Bounds2 from '../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
-import countingCommon from '../countingCommon.js';
+import Range from '../../../dot/js/Range.js';
 import apple_png from '../../images/apple_png.js';
 import ball_png from '../../images/ball_png.js';
-import dog_png from '../../images/dog_png.js';
-import CountingObjectType from './model/CountingObjectType.js';
 import butterfly_png from '../../images/butterfly_png.js';
-import Bounds2 from '../../../dot/js/Bounds2.js';
-import Range from '../../../dot/js/Range.js';
+import dog_png from '../../images/dog_png.js';
+import countingCommon from '../countingCommon.js';
+import CountingObjectType from './model/CountingObjectType.js';
 
 // convenience map that links counting object types to their corresponding images
 const COUNTING_OBJECT_TYPE_TO_IMAGE = new Map();

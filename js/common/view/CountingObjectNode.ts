@@ -7,19 +7,19 @@
  */
 
 import Emitter from '../../../../axon/js/Emitter.js';
+import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
+import TEmitter from '../../../../axon/js/TEmitter.js';
+import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
 import arrayRemove from '../../../../phet-core/js/arrayRemove.js';
+import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
 import { DragListener, Node, PressListenerEvent, Rectangle } from '../../../../scenery/js/imports.js';
 import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingObject from '../model/CountingObject.js';
-import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
-import Vector2 from '../../../../dot/js/Vector2.js';
 import CountingObjectType from '../model/CountingObjectType.js';
-import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
-import TReadOnlyProperty from '../../../../axon/js/TReadOnlyProperty.js';
-import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
-import TEmitter from '../../../../axon/js/TEmitter.js';
+import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
 
 // types
 type SelfOptions = {
