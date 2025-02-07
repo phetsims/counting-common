@@ -19,7 +19,8 @@ import CountingObject from '../../../../counting-common/js/common/model/Counting
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize from '../../../../phet-core/js/optionize.js';
-import { Node, NodeOptions, PressListenerEvent } from '../../../../scenery/js/imports.js';
+import { PressListenerEvent } from '../../../../scenery/js/listeners/PressListener.js';
+import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import countingCommon from '../../countingCommon.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 

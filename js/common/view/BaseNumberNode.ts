@@ -9,9 +9,14 @@
 
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import { Shape } from '../../../../kite/js/imports.js';
+import Shape from '../../../../kite/js/Shape.js';
 import optionize from '../../../../phet-core/js/optionize.js';
-import { Circle, Color, Image, Mipmap, Node, Path } from '../../../../scenery/js/imports.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
+import Image from '../../../../scenery/js/nodes/Image.js';
+import { Mipmap } from '../../../../scenery/js/nodes/Imageable.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
+import Color from '../../../../scenery/js/util/Color.js';
 import digit0_png from '../../../mipmaps/digit0_png.js';
 import digit1_png from '../../../mipmaps/digit1_png.js';
 import digit2_png from '../../../mipmaps/digit2_png.js';
