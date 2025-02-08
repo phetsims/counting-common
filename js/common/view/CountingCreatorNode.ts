@@ -1,4 +1,4 @@
-// Copyright 2021-2024, University of Colorado Boulder
+// Copyright 2021-2025, University of Colorado Boulder
 
 /**
  * Node that can display a 1, 10, 100, or other style of single countingObject which can be clicked/dragged to create
