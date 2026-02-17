@@ -4,7 +4,7 @@
  * Logic for determining whether numbers can be added together, and how numbers should be split apart.
  *
  * @author Sharfudeen Ashraf
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
 import countingCommon from '../../countingCommon.js';

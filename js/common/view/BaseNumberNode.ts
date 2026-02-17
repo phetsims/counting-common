@@ -3,7 +3,7 @@
 /**
  * Creates image views for base numbers.
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
