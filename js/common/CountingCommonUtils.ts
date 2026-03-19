@@ -6,8 +6,6 @@
  * @author Sharfudeen Ashraf
  */
 
-import countingCommon from '../countingCommon.js';
-
 const CountingCommonUtils = {
   /**
    * Common way of determining number of digits in a number.
@@ -21,7 +19,5 @@ const CountingCommonUtils = {
     return ( `${number}` ).length;
   }
 };
-
-countingCommon.register( 'CountingCommonUtils', CountingCommonUtils );
 
 export default CountingCommonUtils;

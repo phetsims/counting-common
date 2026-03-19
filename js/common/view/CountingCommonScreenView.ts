@@ -15,7 +15,6 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import Plane from '../../../../scenery/js/nodes/Plane.js';
 import ClosestDragForwardingListener from '../../../../sun/js/ClosestDragForwardingListener.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
-import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
@@ -210,7 +209,5 @@ class CountingCommonScreenView extends ScreenView {
     // Meant to be overridden
   }
 }
-
-countingCommon.register( 'CountingCommonScreenView', CountingCommonScreenView );
 
 export default CountingCommonScreenView;

@@ -7,7 +7,6 @@
  * @author Jonathan Olson (PhET Interactive Simulations)
  */
 
-import countingCommon from '../../countingCommon.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 
 class ArithmeticRules {
@@ -72,7 +71,5 @@ class ArithmeticRules {
     return amountToRemove;
   }
 }
-
-countingCommon.register( 'ArithmeticRules', ArithmeticRules );
 
 export default ArithmeticRules;

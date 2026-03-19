@@ -33,7 +33,6 @@ import paperBackground1000_png from '../../../mipmaps/paperBackground1000_png.js
 import paperBackground100_png from '../../../mipmaps/paperBackground100_png.js';
 import paperBackground10_png from '../../../mipmaps/paperBackground10_png.js';
 import paperBackground1_png from '../../../mipmaps/paperBackground1_png.js';
-import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import BaseNumber from '../model/BaseNumber.js';
 import CountingObjectType from '../model/CountingObjectType.js';
@@ -359,7 +358,5 @@ class BaseNumberNode extends Node {
     }
   }
 }
-
-countingCommon.register( 'BaseNumberNode', BaseNumberNode );
 
 export default BaseNumberNode;

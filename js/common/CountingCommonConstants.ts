@@ -14,7 +14,6 @@ import apple_png from '../../images/apple_png.js';
 import ball_png from '../../images/ball_png.js';
 import butterfly_png from '../../images/butterfly_png.js';
 import dog_png from '../../images/dog_png.js';
-import countingCommon from '../countingCommon.js';
 import CountingObjectType from './model/CountingObjectType.js';
 
 // convenience map that links counting object types to their corresponding images
@@ -58,7 +57,5 @@ const CountingCommonConstants = {
 
 assert && assert( CountingCommonConstants.MAX_IMAGES_PER_COUNTING_OBJECT % 10 === 0,
   'Max is pretty hard coded to be a multiple of 10' );
-
-countingCommon.register( 'CountingCommonConstants', CountingCommonConstants );
 
 export default CountingCommonConstants;

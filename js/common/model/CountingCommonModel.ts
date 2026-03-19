@@ -15,7 +15,6 @@ import Range from '../../../../dot/js/Range.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import TModel from '../../../../joist/js/TModel.js';
-import countingCommon from '../../countingCommon.js';
 import CountingObject from './CountingObject.js';
 
 class CountingCommonModel implements TModel {
@@ -154,7 +153,5 @@ class CountingCommonModel implements TModel {
     this.resetEmitter.emit();
   }
 }
-
-countingCommon.register( 'CountingCommonModel', CountingCommonModel );
 
 export default CountingCommonModel;

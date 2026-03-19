@@ -20,6 +20,4 @@ type StringsType = {
 
 const CountingCommonStrings = getStringModule( 'COUNTING_COMMON' ) as StringsType;
 
-countingCommon.register( 'CountingCommonStrings', CountingCommonStrings );
-
 export default CountingCommonStrings;

@@ -20,7 +20,6 @@ import Vector2Property from '../../../../dot/js/Vector2Property.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Animation from '../../../../twixt/js/Animation.js';
 import Easing from '../../../../twixt/js/Easing.js';
-import countingCommon from '../../countingCommon.js';
 import CountingCommonConstants from '../CountingCommonConstants.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 import BaseNumber, { SingleDigit } from './BaseNumber.js';
@@ -320,7 +319,5 @@ class CountingObject {
   }
 
 }
-
-countingCommon.register( 'CountingObject', CountingObject );
 
 export default CountingObject;

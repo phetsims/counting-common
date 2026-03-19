@@ -18,7 +18,6 @@ import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import { PressListenerEvent } from '../../../../scenery/js/listeners/PressListener.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
-import countingCommon from '../../countingCommon.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingObject from '../model/CountingObject.js';
 import CountingObjectType from '../model/CountingObjectType.js';
@@ -406,7 +405,5 @@ class CountingObjectNode extends Node {
     } );
   }
 }
-
-countingCommon.register( 'CountingObjectNode', CountingObjectNode );
 
 export default CountingObjectNode;

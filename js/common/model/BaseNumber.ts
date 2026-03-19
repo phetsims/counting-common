@@ -10,7 +10,6 @@
 
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import countingCommon from '../../countingCommon.js';
 import CountingCommonUtils from '../CountingCommonUtils.js';
 
 // eslint-disable-next-line phet/no-view-imported-from-model
@@ -62,7 +61,5 @@ class BaseNumber {
     this.digit = digit;
   }
 }
-
-countingCommon.register( 'BaseNumber', BaseNumber );
 
 export default BaseNumber;
