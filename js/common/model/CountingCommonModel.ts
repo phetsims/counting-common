@@ -96,7 +96,7 @@ class CountingCommonModel implements TModel {
     for ( let i = 0; i < numbers.length; i++ ) {
       const number = numbers[ i ];
 
-      // Ingore 0s
+      // Ignore 0s
       if ( !number ) { continue; }
 
       // evenly distribute across the screen
