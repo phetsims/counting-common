@@ -11,7 +11,6 @@ import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import TEmitter from '../../../../axon/js/TEmitter.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Range from '../../../../dot/js/Range.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView from '../../../../joist/js/ScreenView.js';
 import TModel from '../../../../joist/js/TModel.js';
@@ -28,12 +27,16 @@ class CountingCommonModel implements TModel {
   // used to notify view sub-components that reset is being called
   public readonly resetEmitter: TEmitter;
 
+  // Max value
+  private readonly highestCount: number;
+
   protected constructor( highestCount: number ) {
     this.countingObjects = createObservableArray();
-    this.sumProperty = new NumberProperty( 0, {
-      range: new Range( 0, highestCount )
-    } );
+
+    // Due to https://github.com/phetsims/axon/issues/303 this value can temporarily exceed the highestCount during intermediate states of collapsing numbers, so the range cannot be enforced here.
+    this.sumProperty = new NumberProperty( 0 );
     this.resetEmitter = new Emitter();
+    this.highestCount = highestCount;
   }
 
   /**
@@ -134,7 +137,7 @@ class CountingCommonModel implements TModel {
   }
 
   /**
-   * Updates the total sum of the paper numbers.
+   * Updates the total sum of the paper numbers. Note this is called during inconsistent intermediate states and may temporarily exceed the max.
    */
   public calculateTotal(): void {
     let total = 0;
