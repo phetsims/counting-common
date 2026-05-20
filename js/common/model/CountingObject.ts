@@ -145,15 +145,6 @@ class CountingObject {
   }
 
   /**
-   * Locate the boundary between the "move" input area and "split" input area, in the number's local bounds or provided
-   * bounds.
-   */
-  public getBoundaryY(): number {
-    const moveToSplitRatio = CountingCommonConstants.SPLIT_BOUNDARY_HEIGHT_PROPORTION;
-    return this.localBounds.maxY * ( 1 - moveToSplitRatio ) + this.localBounds.minY * moveToSplitRatio;
-  }
-
-  /**
    * Returns the ideal spot to "drag" a number from (near the center of its move target) relative to its origin.
    */
   public getDragTargetOffset(): Vector2 {

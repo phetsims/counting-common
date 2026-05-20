@@ -34,12 +34,6 @@ const CountingCommonConstants = {
   // Common colors
   CUE_FILL: 'rgb(63,63,183)',
 
-  /**
-   * {number} - Where is the boundary between paper number "move" targets and "split" targets, where 0 would be the
-   * bottom of the paper number and 1 would be the top. TODO: should be removed with the completion of https://github.com/phetsims/make-a-ten/issues/306
-   */
-  SPLIT_BOUNDARY_HEIGHT_PROPORTION: 0.78,
-
   ANIMATION_SPEED: 300, // in screen coordinates per second
   ANIMATION_TIME_RANGE: new Range( 0.2, 1 ), // in seconds
 
