@@ -27,8 +27,9 @@ class CountingCommonModel implements TModel {
   // used to notify view sub-components that reset is being called
   public readonly resetEmitter: TEmitter;
 
-  // Max value
-  private readonly highestCount: number;
+  // Max value. This is separate from sumProperty.range because sumProperty can temporarily exceed this value during
+  // intermediate model states, see https://github.com/phetsims/axon/issues/303.
+  public readonly highestCount: number;
 
   protected constructor( highestCount: number ) {
     this.countingObjects = createObservableArray();

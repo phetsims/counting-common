@@ -11,7 +11,6 @@
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
-import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import { TReadOnlyEmitter } from '../../../../axon/js/TEmitter.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.js';
@@ -86,7 +85,8 @@ class CountingCreatorNode extends Node {
 
   public constructor( place: number,
                       coordinateFrameNode: Node,
-                      sumProperty: NumberProperty,
+                      sumProperty: TReadOnlyProperty<number>,
+                      maxSum: number,
                       resetEmitter: TReadOnlyEmitter,
                       addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
                       providedOptions?: CountingCreatorNodeOptions ) {
@@ -111,7 +111,8 @@ class CountingCreatorNode extends Node {
 
     this.sumProperty = sumProperty;
 
-    this.maxSum = sumProperty.range.max;
+    assert && assert( isFinite( maxSum ), 'CountingCreatorNode requires a finite maxSum' );
+    this.maxSum = maxSum;
 
     this.frontTargetVisibilitySum = this.maxSum - this.creatorNumberValue;
     this.backTargetVisibilitySum = this.frontTargetVisibilitySum - this.creatorNumberValue;
