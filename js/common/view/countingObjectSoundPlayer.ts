@@ -3,7 +3,7 @@
 /**
  * Plays sounds for user-initiated paper number combining, decomposing, and repelling.
  *
- * @author Reid S. (PhET Interactive Simulations)
+ * @author Sam Reid (PhET Interactive Simulations)
  */
 
 import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
