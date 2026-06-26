@@ -8,9 +8,9 @@
 
 import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
 import soundManager from '../../../../tambo/js/soundManager.js';
-import collect_mp3 from '../../../../tambo/sounds/collect_mp3.js';
 import erase_mp3 from '../../../../tambo/sounds/erase_mp3.js';
-import selectionArpeggio003_mp3 from '../../../../tambo/sounds/selectionArpeggio003_mp3.js';
+import paperComposeWav from '../../../sounds/paper-compose_wav.js';
+import paperDecomposeWav from '../../../sounds/paper-decompose_wav.js';
 
 const MAX_PLACE = 3;
 
@@ -26,8 +26,8 @@ class CountingObjectSoundPlayer {
       rateChangesAffectPlayingSounds: false
     };
 
-    this.combineSoundClip = new SoundClip( collect_mp3, soundClipOptions );
-    this.decomposeSoundClip = new SoundClip( selectionArpeggio003_mp3, soundClipOptions );
+    this.combineSoundClip = new SoundClip( paperComposeWav, soundClipOptions );
+    this.decomposeSoundClip = new SoundClip( paperDecomposeWav, soundClipOptions );
     this.repelSoundClip = new SoundClip( erase_mp3, soundClipOptions );
 
     soundManager.addSoundGenerator( this.combineSoundClip );
