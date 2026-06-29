@@ -20,7 +20,7 @@ import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import CountingObject from '../model/CountingObject.js';
 import CountingObjectNode from './CountingObjectNode.js';
-import countingObjectSoundPlayer, { CountingObjectSoundPlayer } from './countingObjectSoundPlayer.js';
+import countingObjectSoundPlayer from './countingObjectSoundPlayer.js';
 
 // types
 export type CountingObjectNodeMap = Record<number, CountingObjectNode>;
@@ -158,15 +158,11 @@ class CountingCommonScreenView extends ScreenView {
       const droppedNumberValue = droppedCountingObject.numberValueProperty.value;
 
       if ( ArithmeticRules.canAddNumbers( draggedNumberValue, droppedNumberValue ) ) {
-        countingObjectSoundPlayer.playCombineSound(
-          CountingObjectSoundPlayer.getInteractionPlace( draggedNumberValue, droppedNumberValue )
-        );
+        countingObjectSoundPlayer.playCombineSound();
         this.model.collapseNumberModels( this.availableViewBoundsProperty.value, draggedCountingObject, droppedCountingObject );
       }
       else {
-        countingObjectSoundPlayer.playRepelSound(
-          CountingObjectSoundPlayer.getInteractionPlace( draggedNumberValue, droppedNumberValue )
-        );
+        countingObjectSoundPlayer.playRepelSound();
 
         // repel numbers - show rejection
         this.model.repelAway( this.availableViewBoundsProperty.value, draggedCountingObject, droppedCountingObject,

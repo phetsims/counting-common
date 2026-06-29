@@ -22,7 +22,7 @@ import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingObject from '../model/CountingObject.js';
 import CountingObjectType from '../model/CountingObjectType.js';
 import BaseNumberNode, { BaseNumberNodeOptions } from './BaseNumberNode.js';
-import countingObjectSoundPlayer, { CountingObjectSoundPlayer } from './countingObjectSoundPlayer.js';
+import countingObjectSoundPlayer from './countingObjectSoundPlayer.js';
 
 // types
 type SelfOptions = {
@@ -177,7 +177,7 @@ class CountingObjectNode extends Node {
           return;
         }
 
-        countingObjectSoundPlayer.playDecomposeSound( CountingObjectSoundPlayer.getDecomposedValuePlace( amountToRemove ) );
+        countingObjectSoundPlayer.playDecomposeSound();
         countingObject.changeNumber( amountRemaining );
 
         this.interactionStartedEmitter.emit( this );
