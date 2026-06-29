@@ -14,51 +14,31 @@ import paperDecomposeWav from '../../../sounds/paper-decompose_wav.js';
 
 const MAX_PLACE = 3;
 
+const composeSoundClip = new SoundClip( paperComposeWav );
+const decomposeSoundClip = new SoundClip( paperDecomposeWav );
+const repelSoundClip = new SoundClip( erase_mp3 );
+
+soundManager.addSoundGenerator( composeSoundClip );
+soundManager.addSoundGenerator( decomposeSoundClip );
+soundManager.addSoundGenerator( repelSoundClip );
+
+const VOLUME = 0.4;
+
+composeSoundClip.setOutputLevel( VOLUME );
+decomposeSoundClip.setOutputLevel( VOLUME );
+
 class CountingObjectSoundPlayer {
 
-  private readonly combineSoundClip: SoundClip;
-  private readonly decomposeSoundClip: SoundClip;
-  private readonly repelSoundClip: SoundClip;
-
-  public constructor() {
-
-    const soundClipOptions = {
-      rateChangesAffectPlayingSounds: false
-    };
-
-    this.combineSoundClip = new SoundClip( paperComposeWav, soundClipOptions );
-    this.decomposeSoundClip = new SoundClip( paperDecomposeWav, soundClipOptions );
-    this.repelSoundClip = new SoundClip( erase_mp3, soundClipOptions );
-
-    soundManager.addSoundGenerator( this.combineSoundClip );
-    soundManager.addSoundGenerator( this.decomposeSoundClip );
-    soundManager.addSoundGenerator( this.repelSoundClip );
+  public playCombineSound(): void {
+    composeSoundClip.play();
   }
 
-  public playCombineSound( place: number ): void {
-    this.playSound( this.combineSoundClip, place );
+  public playDecomposeSound(): void {
+    decomposeSoundClip.play();
   }
 
-  public playDecomposeSound( place: number ): void {
-    this.playSound( this.decomposeSoundClip, place );
-  }
-
-  public playRepelSound( place: number ): void {
-    this.playSound( this.repelSoundClip, place );
-  }
-
-  private playSound( soundClip: SoundClip, place: number ): void {
-    soundClip.setPlaybackRate( CountingObjectSoundPlayer.placeToPlaybackRate( place ) );
-    soundClip.play();
-  }
-
-  /**
-   * For sounds that are keyed to a specific place value, play 1s at the natural pitch, then lower each larger place
-   * value by two half steps.
-   */
-  private static placeToPlaybackRate( place: number ): number {
-    const constrainedPlace = Math.max( 0, Math.min( MAX_PLACE, place ) );
-    return Math.pow( 2, -2 * constrainedPlace / 12 );
+  public playRepelSound(): void {
+    repelSoundClip.play();
   }
 
   /**
