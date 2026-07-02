@@ -24,7 +24,7 @@ soundManager.addSoundGenerator( repelSoundClip );
 
 const VOLUME = 0.4;
 
-composeSoundClip.setOutputLevel( VOLUME );
+composeSoundClip.setOutputLevel( VOLUME * 0.5 );
 decomposeSoundClip.setOutputLevel( VOLUME );
 
 class CountingObjectSoundPlayer {
