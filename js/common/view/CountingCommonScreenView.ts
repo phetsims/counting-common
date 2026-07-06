@@ -19,7 +19,7 @@ import CountingCommonConstants from '../CountingCommonConstants.js';
 import ArithmeticRules from '../model/ArithmeticRules.js';
 import CountingCommonModel from '../model/CountingCommonModel.js';
 import CountingObject from '../model/CountingObject.js';
-import CountingObjectNode from './CountingObjectNode.js';
+import CountingObjectNode, { type CountingObjectDragStartSound, type CountingObjectDropResult } from './CountingObjectNode.js';
 import countingObjectSoundPlayer from './countingObjectSoundPlayer.js';
 
 // types
@@ -43,6 +43,9 @@ class CountingCommonScreenView extends ScreenView {
   // CountingObject.id => {CountingObjectNode} - lookup map for efficiency
   private readonly countingObjectNodeMap: CountingObjectNodeMap;
 
+  private readonly countingObjectDragEndedListener: ( countingObjectNode: CountingObjectNode,
+                                                     dropResult: CountingObjectDropResult ) => void;
+
   protected constructor( model: CountingCommonModel ) {
     super( {
       tandem: Tandem.OPT_OUT
@@ -52,6 +55,7 @@ class CountingCommonScreenView extends ScreenView {
 
     this.countingObjectLayerNode = new Node();
     this.countingObjectNodeMap = {};
+    this.countingObjectDragEndedListener = this.onCountingObjectDragEnded.bind( this );
     this.availableViewBoundsProperty = new Property( ScreenView.DEFAULT_LAYOUT_BOUNDS );
 
     this.closestDragForwardingListener = new ClosestDragForwardingListener( 30, 0 );
@@ -95,13 +99,16 @@ class CountingCommonScreenView extends ScreenView {
    *
    * @param event - The Scenery event that triggered this.
    * @param countingObject - The paper number to add and then drag
+   * @param dragStartSound - Sound to play when the drag starts
    */
-  public addAndDragCountingObject( event: PressListenerEvent, countingObject: CountingObject ): void {
+  public addAndDragCountingObject( event: PressListenerEvent,
+                                   countingObject: CountingObject,
+                                   dragStartSound: CountingObjectDragStartSound = 'playArea' ): void {
     // Add it and lookup the related node.
     this.model.addCountingObject( countingObject );
 
     const countingObjectNode = this.findCountingObjectNode( countingObject );
-    countingObjectNode.startSyntheticDrag( event );
+    countingObjectNode.startSyntheticDrag( event, dragStartSound );
   }
 
   /**
@@ -109,11 +116,14 @@ class CountingCommonScreenView extends ScreenView {
    */
   public onCountingObjectAdded( countingObject: CountingObject ): CountingObjectNode {
     const countingObjectNode = new CountingObjectNode( countingObject, this.availableViewBoundsProperty,
-      this.addAndDragCountingObject.bind( this ), this.tryToCombineCountingObjects.bind( this ) );
+      this.addAndDragCountingObject.bind( this ), this.tryToCombineCountingObjects.bind( this ), {
+        dragStartSoundsEnabled: true
+      } );
 
     this.countingObjectNodeMap[ countingObjectNode.countingObject.id ] = countingObjectNode;
     this.countingObjectLayerNode.addChild( countingObjectNode );
     countingObjectNode.attachListeners();
+    countingObjectNode.endDragEmitter.addListener( this.countingObjectDragEndedListener );
 
     this.closestDragForwardingListener.addDraggableItem( countingObjectNode );
 
@@ -126,6 +136,7 @@ class CountingCommonScreenView extends ScreenView {
   public onCountingObjectRemoved( countingObject: CountingObject ): void {
     const countingObjectNode = this.findCountingObjectNode( countingObject );
 
+    countingObjectNode.endDragEmitter.removeListener( this.countingObjectDragEndedListener );
     delete this.countingObjectNodeMap[ countingObjectNode.countingObject.id ];
     this.closestDragForwardingListener.removeDraggableItem( countingObjectNode );
     countingObjectNode.dispose();
@@ -142,8 +153,10 @@ class CountingCommonScreenView extends ScreenView {
 
   /**
    * When the user drops a paper number they were dragging, see if it can combine with any other nearby paper numbers.
+   *
+   * @returns - The outcome of the drop
    */
-  public tryToCombineCountingObjects( draggedCountingObject: CountingObject ): void {
+  public tryToCombineCountingObjects( draggedCountingObject: CountingObject ): CountingObjectDropResult {
     const draggedNode = this.findCountingObjectNode( draggedCountingObject );
     const draggedNumberValue = draggedCountingObject.numberValueProperty.value;
     const allCountingObjectNodes = this.countingObjectLayerNode.children;
@@ -160,6 +173,7 @@ class CountingCommonScreenView extends ScreenView {
       if ( ArithmeticRules.canAddNumbers( draggedNumberValue, droppedNumberValue ) ) {
         countingObjectSoundPlayer.playCombineSound();
         this.model.collapseNumberModels( this.availableViewBoundsProperty.value, draggedCountingObject, droppedCountingObject );
+        return 'combined';
       }
       else {
         countingObjectSoundPlayer.playRepelSound();
@@ -173,7 +187,18 @@ class CountingCommonScreenView extends ScreenView {
               right: CountingCommonConstants.MOVE_AWAY_DISTANCE[ rightCountingObject.digitLength ]
             };
           } );
+        return 'repelled';
       }
+    }
+    return 'none';
+  }
+
+  /**
+   * Called after a paper number is dropped and after any compose/repel logic has run.
+   */
+  protected onCountingObjectDragEnded( countingObjectNode: CountingObjectNode, dropResult: CountingObjectDropResult ): void {
+    if ( dropResult !== 'combined' ) {
+      countingObjectSoundPlayer.playPlayAreaDropSound();
     }
   }
 

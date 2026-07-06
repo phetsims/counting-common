@@ -16,6 +16,7 @@ import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import BaseNumber from '../../../../counting-common/js/common/model/BaseNumber.js';
 import CountingObject from '../../../../counting-common/js/common/model/CountingObject.js';
 import BaseNumberNode from '../../../../counting-common/js/common/view/BaseNumberNode.js';
+import type { CountingObjectDragStartSound } from '../../../../counting-common/js/common/view/CountingObjectNode.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import { PressListenerEvent } from '../../../../scenery/js/listeners/PressListener.js';
@@ -88,7 +89,9 @@ class CountingCreatorNode extends Node {
                       sumProperty: TReadOnlyProperty<number>,
                       maxSum: number,
                       resetEmitter: TReadOnlyEmitter,
-                      addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
+                      addAndDragCountingObject: ( event: PressListenerEvent,
+                                                  countingObject: CountingObject,
+                                                  dragStartSound?: CountingObjectDragStartSound ) => void,
                       providedOptions?: CountingCreatorNodeOptions ) {
 
     const options = optionize<CountingCreatorNodeOptions, SelfOptions, NodeOptions>()( {
@@ -194,7 +197,7 @@ class CountingCreatorNode extends Node {
         countingObject.setDestination( viewPosition.minus( countingObject.getDragTargetOffset() ), false );
 
         // Create and start dragging the new paper number node
-        addAndDragCountingObject( event, countingObject );
+        addAndDragCountingObject( event, countingObject, 'numberDrawer' );
       }
     } );
 

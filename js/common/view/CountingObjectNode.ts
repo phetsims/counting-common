@@ -28,11 +28,17 @@ import countingObjectSoundPlayer from './countingObjectSoundPlayer.js';
 type SelfOptions = {
   countingObjectTypeProperty?: TReadOnlyProperty<CountingObjectType>;
   baseNumberNodeOptions?: Pick<BaseNumberNodeOptions, 'handleOffsetY'>;
+
+  // Whether pickup/start sounds should play when this paper number starts being dragged.
+  dragStartSoundsEnabled?: boolean;
 };
 type CountingObjectNodeOptions = SelfOptions;
+export type CountingObjectDragStartSound = 'playArea' | 'numberDrawer' | 'none';
+export type CountingObjectDropResult = 'none' | 'combined' | 'repelled';
 
 // constants
 const MINIMUM_OVERLAP_AMOUNT_TO_COMBINE = 8; // in screen coordinates
+const COUNTING_OBJECT_DROP_RESULTS: CountingObjectDropResult[] = [ 'none', 'combined', 'repelled' ];
 
 class CountingObjectNode extends Node {
   public readonly countingObject: CountingObject;
@@ -85,22 +91,30 @@ class CountingObjectNode extends Node {
   // Listener for when whether the paper number's value is included in the sum changes
   private readonly includeInSumListener: ( includedInSum: boolean ) => void;
 
+  // Which pickup/start sound will play when the drag starts.
+  private dragStartSound: CountingObjectDragStartSound;
+
+  private readonly dragStartSoundsEnabled: boolean;
+
   private handleNode: null | Node;
 
   // Fires when the user stops dragging a paper number node.
-  public readonly endDragEmitter: TEmitter<[ CountingObjectNode ]>;
+  public readonly endDragEmitter: TEmitter<[ CountingObjectNode, CountingObjectDropResult ]>;
 
   public constructor( countingObject: CountingObject,
                       availableViewBoundsProperty: TReadOnlyProperty<Bounds2>,
-                      addAndDragCountingObject: ( event: PressListenerEvent, countingObject: CountingObject ) => void,
-                      handleDroppedCountingObject: ( countingObject: CountingObject ) => void,
+                      addAndDragCountingObject: ( event: PressListenerEvent,
+                                                  countingObject: CountingObject,
+                                                  dragStartSound?: CountingObjectDragStartSound ) => void,
+                      handleDroppedCountingObject: ( countingObject: CountingObject ) => CountingObjectDropResult,
                       providedOptions?: CountingObjectNodeOptions ) {
 
     super();
 
     const options = optionize<CountingObjectNodeOptions, SelfOptions>()( {
       countingObjectTypeProperty: new EnumerationProperty( CountingObjectType.PAPER_NUMBER ),
-      baseNumberNodeOptions: {}
+      baseNumberNodeOptions: {},
+      dragStartSoundsEnabled: false
     }, providedOptions );
 
     this.countingObject = countingObject;
@@ -115,7 +129,14 @@ class CountingObjectNode extends Node {
     this.countingObjectTypeProperty = options.countingObjectTypeProperty;
 
     this.baseNumberNodeOptions = options.baseNumberNodeOptions;
-    this.endDragEmitter = new Emitter( { parameters: [ { valueType: CountingObjectNode } ] } );
+    this.dragStartSound = 'playArea';
+    this.dragStartSoundsEnabled = options.dragStartSoundsEnabled;
+    this.endDragEmitter = new Emitter<[ CountingObjectNode, CountingObjectDropResult ]>( {
+      parameters: [
+        { valueType: CountingObjectNode },
+        { valueType: 'string', validValues: COUNTING_OBJECT_DROP_RESULTS }
+      ]
+    } );
     this.numberImageContainer = new Node( {
       pickable: false
     } );
@@ -137,6 +158,7 @@ class CountingObjectNode extends Node {
       targetNode: this,
       pressCursor: 'move', // Our target doesn't have the move cursor, so we need to override here
       start: ( event: PressListenerEvent ) => {
+        this.playDragStartSound();
         this.interactionStartedEmitter.emit( this );
         if ( !this.preventMoveEmit ) {
           this.moveEmitter.emit( this );
@@ -149,8 +171,12 @@ class CountingObjectNode extends Node {
 
       end: () => {
         if ( !this.isDisposed ) { // check if disposed before handling end, see https://github.com/phetsims/make-a-ten/issues/298
-          handleDroppedCountingObject( this.countingObject );
-          this.endDragEmitter.emit( this );
+          const dropResult = handleDroppedCountingObject( this.countingObject );
+
+          // Combining may dispose this node before this drag listener finishes.
+          if ( !this.isDisposed ) {
+            this.endDragEmitter.emit( this, dropResult );
+          }
         }
       }
     } );
@@ -190,7 +216,7 @@ class CountingObjectNode extends Node {
           new Vector2( countingObject.positionProperty.value.x, viewPosition.y ), {
             groupingEnabledProperty: countingObject.groupingEnabledProperty
           } );
-        addAndDragCountingObject( event, newCountingObject );
+        addAndDragCountingObject( event, newCountingObject, 'none' );
       }
     };
     this.splitTarget.addInputListener( this.splitDragListener );
@@ -315,15 +341,32 @@ class CountingObjectNode extends Node {
   }
 
   /**
+   * Plays the pickup/start sound associated with the drag that is beginning.
+   */
+  private playDragStartSound(): void {
+    if ( this.dragStartSoundsEnabled ) {
+      if ( this.dragStartSound === 'playArea' ) {
+        countingObjectSoundPlayer.playPlayAreaPickupSound();
+      }
+      else if ( this.dragStartSound === 'numberDrawer' ) {
+        countingObjectSoundPlayer.playNumberDrawerPickupSound();
+      }
+    }
+  }
+
+  /**
    * Called when we grab an event from a different input (like clicking the paper number in the explore panel, or
    * splitting paper numbers), and starts a drag on this paper number.
    *
    * @param event - Scenery event from the relevant input handler
+   * @param dragStartSound - Sound to play when this synthetic drag starts
    */
-  public startSyntheticDrag( event: PressListenerEvent ): void {
+  public startSyntheticDrag( event: PressListenerEvent, dragStartSound: CountingObjectDragStartSound = 'playArea' ): void {
     // Don't emit a move event, as we don't want the cue to disappear.
     this.preventMoveEmit = true;
+    this.dragStartSound = dragStartSound;
     this.moveDragListener.press( event );
+    this.dragStartSound = 'playArea';
     this.preventMoveEmit = false;
   }
 

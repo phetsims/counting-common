@@ -7,6 +7,7 @@
  */
 
 import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
+import sharedSoundPlayers from '../../../../tambo/js/sharedSoundPlayers.js';
 import soundManager from '../../../../tambo/js/soundManager.js';
 import erase_mp3 from '../../../../tambo/sounds/erase_mp3.js';
 import paperComposeWav from '../../../sounds/paper-compose_wav.js';
@@ -39,6 +40,34 @@ class CountingObjectSoundPlayer {
 
   public playRepelSound(): void {
     repelSoundClip.play();
+  }
+
+  /**
+   * Plays when a number starts being dragged from the number drawer.
+   */
+  public playNumberDrawerPickupSound(): void {
+    sharedSoundPlayers.get( 'toggleOn' ).play();
+  }
+
+  /**
+   * Plays when a number is dropped into the number drawer.
+   */
+  public playNumberDrawerDropSound(): void {
+    sharedSoundPlayers.get( 'toggleOff' ).play();
+  }
+
+  /**
+   * Plays when a number is picked up in the play area.
+   */
+  public playPlayAreaPickupSound(): void {
+    sharedSoundPlayers.get( 'grab' ).play();
+  }
+
+  /**
+   * Plays when a number is dropped in the play area.
+   */
+  public playPlayAreaDropSound(): void {
+    sharedSoundPlayers.get( 'release' ).play();
   }
 
   /**
